@@ -1,16 +1,30 @@
-# application
+# Flutter Frontend - Splash Project
 
-A new Flutter project.
+Questo progetto rappresenta la parte **frontend** sviluppata in **Flutter**, connessa a un backend Next.js + MongoDB.
 
-## Getting Started
+## 📦 Requisiti
 
-This project is a starting point for a Flutter application.
+- Flutter SDK installato
+- Dart SDK (incluso in Flutter)
+- Un emulatore Android/iOS o un dispositivo fisico collegato
+- Backend attivo (es. su `http://localhost:3000`)
 
-A few resources to get you started if this is your first Flutter project:
+## ▶️ Avvio rapido
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 1. Naviga nella cartella del progetto Flutter
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd frontend
+```
+
+### 2. Recupera le dipendenze
+
+```bash
+flutter pub get
+```
+
+### 3. Avvia l'app (in debug)
+
+```bash
+flutter run
+```
