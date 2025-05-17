@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/dashboard_screen.dart';
 import 'screens/fontanelle_screen.dart';
+import 'screens/fontanelle_details_screen.dart';
 import 'screens/mappe_screen.dart';
 import 'screens/user_screen.dart';
 import 'screens/login_screen.dart';
@@ -12,4 +12,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/mappe': (context) => const MappeScreen(),
   '/utente': (context) => const UserScreen(),
   '/login': (context) => const LoginScreen(),
+  '/dettagli_fontanella': (context) => FontanellaDetailScreen(),
 };

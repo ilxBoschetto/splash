@@ -80,10 +80,10 @@ class _MappeScreenState extends State<MappeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final initialCenter = userPosition ?? const LatLng(45.5, 11.5);
+    final initialCenter = userPosition ?? const LatLng(45.72064772402749, 11.309933083088417);
     return Scaffold(
       body: FlutterMap(
-        options: MapOptions(initialCenter: initialCenter, initialZoom: 7.0),
+        options: MapOptions(initialCenter: initialCenter, initialZoom: 14.0),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
