@@ -32,6 +32,12 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color.fromARGB(255, 27, 27, 27),
           foregroundColor: Color.fromARGB(255, 238, 238, 238),
         ),
+        textTheme: const TextTheme(
+          bodySmall: TextStyle(
+            color: Color.fromARGB(255, 160, 160, 160), // subtext color
+            fontSize: 12,
+          ),
+        ),
       ),
       themeMode: ThemeMode.system,
       initialRoute: '/',

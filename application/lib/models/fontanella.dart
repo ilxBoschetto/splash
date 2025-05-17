@@ -17,7 +17,7 @@ class Fontanella {
 
   factory Fontanella.fromJson(Map<String, dynamic> json, double distanza) {
     return Fontanella(
-      id: json['id'].toString() ?? 'unknown',
+      id: json['id'].toString(),
       nome: json['name'] ?? '-',
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
