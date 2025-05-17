@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 import '../services/location_service.dart';
@@ -41,8 +42,9 @@ class _MappeScreenState extends State<MappeScreen> {
   }
 
   Future<void> fetchFontanelle() async {
+    final url = '${dotenv.env['API_URL']}/fontanelle';
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/fontanelle'),
+      Uri.parse(url),
     );
 
     if (response.statusCode == 200) {
@@ -100,7 +102,7 @@ class _MappeScreenState extends State<MappeScreen> {
                         ),
                       ),
                     )
-                    .toList(),
+                    ,
             ]
                 
           ),
