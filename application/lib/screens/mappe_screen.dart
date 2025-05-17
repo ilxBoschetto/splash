@@ -41,7 +41,6 @@ class _MappeScreenState extends State<MappeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mappa Fontanelle')),
       body: FlutterMap(
         options: MapOptions(
           initialCenter:
@@ -65,7 +64,7 @@ class _MappeScreenState extends State<MappeScreen> {
                         point: coord,
                         child: const Icon(
                           Icons.location_on,
-                          color: Colors.red,
+                          color: Colors.lightBlue,
                           size: 30,
                         ),
                       ),

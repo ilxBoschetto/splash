@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/fontanelle_list.dart';
+import 'app_layout.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Fontanelle App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const FontanelleListScreen(),
+      home: const AppLayout(),
     );
   }
 }

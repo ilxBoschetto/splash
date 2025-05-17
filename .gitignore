@@ -39,3 +39,6 @@
 # typescript
 /backend/*.tsbuildinfo
 /backend/next-env.d.ts
+
+#vs code
+.vscode
