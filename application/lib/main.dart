@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'app_layout.dart';
+import 'routes.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -33,8 +33,9 @@ class MyApp extends StatelessWidget {
           foregroundColor: Color.fromARGB(255, 238, 238, 238),
         ),
       ),
-      themeMode: ThemeMode.dark,
-      home: const AppLayout(),
+      themeMode: ThemeMode.system,
+      initialRoute: '/',
+      routes: appRoutes,
     );
   }
 }

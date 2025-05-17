@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../services/location_service.dart';
@@ -22,7 +23,25 @@ class _MappeScreenState extends State<MappeScreen> {
   @override
   void initState() {
     super.initState();
+    loadCachedUserPosition(); // carica posizione dalla cache se disponibile
     fetchData();
+  }
+
+  Future<void> loadCachedUserPosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lat = prefs.getDouble('cached_lat');
+    final lon = prefs.getDouble('cached_lon');
+    if (lat != null && lon != null) {
+      setState(() {
+        userPosition = LatLng(lat, lon);
+      });
+    }
+  }
+
+  Future<void> cacheUserPosition(Position position) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('cached_lat', position.latitude);
+    await prefs.setDouble('cached_lon', position.longitude);
   }
 
   Future<void> fetchData() async {
@@ -36,6 +55,7 @@ class _MappeScreenState extends State<MappeScreen> {
       setState(() {
         userPosition = LatLng(position.latitude, position.longitude);
       });
+      await cacheUserPosition(position); // salva in cache
     } catch (e) {
       print('Errore posizione utente: $e');
     }
@@ -43,9 +63,7 @@ class _MappeScreenState extends State<MappeScreen> {
 
   Future<void> fetchFontanelle() async {
     final url = '${dotenv.env['API_URL']}/fontanelle';
-    final response = await http.get(
-      Uri.parse(url),
-    );
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -65,18 +83,14 @@ class _MappeScreenState extends State<MappeScreen> {
     final initialCenter = userPosition ?? const LatLng(45.5, 11.5);
     return Scaffold(
       body: FlutterMap(
-        options: MapOptions(
-          initialCenter: initialCenter,
-          initialZoom: 9.0,
-        ),
+        options: MapOptions(initialCenter: initialCenter, initialZoom: 7.0),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
             userAgentPackageName: 'com.example.app',
           ),
           MarkerLayer(
-            
-            markers:[
+            markers: [
               if (userPosition != null)
                 Marker(
                   point: userPosition!,
@@ -88,23 +102,19 @@ class _MappeScreenState extends State<MappeScreen> {
                     size: 35,
                   ),
                 ),
-
-                ...fontanelleCoords
-                    .map(
-                      (coord) => Marker(
-                        width: 40,
-                        height: 40,
-                        point: coord,
-                        child: const Icon(
-                          Icons.location_on,
-                          color: Colors.lightBlue,
-                          size: 30,
-                        ),
-                      ),
-                    )
-                    ,
-            ]
-                
+              ...fontanelleCoords.map(
+                (coord) => Marker(
+                  width: 40,
+                  height: 40,
+                  point: coord,
+                  child: const Icon(
+                    Icons.location_on,
+                    color: Colors.lightBlue,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

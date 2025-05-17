@@ -36,14 +36,8 @@ class _AppLayoutState extends State<AppLayout> {
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop),
-            label: 'Fontanelle',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.water_drop), label: 'Fontanelle'),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Mappe'),
           BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Utente'),
         ],
