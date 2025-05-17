@@ -25,10 +25,10 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.black,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 41, 41, 41),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 27, 27, 27),
+          foregroundColor: Color.fromARGB(255, 238, 238, 238),
         ),
       ),
       themeMode: ThemeMode.dark,

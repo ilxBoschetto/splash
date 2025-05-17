@@ -4,6 +4,9 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../services/location_service.dart';
+import 'package:geolocator/geolocator.dart';
+
 class MappeScreen extends StatefulWidget {
   const MappeScreen({super.key});
 
@@ -13,11 +16,28 @@ class MappeScreen extends StatefulWidget {
 
 class _MappeScreenState extends State<MappeScreen> {
   List<LatLng> fontanelleCoords = [];
+  LatLng? userPosition;
 
   @override
   void initState() {
     super.initState();
-    fetchFontanelle();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    await fetchUserPosition();
+    await fetchFontanelle();
+  }
+
+  Future<void> fetchUserPosition() async {
+    try {
+      final position = await LocationService.getCurrentPosition();
+      setState(() {
+        userPosition = LatLng(position.latitude, position.longitude);
+      });
+    } catch (e) {
+      print('Errore posizione utente: $e');
+    }
   }
 
   Future<void> fetchFontanelle() async {
@@ -40,13 +60,11 @@ class _MappeScreenState extends State<MappeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final initialCenter = userPosition ?? const LatLng(45.5, 11.5);
     return Scaffold(
       body: FlutterMap(
         options: MapOptions(
-          initialCenter:
-              fontanelleCoords.isNotEmpty
-                  ? fontanelleCoords[0]
-                  : const LatLng(45.5, 11.5),
+          initialCenter: initialCenter,
           initialZoom: 9.0,
         ),
         children: [
@@ -55,8 +73,21 @@ class _MappeScreenState extends State<MappeScreen> {
             userAgentPackageName: 'com.example.app',
           ),
           MarkerLayer(
-            markers:
-                fontanelleCoords
+            
+            markers:[
+              if (userPosition != null)
+                Marker(
+                  point: userPosition!,
+                  width: 40,
+                  height: 40,
+                  child: const Icon(
+                    Icons.person_pin_circle,
+                    color: Colors.red,
+                    size: 35,
+                  ),
+                ),
+
+                ...fontanelleCoords
                     .map(
                       (coord) => Marker(
                         width: 40,
@@ -70,6 +101,8 @@ class _MappeScreenState extends State<MappeScreen> {
                       ),
                     )
                     .toList(),
+            ]
+                
           ),
         ],
       ),

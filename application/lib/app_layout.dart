@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
-import 'screens/fontanelle_list.dart';
+import 'screens/fontanelle_screen.dart';
 import 'screens/mappe_screen.dart';
 import 'screens/user_screen.dart';
 

@@ -45,5 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Abbiamo bisogno della tua posizione per mostrare le fontanelle più vicine.</string>
 </dict>
 </plist>
