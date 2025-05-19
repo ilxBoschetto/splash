@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
@@ -43,8 +44,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final token = data['token'];
-        print("Login ok! Token: $token");
-        Navigator.pushReplacementNamed(context, '/app');
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', token);
+        Navigator.pushReplacementNamed(context, '/');
       } else {
         setState(() => error = 'Credenziali non valide.');
       }

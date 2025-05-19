@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -8,16 +10,44 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  bool _showBanner = true;
+  bool isUserLogged = false;
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  Future<void> checkLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      setState(() {
+        isUserLogged = true;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        isUserLogged = false;
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard')),
       body: Stack(
         children: [
           const Center(child: Text('Benvenuto nella Dashboard')),
-          if (_showBanner)
+          if (!isUserLogged)
             Positioned(
               top: 10,
               left: 10,
@@ -44,7 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           Center(
                             child: Container(
-                              width: 200, // o double.infinity per tutta la larghezza disponibile
+                              width: 200,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                               ),
@@ -60,7 +90,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      setState(() => _showBanner = false);
                                       Navigator.pushNamed(context, '/register');
                                     },
                                     child: Text(
@@ -84,7 +113,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       ),
                                     ),
                                     onPressed: () {
-                                      setState(() => _showBanner = false);
                                       Navigator.pushNamed(context, '/login');
                                     },
                                     child: Text(
@@ -103,10 +131,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                         ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [],
                       ),
                     ],
                   ),

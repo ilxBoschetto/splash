@@ -17,13 +17,13 @@ export default async function handler(req, res) {
 
   let isDevMode = false;
 
+  const user = await User.findOne({ email })
+
   if(email === process.env.ADMIN_USERNAME && bcrypt.compare(password, process.env.ADMIN_PASSWORD))
     isDevMode = true;
 
   if(!isDevMode){
-    const user = await User.findOne({ email })
     if (!user) return res.status(401).json({ error: 'Email o password errati' })
-
     const match = await bcrypt.compare(password, user.passwordHash)
     if (!match) return res.status(401).json({ error: 'Email o password errati' })
   }
