@@ -96,19 +96,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   TextField(
                     controller: nameController,
-                    decoration: const InputDecoration(labelText: 'Nome'),
+                    decoration: const InputDecoration(labelText: 'Nome (*)'),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Email'),
+                    decoration: const InputDecoration(labelText: 'Email (*)'),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
+                    decoration: const InputDecoration(labelText: 'Password (*)'),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
