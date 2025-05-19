@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI non definito in .env.local');
+  throw new Error('MONGODB_URI non definita in .env');
 }
 
 let cached = global.mongoose;
@@ -17,8 +17,9 @@ async function dbConnect() {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI, {
-      bufferCommands: false,
-    }).then(m => m);
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }).then((mongoose) => mongoose);
   }
 
   cached.conn = await cached.promise;
