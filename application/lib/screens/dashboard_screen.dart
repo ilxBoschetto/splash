@@ -42,53 +42,72 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4), // Bordi meno arrotondati
+                          Center(
+                            child: Container(
+                              width: 200, // o double.infinity per tutta la larghezza disponibile
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
                               ),
-                            ),
-                            onPressed: () {
-                              setState(() => _showBanner = false);
-                              Navigator.pushNamed(context, '/register');
-                            },
-                            child: Text(
-                              'REGISTRATI',
-                              style: (
-                                TextStyle(fontWeight: FontWeight.w900,
-                                          color: Theme.of(context).scaffoldBackgroundColor)
-                                ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() => _showBanner = false);
+                                      Navigator.pushNamed(context, '/register');
+                                    },
+                                    child: Text(
+                                      'REGISTRATI',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).scaffoldBackgroundColor,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      setState(() => _showBanner = false);
+                                      Navigator.pushNamed(context, '/login');
+                                    },
+                                    child: Text(
+                                      'LOGIN',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).scaffoldBackgroundColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            onPressed: () {
-                              setState(() => _showBanner = false);
-                              Navigator.pushNamed(context, '/login');
-                            },
-                            child: Text(
-                              'LOGIN',
-                              style: (
-                                TextStyle(fontWeight: FontWeight.w900,
-                                          color: Theme.of(context).scaffoldBackgroundColor)
-                                ),
                             ),
                           ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          
-                        ],
-                      )
+                        children: [],
+                      ),
                     ],
                   ),
                 ),
