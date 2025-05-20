@@ -35,11 +35,32 @@ class _AppLayoutState extends State<AppLayout> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor: Colors.grey,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.normal,
+          fontSize: 12,
+        ),
+        selectedIconTheme: const IconThemeData(size: 35),
+        unselectedIconTheme: const IconThemeData(size: 24),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.water_drop), label: 'Fontanelle'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.water_drop),
+            label: 'Fontanelle',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Mappe'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: 'Utente'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Utente',
+          ),
         ],
       ),
     );
