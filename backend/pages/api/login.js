@@ -7,7 +7,7 @@ import corsMiddleware from '../../lib/cors'
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key'
 
 export default async function handler(req, res) {
-  await corsMiddleware(req, res)
+  await corsMiddleware(req, res);
 
   if (req.method !== 'POST') return res.status(405).end()
 

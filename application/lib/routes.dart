@@ -5,6 +5,7 @@ import 'screens/mappe_screen.dart';
 import 'screens/user_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/profile_screen.dart';
 import 'app_layout.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
@@ -15,4 +16,5 @@ final Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
   '/register': (context) => const RegisterScreen(),
   '/dettagli_fontanella': (context) => FontanellaDetailScreen(),
+  '/profile': (context) => const ProfileScreen(),
 };
