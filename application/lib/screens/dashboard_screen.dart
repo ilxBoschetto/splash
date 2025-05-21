@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
+import '../helpers/auth_helper.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -16,24 +15,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    _checkUserStatus();
   }
 
-  Future<void> checkLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token');
-
-    if (token != null && !JwtDecoder.isExpired(token)) {
-      setState(() {
-        isUserLogged = true;
-        loading = false;
-      });
-    } else {
-      setState(() {
-        isUserLogged = false;
-        loading = false;
-      });
-    }
+  void _checkUserStatus() async {
+    await AuthHelper.checkLogin();
+    setState(() {
+      isUserLogged = AuthHelper.isUserLogged;
+      loading = false;
+    });
   }
 
   @override

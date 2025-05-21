@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
           ),
           themeMode: currentThemeMode,
           initialRoute: '/',
-          routes: appRoutes(themeNotifier),
+          routes: appRoutes(themeNotifier), // Passa il notifier ai routes
         );
       },
     );

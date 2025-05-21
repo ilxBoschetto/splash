@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class UserScreen extends StatelessWidget {
+class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
+
+  @override
+  State<UserScreen> createState() => _UserScreenState();
+}
+
+class _UserScreenState extends State<UserScreen> {
+  bool isUserLogged = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserStatus();
+  }
+
+  void _checkUserStatus() async {
+    await AuthHelper.checkLogin();
+    setState(() {
+      isUserLogged = AuthHelper.isUserLogged;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +72,11 @@ class UserScreen extends StatelessWidget {
                 MenuItemCard(
                   label: 'Profilo',
                   onTap: () {
-                    Navigator.pushNamed(context, '/profile');
+                    if (isUserLogged) {
+                      Navigator.pushNamed(context, '/profile');
+                    } else {
+                      Navigator.pushNamed(context, '/login');
+                    }
                   },
                 ),
                 MenuItemCard(
@@ -60,47 +85,48 @@ class UserScreen extends StatelessWidget {
                     Navigator.pushNamed(context, '/settings');
                   },
                 ),
-                MenuItemCard(
-                  label: 'Logout',
-                  color: Colors.red,
-                  onTap: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder:
-                          (context) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            title: const Text('Conferma Logout'),
-                            content: const Text(
-                              'Sei sicuro di voler effettuare il logout?',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(false),
-                                child: const Text('Annulla'),
+                if (isUserLogged)
+                  MenuItemCard(
+                    label: 'Logout',
+                    color: Colors.red,
+                    onTap: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              TextButton(
-                                onPressed:
-                                    () => Navigator.of(context).pop(true),
-                                child: const Text('Logout'),
+                              title: const Text('Conferma Logout'),
+                              content: const Text(
+                                'Sei sicuro di voler effettuare il logout?',
                               ),
-                            ],
-                          ),
-                    );
-
-                    if (confirmed == true) {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.remove('jwt_token');
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/',
-                        (route) => false,
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(false),
+                                  child: const Text('Annulla'),
+                                ),
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.of(context).pop(true),
+                                  child: const Text('Logout'),
+                                ),
+                              ],
+                            ),
                       );
-                    }
-                  },
-                ),
+
+                      if (confirmed == true) {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.remove('jwt_token');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/',
+                          (route) => false,
+                        );
+                      }
+                    },
+                  ),
               ],
             ),
           ),
