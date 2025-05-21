@@ -15,12 +15,39 @@ class FontanelleListScreen extends StatefulWidget {
 
 class _FontanelleListScreenState extends State<FontanelleListScreen> {
   List<Fontanella> fontanelle = [];
+  List<Fontanella> filteredFontanelle = [];
   bool isLoading = true;
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     fetchFontanelle();
+
+    _searchController.addListener(() {
+      filterFontanelle();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void filterFontanelle() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        filteredFontanelle = fontanelle;
+      } else {
+        filteredFontanelle =
+            fontanelle.where((f) {
+              return f.nome.toLowerCase().contains(query);
+            }).toList();
+      }
+    });
   }
 
   Future<void> fetchFontanelle() async {
@@ -53,6 +80,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
         setState(() {
           fontanelle = loaded;
+          filteredFontanelle = loaded;
           isLoading = false;
         });
       }
@@ -68,14 +96,49 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fontanelle vicine')),
+      appBar: AppBar(
+        title:
+            _isSearching
+                ? TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Cerca fontanella...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.white54),
+                  ),
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                )
+                : const Text('Fontanelle vicine'),
+        actions: [
+          _isSearching
+              ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    _isSearching = false;
+                    _searchController.clear();
+                    filteredFontanelle = fontanelle;
+                  });
+                },
+              )
+              : IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  setState(() {
+                    _isSearching = true;
+                  });
+                },
+              ),
+        ],
+      ),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
-                itemCount: fontanelle.length,
+                itemCount: filteredFontanelle.length,
                 itemBuilder: (context, index) {
-                  final f = fontanelle[index];
+                  final f = filteredFontanelle[index];
                   return ListTile(
                     title: Text(f.nome),
                     subtitle: Text('${f.distanza} km'),
