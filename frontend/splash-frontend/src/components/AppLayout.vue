@@ -10,13 +10,15 @@
                 
                 <hr>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2" v-for="item in menuItems" :key="item.to">
-                        <RouterLink class="nav-link" :class="{ active: route.path === item.to }" :to="item.to">
+                    <li class="nav-item mb-2" v-for="(item, index) in menuItems" :key="item.to">
+                        <RouterLink
+                            class="nav-link"
+                            :class="{ active: route?.path === item.to }"
+                            :to="item.to"
+                        >
                             {{ item.label }}
-
                         </RouterLink>
-                        <hr v-if="index !== menuItems.length - 1" class="my-1 mx-4"
-                            style="color: var(--custom-text-alt)" />
+                        <hr v-if="index !== menuItems.length - 1" class="my-1 mx-4" style="border-color: var(--custom-text-alt)" />
                     </li>
                 </ul>
             </nav>
@@ -36,7 +38,7 @@
 
 <script setup>
 import { useRoute } from 'vue-router';
-import icon from '@/assets/images/icon.png'
+import icon from '@/assets/images/icon.png';
 
 const route = useRoute();
 
@@ -68,6 +70,7 @@ const menuItems = [
 
 .nav-link.active {
     color: var(--custom-text-alt);
+    font-size: 1.15rem;
     background-color: var(--custom-primary);
     font-weight: bold;
     border-left: 0.1rem solid var(--custom-text-alt);

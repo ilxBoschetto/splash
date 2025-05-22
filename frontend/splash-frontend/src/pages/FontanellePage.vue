@@ -1,7 +1,10 @@
 <template>
   <div>
     <h2>Fontanelle</h2>
-    <table class="table table-bordered">
+    <div v-if="isLoading" class="skeleton-table">
+      
+    </div>
+    <table v-else class="table table-bordered">
       <thead>
         <tr>
           <th>Nome</th>
@@ -11,7 +14,7 @@
       </thead>
       <tbody>
         <tr v-for="f in fontanelle" :key="f.id">
-          <td>{{ f.nome }}</td>
+          <td>{{ f.name }}</td>
           <td>{{ f.lat }}</td>
           <td>{{ f.lon }}</td>
         </tr>
@@ -21,10 +24,53 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-const fontanelle = ref([
-  { id: 1, nome: 'Fontanella A', lat: 45.12, lon: 9.45 },
-  { id: 2, nome: 'Fontanella B', lat: 45.78, lon: 9.10 },
-])
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+
+const fontanelle = ref([])
+const isLoading = ref(true);
+
+const getFontanelle = () => {
+  axios.get(`${apiBaseUrl}/fontanelle`, {})
+    .then((response) => {
+      console.log(response.data)
+      fontanelle.value = response.data;
+    })
+    .catch(error => {
+      console.error('Errore API:', error)
+    })
+}
+
+onMounted(() => {
+  Promise.all([
+    getFontanelle()
+  ]).finally(() => {
+    //isLoading.value = false;
+  });
+})
 </script>
+<style scoped>
+.skeleton-table {
+    width: 100%;
+    height: 40rem;
+    border-radius: 0.8rem;
+    background-color: var(--custom-skeleton-base);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}
+</style>
