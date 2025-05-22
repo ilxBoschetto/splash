@@ -24,7 +24,7 @@
             </nav>
 
             <!-- Main content -->
-            <main class="flex-grow-1 p-4">
+            <main class="main-content flex-grow-1 p-4">
                 <RouterView />
             </main>
         </div>
@@ -88,7 +88,7 @@ const menuItems = [
 
 .footer {
     background-color: var(--custom-secondary);
-    color: var(--custom-text);
+    color: var(--custom-text-alt);
 }
 .icon {
     height: 5rem;

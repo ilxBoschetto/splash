@@ -2,9 +2,8 @@
   <div>
     <h2>Fontanelle</h2>
     <div v-if="isLoading" class="skeleton-table">
-      
     </div>
-    <table v-else class="table table-bordered">
+    <table v-else class="table table-custom">
       <thead>
         <tr>
           <th>Nome</th>
@@ -47,30 +46,48 @@ onMounted(() => {
   Promise.all([
     getFontanelle()
   ]).finally(() => {
-    //isLoading.value = false;
+    isLoading.value = false;
   });
 })
 </script>
 <style scoped>
+.table-custom {
+  background-color: var(--custom-surface);
+  color: var(--custom-text);
+  border: 1px solid var(--custom-border);
+}
+
+.table-custom th {
+  background-color: var(--custom-surface);
+  color: var(--custom-text);
+  border: 1px solid var(--custom-border);
+}
+
+.table-custom td {
+  background-color: var(--custom-bg);
+  color: var(--custom-text);
+  border: 1px solid var(--custom-border);
+}
+
 .skeleton-table {
-    width: 100%;
-    height: 40rem;
-    border-radius: 0.8rem;
-    background-color: var(--custom-skeleton-base);
-    animation: pulse 1.5s infinite ease-in-out;
+  width: 100%;
+  height: 40rem;
+  border-radius: 0.8rem;
+  background-color: var(--custom-skeleton-base);
+  animation: pulse 1.5s infinite ease-in-out;
 }
 
 @keyframes pulse {
-    0% {
-        opacity: 0.3;
-    }
+  0% {
+    opacity: 0.3;
+  }
 
-    50% {
-        opacity: 1;
-    }
+  50% {
+    opacity: 1;
+  }
 
-    100% {
-        opacity: 0.3;
-    }
+  100% {
+    opacity: 0.3;
+  }
 }
 </style>
