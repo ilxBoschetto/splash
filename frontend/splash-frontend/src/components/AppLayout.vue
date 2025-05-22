@@ -3,7 +3,11 @@
         <div class="d-flex flex-grow-1">
             <!-- Sidebar -->
             <nav class="sidebar p-3">
-                <span class="main-title">Splash</span>
+                <div class="">
+                    <span class="main-title">Splash</span>
+                    <img :src="icon" class="icon" alt="Icon" />
+                </div>
+                
                 <hr>
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2" v-for="item in menuItems" :key="item.to">
@@ -25,13 +29,14 @@
 
         <!-- Footer -->
         <footer class="footer text-end py-2 px-1">
-            <small>© 2025 Splash App - Tutti i diritti riservati</small>
+            <small>© 2025 Splash - Matteo Boschetti</small>
         </footer>
     </div>
 </template>
 
 <script setup>
 import { useRoute } from 'vue-router';
+import icon from '@/assets/images/icon.png'
 
 const route = useRoute();
 
@@ -81,5 +86,8 @@ const menuItems = [
 .footer {
     background-color: var(--custom-secondary);
     color: var(--custom-text);
+}
+.icon {
+    height: 5rem;
 }
 </style>
