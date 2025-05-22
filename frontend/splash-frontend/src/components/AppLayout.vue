@@ -1,29 +1,85 @@
 <template>
-  <div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div class="container">
-        <a class="navbar-brand" href="#">FontanelleApp</a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/">Home</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/fontanelle">Fontanelle</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/utenti">Utenti</RouterLink>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <div class="d-flex flex-column min-vh-100">
+        <div class="d-flex flex-grow-1">
+            <!-- Sidebar -->
+            <nav class="sidebar p-3">
+                <span class="main-title">Splash</span>
+                <hr>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2" v-for="item in menuItems" :key="item.to">
+                        <RouterLink class="nav-link" :class="{ active: route.path === item.to }" :to="item.to">
+                            {{ item.label }}
 
-    <main class="container mt-4">
-      <RouterView />
-    </main>
-  </div>
+                        </RouterLink>
+                        <hr v-if="index !== menuItems.length - 1" class="my-1 mx-4"
+                            style="color: var(--custom-text-alt)" />
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main content -->
+            <main class="flex-grow-1 p-4">
+                <RouterView />
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer text-end py-2 px-1">
+            <small>© 2025 Splash App - Tutti i diritti riservati</small>
+        </footer>
+    </div>
 </template>
 
 <script setup>
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+
+const menuItems = [
+    { to: '/', label: 'Home' },
+    { to: '/fontanelle', label: 'Fontanelle' },
+    { to: '/utenti', label: 'Utenti' }
+];
 </script>
+
+<style scoped>
+.sidebar {
+    min-width: 15rem;
+    background-color: var(--custom-primary);
+    color: var(--custom-text);
+}
+
+.nav-link {
+    color: var(--custom-text-alt);
+    padding: 0.5rem 1rem;
+    display: block;
+    border-radius: 0.2rem;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    color: var(--custom-text-alt);
+}
+
+.nav-link.active {
+    color: var(--custom-text-alt);
+    background-color: var(--custom-primary);
+    font-weight: bold;
+    border-left: 0.1rem solid var(--custom-text-alt);
+}
+
+.main-content {
+    background-color: var(--custom-bg);
+    color: var(--custom-text);
+}
+
+.main-title {
+    color: var(--custom-text-alt);
+    font-size: 2rem;
+}
+
+.footer {
+    background-color: var(--custom-secondary);
+    color: var(--custom-text);
+}
+</style>
