@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../providers/auth_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,8 +27,6 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final version = dotenv.env['APP_VERSION'] ?? 'v?';
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -49,67 +46,61 @@ class _UserScreenState extends State<UserScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Card(
-            margin: const EdgeInsets.all(16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'App Info',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Developed by Matteo Boschetti',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  Text(
-                    'Versione: $version',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            margin: const EdgeInsets.all(8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color.fromARGB(
+                    255,
+                    97,
+                    96,
+                    96,
+                  ).withAlpha((0.1 * 255).round()),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
             child: Column(
               children: [
-                MenuItemCard(
+                _buildMenuItem(
+                  context,
                   label: 'Profilo',
                   onTap: () {
-                    if (isUserLogged) {
-                      Navigator.pushNamed(context, '/profile');
-                    } else {
-                      Navigator.pushNamed(context, '/login');
-                    }
+                    Navigator.pushNamed(
+                      context,
+                      isUserLogged ? '/profile' : '/login',
+                    );
                   },
                 ),
-                MenuItemCard(
+                _buildDivider(),
+                _buildMenuItem(
+                  context,
                   label: 'Impostazioni',
-                  onTap: () {
-                    Navigator.pushNamed(context, '/settings');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/settings'),
                 ),
-                if (isUserLogged)
-                  MenuItemCard(
+                _buildDivider(),
+                _buildMenuItem(
+                  context,
+                  label: 'Informazioni Applicazione',
+                  onTap: () => Navigator.pushNamed(context, '/app_information'),
+                ),
+                if (isUserLogged) ...[
+                  _buildDivider(),
+                  _buildMenuItem(
+                    context,
                     label: 'Logout',
-                    color: Colors.red,
+                    textColor: Colors.red,
                     onTap: () async {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder:
                             (context) => AlertDialog(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               title: const Text('Conferma Logout'),
                               content: const Text(
@@ -124,7 +115,10 @@ class _UserScreenState extends State<UserScreen> {
                                 TextButton(
                                   onPressed:
                                       () => Navigator.of(context).pop(true),
-                                  child: const Text('Logout'),
+                                  child: const Text(
+                                    'Logout',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                 ),
                               ],
                             ),
@@ -141,12 +135,52 @@ class _UserScreenState extends State<UserScreen> {
                       }
                     },
                   ),
+                ],
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context, {
+    required String label,
+    required VoidCallback onTap,
+    Color? textColor,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      splashColor: Theme.of(
+        context,
+      ).primaryColor.withAlpha((0.1 * 255).round()), // colore effetto tocco
+      highlightColor: Theme.of(
+        context,
+      ).primaryColor.withAlpha((0.1 * 255).round()), // colore effetto pressione
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                color:
+                    textColor ?? Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            const Icon(Icons.chevron_right, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Divider(height: 1, thickness: 0.5, indent: 16, endIndent: 16);
   }
 }
 

@@ -8,6 +8,7 @@ import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/app_information_screen.dart';
 import 'app_layout.dart';
 
 Map<String, WidgetBuilder> appRoutes(ThemeNotifier themeNotifier) {
@@ -20,6 +21,7 @@ Map<String, WidgetBuilder> appRoutes(ThemeNotifier themeNotifier) {
     '/register': (_) => const RegisterScreen(),
     '/dettagli_fontanella': (_) => FontanellaDetailScreen(),
     '/profile': (_) => const ProfileScreen(),
+    '/app_information': (_) => const AppInformationScreen(),
     '/settings': (_) => SettingsScreen(themeNotifier: themeNotifier),
   };
 }
