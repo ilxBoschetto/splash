@@ -1,7 +1,9 @@
 import dbConnect from '../../../lib/mongodb';
 import Fontanella from '../../../models/Fontanella';
+import corsMiddleware from '../../../lib/cors';
 
 export default async function handler(req, res) {
+  await corsMiddleware(req, res);
   await dbConnect();
 
   const { method } = req;
@@ -17,23 +19,24 @@ export default async function handler(req, res) {
       break;
 
     case 'POST':
-      const { name, lat, lon } = req.body;
-
-      if (
-        !name || typeof name !== 'string' ||
-        typeof lat !== 'number' ||
-        typeof lon !== 'number'
-      ) {
-        return res.status(400).json({ error: 'Missing or invalid fields' });
-      }
-
       try {
-        const newFontanella = await Fontanella.create({ name, lat, lon });
-        res.status(201).json(newFontanella);
+        const { name, lat, lon } = req.body;
+
+        // Validazione
+        if (
+          !name || typeof name !== 'string' || name.trim() === '' ||
+          typeof lat !== 'number' || isNaN(lat) ||
+          typeof lon !== 'number' || isNaN(lon)
+        ) {
+          return res.status(400).json({ error: 'Missing or invalid fields' });
+        }
+
+        const newFontanella = await Fontanella.create({ name: name.trim(), lat, lon });
+        return res.status(201).json(newFontanella);
       } catch (err) {
-        res.status(400).json({ error: 'Failed to create fontanella' });
+        console.error('POST /fontanelle error:', err);
+        return res.status(500).json({ error: 'Failed to create fontanella' });
       }
-      break;
 
     default:
       res.setHeader('Allow', ['GET', 'POST']);

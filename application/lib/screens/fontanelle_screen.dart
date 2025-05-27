@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
-
 import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,19 +21,23 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
 
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _latController = TextEditingController();
+  final TextEditingController _lonController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     fetchFontanelle();
-
-    _searchController.addListener(() {
-      filterFontanelle();
-    });
+    _searchController.addListener(() => filterFontanelle());
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _nomeController.dispose();
+    _latController.dispose();
+    _lonController.dispose();
     super.dispose();
   }
 
@@ -45,9 +48,9 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         filteredFontanelle = fontanelle;
       } else {
         filteredFontanelle =
-            fontanelle.where((f) {
-              return f.nome.toLowerCase().contains(query);
-            }).toList();
+            fontanelle
+                .where((f) => f.nome.toLowerCase().contains(query))
+                .toList();
       }
     });
   }
@@ -88,10 +91,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       } else {
         throw Exception('Errore ${response.statusCode}');
       }
-    } on TimeoutException catch (_) {
-      setState(() {
-        isLoading = false;
-      });
+    } on TimeoutException {
+      setState(() => isLoading = false);
       print('Timeout: il server non ha risposto in tempo.');
     } catch (e) {
       print('Errore nel caricamento: $e');
@@ -100,6 +101,173 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   void goToDetail(Fontanella f) {
     Navigator.pushNamed(context, '/dettagli_fontanella', arguments: f);
+  }
+
+  void _showAddFontanellaSheet(Position position) {
+    _nomeController.clear();
+    _latController.text = position.latitude.toStringAsFixed(6);
+    _lonController.text = position.longitude.toStringAsFixed(6);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder:
+          (context) => Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+              left: 16,
+              right: 16,
+              top: 24,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _nomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome fontanella',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _latController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: const InputDecoration(
+                          labelText: 'Latitudine',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: _lonController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: const InputDecoration(
+                          labelText: 'Longitudine',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.add_location_alt),
+                  label: const Text("Aggiungi fontanella"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _submitFontanella,
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+    );
+  }
+
+  void _submitFontanella() async {
+    final nome = _nomeController.text.trim();
+    final lat = double.tryParse(_latController.text.trim());
+    final lon = double.tryParse(_lonController.text.trim());
+
+    if (nome.isEmpty || lat == null || lon == null) {
+      showMinimalNotification(context, {
+        'message': 'Inserisci il nome!',
+        'duration': 2500,
+        'position': 'top', // oppure 'top'
+      });
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon}),
+    );
+
+    if (response.statusCode == 201) {
+      Navigator.pop(context);
+      await fetchFontanelle();
+      showMinimalNotification(context, {
+        'message': 'Fontanella aggiunta!',
+        'duration': 2500,
+        'position': 'top', // oppure 'top'
+      });
+    } else {
+      showMinimalNotification(context, {
+        'message': 'Errore!',
+        'duration': 2500,
+        'position': 'top', // oppure 'top'
+      });
+    }
+  }
+
+  void showMinimalNotification(
+    BuildContext context,
+    Map<String, dynamic> options,
+  ) {
+    final overlay = Overlay.of(context);
+    final theme = Theme.of(context);
+    final entry = OverlayEntry(
+      builder:
+          (context) => Positioned(
+            bottom: options['position'] == 'top' ? null : 40,
+            top: options['position'] == 'top' ? 40 : null,
+            left: 20,
+            right: 20,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      options['backgroundColor'] ?? theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  options['message'] ?? 'Notifica',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: options['textColor'] ?? theme.colorScheme.onSurface,
+                    fontSize: options['fontSize']?.toDouble() ?? 14.0,
+                  ),
+                ),
+              ),
+            ),
+          ),
+    );
+
+    overlay.insert(entry);
+
+    Future.delayed(
+      Duration(milliseconds: options['duration'] ?? 2000),
+      () => entry.remove(),
+    );
   }
 
   @override
@@ -158,11 +326,19 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   final f = filteredFontanelle[index];
                   return ListTile(
                     title: Text(f.nome),
-                    subtitle: Text('${f.distanza} km'),
+                    subtitle: Text('${f.distanza.toStringAsFixed(2)} km'),
                     onTap: () => goToDetail(f),
                   );
                 },
               ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final position = await Geolocator.getCurrentPosition();
+          _showAddFontanellaSheet(position);
+        },
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: const Icon(Icons.add, size: 28),
+      ),
     );
   }
 }
