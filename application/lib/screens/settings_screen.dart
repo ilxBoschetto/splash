@@ -9,38 +9,49 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Impostazioni")),
-      body: ListView(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Impostazioni",
+          style: TextStyle(
+            fontSize: 20,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+      ),
+      body: Column(
         children: [
-          ListTile(
+          RadioListTile<ThemeMode>(
             title: const Text("Tema Chiaro"),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.light,
-              groupValue: themeNotifier.value,
-              onChanged: (mode) {
-                if (mode != null) themeNotifier.setTheme(mode);
-              },
-            ),
+            secondary: const Icon(Icons.light_mode),
+            value: ThemeMode.light,
+            groupValue: themeNotifier.value,
+            onChanged: (mode) {
+              if (mode != null) themeNotifier.setTheme(mode);
+            },
           ),
-          ListTile(
+          RadioListTile<ThemeMode>(
             title: const Text("Tema Scuro"),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.dark,
-              groupValue: themeNotifier.value,
-              onChanged: (mode) {
-                if (mode != null) themeNotifier.setTheme(mode);
-              },
-            ),
+            secondary: const Icon(Icons.dark_mode),
+            value: ThemeMode.dark,
+            groupValue: themeNotifier.value,
+            onChanged: (mode) {
+              if (mode != null) themeNotifier.setTheme(mode);
+            },
           ),
-          ListTile(
+          RadioListTile<ThemeMode>(
             title: const Text("Sistema"),
-            leading: Radio<ThemeMode>(
-              value: ThemeMode.system,
-              groupValue: themeNotifier.value,
-              onChanged: (mode) {
-                if (mode != null) themeNotifier.setTheme(mode);
-              },
-            ),
+            secondary: const Icon(Icons.settings),
+            value: ThemeMode.system,
+            groupValue: themeNotifier.value,
+            onChanged: (mode) {
+              if (mode != null) themeNotifier.setTheme(mode);
+            },
           ),
         ],
       ),

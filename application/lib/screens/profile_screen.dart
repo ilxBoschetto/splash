@@ -49,7 +49,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profilo')),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Profilo",
+          style: TextStyle(
+            fontSize: 20,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _userFuture,
         builder: (context, snapshot) {
@@ -138,8 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     'it_IT',
                                   ).format(DateTime.parse(user['created_at'])),
                                   textAlign: TextAlign.right,
-                                  style:
-                                      Theme.of(context).textTheme.titleSmall,
+                                  style: Theme.of(context).textTheme.titleSmall,
                                 ),
                               ),
                             ],

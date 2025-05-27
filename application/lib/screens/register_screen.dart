@@ -66,7 +66,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrazione')),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Registrazione",
+          style: TextStyle(
+            fontSize: 20,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Card(
@@ -108,7 +122,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextField(
                     controller: passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password (*)'),
+                    decoration: const InputDecoration(
+                      labelText: 'Password (*)',
+                    ),
                   ),
                   const SizedBox(height: 20),
                   SizedBox(

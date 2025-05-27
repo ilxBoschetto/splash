@@ -31,7 +31,21 @@ class _UserScreenState extends State<UserScreen> {
     final version = dotenv.env['APP_VERSION'] ?? 'v?';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Impostazioni Utente')),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Impostazioni Utente",
+          style: TextStyle(
+            fontSize: 20,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

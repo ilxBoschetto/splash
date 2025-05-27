@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
+
+import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
@@ -57,9 +59,9 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       final userLon = position.longitude;
       final distance = Distance();
 
-      final response = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
-      );
+      final response = await http
+          .get(Uri.parse('${dotenv.env['API_URL']}/fontanelle'))
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -83,7 +85,14 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
           filteredFontanelle = loaded;
           isLoading = false;
         });
+      } else {
+        throw Exception('Errore ${response.statusCode}');
       }
+    } on TimeoutException catch (_) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Timeout: il server non ha risposto in tempo.');
     } catch (e) {
       print('Errore nel caricamento: $e');
     }
@@ -97,39 +106,47 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
         title:
             _isSearching
                 ? TextField(
                   controller: _searchController,
                   autofocus: true,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: 'Cerca fontanella...',
+                    hintStyle: TextStyle(color: Theme.of(context).hintColor),
                     border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.white54),
                   ),
-                  style: const TextStyle(color: Colors.white, fontSize: 18),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    fontSize: 20,
+                  ),
                 )
-                : const Text('Fontanelle vicine'),
+                : Text(
+                  'Fontanelle vicine',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 1,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
         actions: [
-          _isSearching
-              ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  setState(() {
-                    _isSearching = false;
-                    _searchController.clear();
-                    filteredFontanelle = fontanelle;
-                  });
-                },
-              )
-              : IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  setState(() {
-                    _isSearching = true;
-                  });
-                },
-              ),
+          IconButton(
+            color: Theme.of(context).iconTheme.color,
+            icon: Icon(_isSearching ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) {
+                  _searchController.clear();
+                  filteredFontanelle = fontanelle;
+                }
+              });
+            },
+          ),
         ],
       ),
       body:

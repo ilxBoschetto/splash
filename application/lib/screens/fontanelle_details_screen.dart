@@ -11,7 +11,21 @@ class FontanellaDetailScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Fontanella;
 
     return Scaffold(
-      appBar: AppBar(title: Text(fontanella.nome)),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          fontanella.nome,
+          style: TextStyle(
+            fontSize: 20,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -51,15 +65,14 @@ class FontanellaDetailScreen extends StatelessWidget {
                 try {
                   await _openInMaps(fontanella.lat, fontanella.lon);
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(e.toString())));
                 }
               },
               icon: const Icon(Icons.map),
               label: const Text('Apri in Google Maps'),
             ),
-
           ],
         ),
       ),
@@ -67,7 +80,9 @@ class FontanellaDetailScreen extends StatelessWidget {
   }
 
   Future<void> _openInMaps(double lat, double lon) async {
-    final Uri url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lon');
+    final Uri url = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lon',
+    );
 
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -75,5 +90,4 @@ class FontanellaDetailScreen extends StatelessWidget {
       throw 'Impossibile aprire Google Maps';
     }
   }
-
 }

@@ -63,19 +63,38 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Login",
+          style: TextStyle(
+            fontSize: 20,
+            letterSpacing: 1,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 24),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Accedi al tuo account', style: theme.textTheme.headlineSmall),
+                  Text(
+                    'Accedi al tuo account',
+                    style: theme.textTheme.headlineSmall,
+                  ),
                   const SizedBox(height: 16),
                   if (error != null)
                     Padding(
@@ -102,21 +121,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
                       onPressed: loading ? null : login,
-                      child: loading
-                          ? const CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
-                          : Text(
-                            'LOGIN',
-                            style: (
-                              TextStyle(fontWeight: FontWeight.w900,
-                                        color: Theme.of(context).scaffoldBackgroundColor)
+                      child:
+                          loading
+                              ? const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              )
+                              : Text(
+                                'LOGIN',
+                                style: (TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                )),
                               ),
-                            ),
                     ),
                   ),
                 ],
