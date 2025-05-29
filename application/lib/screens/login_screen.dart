@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import '../helpers/auth_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,29 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => loading = true);
 
-    try {
-      final url = '${dotenv.env['API_URL']}/login';
-      final response = await http.post(
-        Uri.parse(url),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({'email': email, 'password': password}),
-      );
+    final success = await AuthHelper.login(email, password);
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final token = data['token'];
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('jwt_token', token);
-        Navigator.pushReplacementNamed(context, '/');
-      } else {
-        setState(() => error = 'Credenziali non valide.');
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      setState(() => error = 'Errore di rete. Riprova.');
-    } finally {
-      setState(() => loading = false);
+    if (success) {
+      Navigator.pushReplacementNamed(context, '/');
+    } else {
+      setState(() => error = 'Credenziali non valide o errore di rete.');
     }
+
+    setState(() => loading = false);
   }
 
   @override

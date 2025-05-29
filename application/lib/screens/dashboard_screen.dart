@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../helpers/auth_helper.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+import '../helpers/user_session.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -12,18 +15,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isUserLogged = false;
   bool loading = true;
 
+  int totalFontanelle = 0;
+  int fontanelleOggi = 0;
+  int fontanelleUser = 0;
+
   @override
   void initState() {
     super.initState();
     _checkUserStatus();
+    _loadDashboardStats();
+    
   }
 
   void _checkUserStatus() async {
-    await AuthHelper.checkLogin();
+    final userSession = UserSession();
     setState(() {
-      isUserLogged = AuthHelper.isUserLogged;
+      isUserLogged = userSession.isLogged;
       loading = false;
     });
+  }
+
+  Future<void> _loadDashboardStats() async {
+    try {
+      final userSession = UserSession();
+      final res1 = await http.get(Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'));
+      final res2 = await http.get(Uri.parse('${dotenv.env['API_URL']}/fontanelle/today'));
+      if (isUserLogged) {
+        final res3 = await http.get(Uri.parse('${dotenv.env['API_URL']}/user/${userSession.userId}/get_saved_fontanelle_count'));
+
+        if (res3.statusCode == 200) {
+          fontanelleUser = json.decode(res3.body)['count'];
+        }
+      }
+
+      if (res1.statusCode == 200) {
+        totalFontanelle = json.decode(res1.body)['count'];
+      }
+
+      if (res2.statusCode == 200) {
+        fontanelleOggi = json.decode(res2.body)['today'];
+      }
+
+      setState(() {});
+    } catch (e) {
+      print('Errore durante il caricamento delle statistiche: $e');
+    }
   }
 
   @override
@@ -50,98 +86,168 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: Stack(
         children: [
-          const Center(child: Text('Benvenuto nella Dashboard')),
-          if (!isUserLogged)
-            Positioned(
-              top: 10,
-              left: 10,
-              right: 10,
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+          ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              _DashboardCard(
+                title: "Totale fontanelle",
+                value: "$totalFontanelle",
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              _DashboardCard(
+                title: "Aggiunte oggi",
+                value: "$fontanelleOggi",
+                color: Colors.orange,
+              ),
+              const SizedBox(height: 12),
+              _DashboardCard(
+                title: "Le mie fontanelle",
+                value: "$fontanelleUser",
+                color: Colors.green,
+              ),
+              const SizedBox(height: 80),
+            ],
+          ),
+          if (!isUserLogged) const _LoginPrompt(),
+        ],
+      ),
+    );
+  }
+}
+
+class _DashboardCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final Color color;
+
+  const _DashboardCard({
+    required this.title,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title.toUpperCase(),
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).hintColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Componente interno per il messaggio e i pulsanti login/register
+class _LoginPrompt extends StatelessWidget {
+  const _LoginPrompt();
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 10,
+      left: 10,
+      right: 10,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 4,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.info_outline, color: Colors.blue),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Salva le tue fontanelle creando un account o facendo il login.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  Center(
+                    child: Container(
+                      width: 200,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Icon(Icons.info_outline, color: Colors.blue),
-                          const SizedBox(width: 8),
-                          const Expanded(
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/register');
+                            },
                             child: Text(
-                              'Salva le tue fontanelle creando un account o facendo il login.',
-                              style: TextStyle(fontSize: 14),
+                              'REGISTRATI',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                              ),
                             ),
                           ),
-                          Center(
-                            child: Container(
-                              width: 200,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
+                          const SizedBox(height: 12),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/register');
-                                    },
-                                    child: Text(
-                                      'REGISTRATI',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).scaffoldBackgroundColor,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/login');
-                                    },
-                                    child: Text(
-                                      'LOGIN',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).scaffoldBackgroundColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/login');
+                            },
+                            child: Text(
+                              'LOGIN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
