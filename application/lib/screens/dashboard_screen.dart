@@ -24,7 +24,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _checkUserStatus();
     _loadDashboardStats();
-    
   }
 
   void _checkUserStatus() async {
@@ -38,10 +37,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _loadDashboardStats() async {
     try {
       final userSession = UserSession();
-      final res1 = await http.get(Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'));
-      final res2 = await http.get(Uri.parse('${dotenv.env['API_URL']}/fontanelle/today'));
+      final res1 = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'),
+      );
+      final res2 = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/fontanelle/today'),
+      );
       if (isUserLogged) {
-        final res3 = await http.get(Uri.parse('${dotenv.env['API_URL']}/user/${userSession.userId}/get_saved_fontanelle_count'));
+        final res3 = await http.get(
+          Uri.parse(
+            '${dotenv.env['API_URL']}/user/${userSession.userId}/get_saved_fontanelle_count',
+          ),
+        );
 
         if (res3.statusCode == 200) {
           fontanelleUser = json.decode(res3.body)['count'];
@@ -84,32 +91,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
       ),
-      body: Stack(
+      body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              _DashboardCard(
-                title: "Totale fontanelle",
-                value: "$totalFontanelle",
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 12),
-              _DashboardCard(
-                title: "Aggiunte oggi",
-                value: "$fontanelleOggi",
-                color: Colors.orange,
-              ),
-              const SizedBox(height: 12),
-              _DashboardCard(
-                title: "Le mie fontanelle",
-                value: "$fontanelleUser",
-                color: Colors.green,
-              ),
-              const SizedBox(height: 80),
-            ],
+          if (!isUserLogged) ...[
+            const _LoginPrompt(),
+            const SizedBox(height: 16),
+          ],
+          _DashboardCard(
+            title: "Totale fontanelle",
+            value: "$totalFontanelle",
+            color: Theme.of(context).colorScheme.primary,
           ),
-          if (!isUserLogged) const _LoginPrompt(),
+          const SizedBox(height: 12),
+          _DashboardCard(
+            title: "Aggiunte oggi",
+            value: "$fontanelleOggi",
+            color: Colors.orange,
+          ),
+          const SizedBox(height: 12),
+          _DashboardCard(
+            title: "Le mie fontanelle",
+            value: "$fontanelleUser",
+            color: Colors.green,
+          ),
+          const SizedBox(height: 80),
         ],
       ),
     );
@@ -161,7 +167,6 @@ class _DashboardCard extends StatelessWidget {
   }
 }
 
-// Componente interno per il messaggio e i pulsanti login/register
 class _LoginPrompt extends StatelessWidget {
   const _LoginPrompt();
 
@@ -172,9 +177,7 @@ class _LoginPrompt extends StatelessWidget {
       left: 10,
       right: 10,
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 4,
         child: Padding(
           padding: const EdgeInsets.all(16),
