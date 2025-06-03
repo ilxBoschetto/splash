@@ -69,6 +69,7 @@ class _UserScreenState extends State<UserScreen> {
                 _buildMenuItem(
                   context,
                   label: 'Profilo',
+                  icon: Icons.person,
                   onTap: () {
                     Navigator.pushNamed(
                       context,
@@ -80,12 +81,21 @@ class _UserScreenState extends State<UserScreen> {
                 _buildMenuItem(
                   context,
                   label: 'Impostazioni',
+                  icon: Icons.settings,
                   onTap: () => Navigator.pushNamed(context, '/settings'),
                 ),
                 _buildDivider(),
                 _buildMenuItem(
                   context,
+                  label: 'Community',
+                  icon: Icons.people,
+                  onTap: () => Navigator.pushNamed(context, '/community'),
+                ),
+                _buildDivider(),
+                _buildMenuItem(
+                  context,
                   label: 'Informazioni Applicazione',
+                  icon: Icons.info_outline,
                   onTap: () => Navigator.pushNamed(context, '/app_information'),
                 ),
                 if (isUserLogged) ...[
@@ -148,34 +158,14 @@ class _UserScreenState extends State<UserScreen> {
     BuildContext context, {
     required String label,
     required VoidCallback onTap,
+    IconData? icon,
     Color? textColor,
   }) {
-    return InkWell(
+    return MenuItemCard(
+      label: label,
+      icon: icon,
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      splashColor: Theme.of(
-        context,
-      ).primaryColor.withAlpha((0.1 * 255).round()), // colore effetto tocco
-      highlightColor: Theme.of(
-        context,
-      ).primaryColor.withAlpha((0.1 * 255).round()), // colore effetto pressione
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                color:
-                    textColor ?? Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-            const Icon(Icons.chevron_right, size: 20),
-          ],
-        ),
-      ),
+      color: textColor,
     );
   }
 
@@ -188,11 +178,13 @@ class MenuItemCard extends StatelessWidget {
   final String label;
   final Color? color;
   final VoidCallback onTap;
+  final IconData? icon;
 
   const MenuItemCard({
     super.key,
     required this.label,
     required this.onTap,
+    this.icon,
     this.color,
   });
 
@@ -208,6 +200,10 @@ class MenuItemCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           child: Row(
             children: [
+              if (icon != null) ...[
+                Icon(icon, color: color ?? Theme.of(context).iconTheme.color),
+                const SizedBox(width: 12),
+              ],
               Expanded(
                 child: Text(
                   label,

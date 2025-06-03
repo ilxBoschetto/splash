@@ -14,7 +14,6 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final version = dotenv.env['APP_VERSION'] ?? 'v?';
 
     return Scaffold(
