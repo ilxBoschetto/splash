@@ -14,6 +14,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   bool isUserLogged = false;
   bool loading = true;
+  final userSession = UserSession();
 
   int totalFontanelle = 0;
   int fontanelleOggi = 0;
@@ -27,7 +28,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _checkUserStatus() async {
-    final userSession = UserSession();
     setState(() {
       isUserLogged = userSession.isLogged;
       loading = false;
@@ -46,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (isUserLogged) {
         final res3 = await http.get(
           Uri.parse(
-            '${dotenv.env['API_URL']}/user/${userSession.userId}/get_saved_fontanelle_count',
+            '${dotenv.env['API_URL']}/user/${userSession.userId}/saved_fontanella_count',
           ),
         );
 
@@ -60,7 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
 
       if (res2.statusCode == 200) {
-        fontanelleOggi = json.decode(res2.body)['today'];
+        fontanelleOggi = json.decode(res2.body)['count'];
       }
 
       setState(() {});

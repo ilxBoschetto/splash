@@ -1,10 +1,10 @@
 // /pages/api/user/[id]/saved_fontanella.js
 import dbConnect from '../../../../lib/mongodb';
 import SavedFontanella from '../../../../models/SavedFontanella';
-import corsMiddleware from '../../../lib/cors';
+import corsMiddleware from '../../../../lib/cors';
 
 export default async function handler(req, res) {
-    await corsMiddleware(req, res);
+  await corsMiddleware(req, res);
   await dbConnect();
 
   const { id } = req.query;

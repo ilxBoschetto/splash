@@ -10,10 +10,13 @@ class UserSession {
 
   bool get isLogged => token != null;
 
-  String? get userId => userData?['_id'];
+  String? get userId => userData?['id'];
   String? get email => userData?['email'];
 
-  void saveSession({required String token, required Map<String, dynamic> userData}) {
+  void saveSession({
+    required String token,
+    required Map<String, dynamic> userData,
+  }) {
     this.token = token;
     this.userData = userData;
   }
