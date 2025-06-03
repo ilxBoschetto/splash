@@ -103,6 +103,7 @@ class _UserScreenState extends State<UserScreen> {
                   _buildMenuItem(
                     context,
                     label: 'Logout',
+                    icon: Icons.logout,
                     textColor: Colors.red,
                     onTap: () async {
                       final confirmed = await showDialog<bool>(
