@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
-import '../helpers/user_session.dart';
+import '../../helpers/user_session.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

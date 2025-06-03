@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import '../services/location_service.dart';
+import '../../services/location_service.dart';
 import 'package:geolocator/geolocator.dart';
 
 class MappeScreen extends StatefulWidget {

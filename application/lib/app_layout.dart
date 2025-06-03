@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screens/dashboard_screen.dart';
-import 'screens/fontanelle_screen.dart';
-import 'screens/mappe_screen.dart';
-import 'screens/user_screen.dart';
+import 'screens/layout/dashboard_screen.dart';
+import 'screens/layout/fontanelle_screen.dart';
+import 'screens/layout/mappe_screen.dart';
+import 'screens/layout/user_screen.dart';
 
 class AppLayout extends StatefulWidget {
   const AppLayout({super.key});
