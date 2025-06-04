@@ -1,5 +1,6 @@
 import dbConnect from '../../../lib/mongodb';
 import Fontanella from '../../../models/Fontanella';
+import SavedFontanella from '../../../models/SavedFontanella';
 import User from '../../../models/User';
 import corsMiddleware from '../../../lib/cors';
 import { verifyToken } from '../../../lib/auth';
@@ -14,10 +15,21 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const all = await Fontanella.find({})
-        .populate('createdBy', 'name')
-        .lean();
-        res.status(200).json(all);
+        const user = verifyToken(req);
+        var fontanelle = null;
+        if (!user || !user.userId) {
+          res.status(200).json(fontanelle);
+        } else {
+          const savedEntries = await SavedFontanella.find({ userId: user.userId }).select('fontanellaId').lean();
+          const savedFontanellaIds = savedEntries.map(e => e.fontanellaId.toString());
+
+          const result = fontanelle.map(f => ({
+            ...f,
+            isSaved: savedFontanellaIds.includes(f._id.toString()),
+          }));
+
+          res.status(200).json(result);
+        }
       } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Failed to fetch fontanelle' });
@@ -27,7 +39,6 @@ export default async function handler(req, res) {
      case 'POST':
       try {
         const user = verifyToken(req);
-        console.log(user);
         if (!user || !user.userId) {
           return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
         }

@@ -69,8 +69,12 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       final distance = Distance();
 
       final response = await http
-          .get(Uri.parse('${dotenv.env['API_URL']}/fontanelle'))
-          .timeout(const Duration(seconds: 10));
+          .get(Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
+          headers: {
+              'Authorization': 'Bearer ${userSession.token}',
+              'Content-Type': 'application/json',
+            }
+          );
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -202,7 +206,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       showMinimalNotification(context, {
         'message': 'Inserisci il nome!',
         'duration': 2500,
-        'position': 'top', // oppure 'top'
+        'position': 'top',
       });
       return;
     }
@@ -222,13 +226,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       showMinimalNotification(context, {
         'message': 'Fontanella aggiunta!',
         'duration': 2500,
-        'position': 'top', // oppure 'top'
+        'position': 'top',
       });
     } else {
       showMinimalNotification(context, {
         'message': 'Errore!',
         'duration': 2500,
-        'position': 'top', // oppure 'top'
+        'position': 'top',
       });
     }
   }
@@ -348,15 +352,15 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 },
               ),
       floatingActionButton: FloatingActionButton(
-        onPressed: isUserLogged
-            ? () async {
-                final position = await Geolocator.getCurrentPosition();
-                _showAddFontanellaSheet(position);
-              }
-            : null, // 👈 disabilitato se null
-        backgroundColor: isUserLogged
-            ? Theme.of(context).colorScheme.primary
-            : Colors.grey, // 👈 colore disabilitato
+        onPressed:
+            isUserLogged
+                ? () async {
+                  final position = await Geolocator.getCurrentPosition();
+                  _showAddFontanellaSheet(position);
+                }
+                : null,
+        backgroundColor:
+            isUserLogged ? Theme.of(context).colorScheme.primary : Colors.grey,
         child: const Icon(Icons.add, size: 28),
       ),
     );
