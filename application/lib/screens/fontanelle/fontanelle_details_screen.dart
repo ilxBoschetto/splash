@@ -219,6 +219,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                       Text(
                         'Distanza: ${fontanella.distanza.toStringAsFixed(2)} km',
                       ),
+                      Text('Creato da: ${fontanella.createdBy?.name}'),
                     ],
                   ),
                 ),

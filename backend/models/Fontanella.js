@@ -10,9 +10,8 @@ const FontanellaSchema = new mongoose.Schema({
     default: 'potabile',
   },
   immagini: [String],
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 },
-
 { timestamps: true });
 
 export default mongoose.models.Fontanella || mongoose.model('Fontanella', FontanellaSchema);

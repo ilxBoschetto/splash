@@ -27,5 +27,4 @@ const UserSchema = new mongoose.Schema({
   }
 })
 
-// Evita errori in Next.js con hot reload (modelli duplicati)
 export default mongoose.models.User || mongoose.model('User', UserSchema)

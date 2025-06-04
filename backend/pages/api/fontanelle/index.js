@@ -1,7 +1,9 @@
 import dbConnect from '../../../lib/mongodb';
 import Fontanella from '../../../models/Fontanella';
+import User from '../../../models/User';
 import corsMiddleware from '../../../lib/cors';
 import { verifyToken } from '../../../lib/auth';
+import mongoose from 'mongoose';
 
 export default async function handler(req, res) {
   await corsMiddleware(req, res);
@@ -12,9 +14,12 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const all = await Fontanella.find({});
+        const all = await Fontanella.find({})
+        .populate('createdBy', 'name')
+        .lean();
         res.status(200).json(all);
       } catch (err) {
+        console.log(err);
         res.status(500).json({ error: 'Failed to fetch fontanelle' });
       }
       break;
@@ -22,6 +27,7 @@ export default async function handler(req, res) {
      case 'POST':
       try {
         const user = verifyToken(req);
+        console.log(user);
         if (!user || !user.userId) {
           return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
         }
@@ -36,11 +42,13 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'Missing or invalid fields' });
         }
 
+        const userObjectId = new mongoose.Types.ObjectId(user.userId);
+
         const newFontanella = await Fontanella.create({
           name: name.trim(),
           lat,
           lon,
-          createdBy: user.userId,
+          createdBy: userObjectId,
         });
 
         return res.status(201).json(newFontanella);
