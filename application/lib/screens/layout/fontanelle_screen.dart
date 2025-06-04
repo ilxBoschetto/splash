@@ -6,6 +6,8 @@ import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
+import '../../providers/auth_provider.dart';
+import '../../helpers/user_session.dart';
 
 class FontanelleListScreen extends StatefulWidget {
   const FontanelleListScreen({super.key});
@@ -25,10 +27,14 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   final TextEditingController _latController = TextEditingController();
   final TextEditingController _lonController = TextEditingController();
 
+  bool isUserLogged = false;
+  final userSession = UserSession();
+
   @override
   void initState() {
     super.initState();
     fetchFontanelle();
+    _checkUserStatus();
     _searchController.addListener(() => filterFontanelle());
   }
 
@@ -97,6 +103,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     } catch (e) {
       print('Errore nel caricamento: $e');
     }
+  }
+
+  void _checkUserStatus() async {
+    await AuthHelper.checkLogin();
+    setState(() {
+      isUserLogged = AuthHelper.isUserLogged;
+    });
   }
 
   void goToDetail(Fontanella f) {
@@ -196,7 +209,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
     final response = await http.post(
       Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
       body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon}),
     );
 
@@ -332,11 +348,15 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 },
               ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final position = await Geolocator.getCurrentPosition();
-          _showAddFontanellaSheet(position);
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        onPressed: isUserLogged
+            ? () async {
+                final position = await Geolocator.getCurrentPosition();
+                _showAddFontanellaSheet(position);
+              }
+            : null, // 👈 disabilitato se null
+        backgroundColor: isUserLogged
+            ? Theme.of(context).colorScheme.primary
+            : Colors.grey, // 👈 colore disabilitato
         child: const Icon(Icons.add, size: 28),
       ),
     );

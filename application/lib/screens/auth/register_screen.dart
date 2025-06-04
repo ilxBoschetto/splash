@@ -43,9 +43,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final token = data['token'];
-        print("Registrazione ok! Token: $token");
         Navigator.pushReplacementNamed(context, '/app');
       } else {
         final data = json.decode(response.body);

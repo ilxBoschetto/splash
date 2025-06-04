@@ -1,6 +1,7 @@
 import dbConnect from '../../../lib/mongodb';
 import Fontanella from '../../../models/Fontanella';
 import corsMiddleware from '../../../lib/cors';
+import { verifyToken } from '../../../lib/auth';
 
 export default async function handler(req, res) {
   await corsMiddleware(req, res);
@@ -18,11 +19,15 @@ export default async function handler(req, res) {
       }
       break;
 
-    case 'POST':
+     case 'POST':
       try {
+        const user = verifyToken(req);
+        if (!user || !user.userId) {
+          return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
+        }
+
         const { name, lat, lon } = req.body;
 
-        // Validazione
         if (
           !name || typeof name !== 'string' || name.trim() === '' ||
           typeof lat !== 'number' || isNaN(lat) ||
@@ -31,7 +36,13 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'Missing or invalid fields' });
         }
 
-        const newFontanella = await Fontanella.create({ name: name.trim(), lat, lon });
+        const newFontanella = await Fontanella.create({
+          name: name.trim(),
+          lat,
+          lon,
+          createdBy: user.userId,
+        });
+
         return res.status(201).json(newFontanella);
       } catch (err) {
         console.error('POST /fontanelle error:', err);
