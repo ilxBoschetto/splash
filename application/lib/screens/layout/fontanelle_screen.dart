@@ -75,10 +75,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
               'Content-Type': 'application/json',
             }
           );
-
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
-
         final List<Fontanella> loaded =
             data.map((jsonItem) {
               final lat = jsonItem['lat'].toDouble();
@@ -347,8 +345,12 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   return ListTile(
                     title: Text(f.nome),
                     subtitle: Text('${f.distanza.toStringAsFixed(2)} km'),
+                    trailing: f.isSaved
+                        ? Icon(Icons.bookmark, color: Theme.of(context).colorScheme.primary)
+                        : null,
                     onTap: () => goToDetail(f),
                   );
+
                 },
               ),
       floatingActionButton: FloatingActionButton(

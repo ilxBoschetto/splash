@@ -6,7 +6,8 @@ class Fontanella {
   final double lat;
   final double lon;
   final double distanza;
-  final User? createdBy; // può essere nullo se non presente
+  final User? createdBy;
+  final bool isSaved;
 
   Fontanella({
     required this.id,
@@ -15,17 +16,31 @@ class Fontanella {
     required this.lon,
     required this.distanza,
     this.createdBy,
+    this.isSaved = false,
   });
 
   factory Fontanella.fromJson(Map<String, dynamic> json, double distanza) {
+    User? createdByUser;
+
+    final createdByData = json['createdBy'];
+    if (createdByData != null) {
+      if (createdByData is String) {
+        // createdBy è solo l'ID, quindi creiamo un User con solo id e nome null
+        createdByUser = User(id: createdByData, name: 'Admin');
+      } else if (createdByData is Map<String, dynamic>) {
+        // createdBy è un oggetto JSON completo
+        createdByUser = User.fromJson(createdByData);
+      }
+    }
+
     return Fontanella(
       id: json['_id'].toString(),
       nome: json['name'] ?? '-',
       lat: (json['lat'] as num).toDouble(),
       lon: (json['lon'] as num).toDouble(),
       distanza: distanza,
-      createdBy:
-          json['createdBy'] != null ? User.fromJson(json['createdBy']) : null,
+      createdBy: createdByUser,
+      isSaved: json['isSaved'] ?? false,
     );
   }
 
@@ -36,10 +51,10 @@ class Fontanella {
       'lat': lat,
       'lon': lon,
       'distanza': distanza,
-      'createdBy':
-          createdBy != null
-              ? {'id': createdBy!.id, 'name': createdBy!.name}
-              : null,
+      'createdBy': createdBy != null
+          ? {'id': createdBy!.id, 'name': createdBy!.name}
+          : null,
+      'isSaved': isSaved,
     };
   }
 }

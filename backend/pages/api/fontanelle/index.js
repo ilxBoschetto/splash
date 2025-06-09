@@ -1,42 +1,53 @@
 import dbConnect from '../../../lib/mongodb';
 import Fontanella from '../../../models/Fontanella';
 import SavedFontanella from '../../../models/SavedFontanella';
-import User from '../../../models/User';
 import corsMiddleware from '../../../lib/cors';
 import { verifyToken } from '../../../lib/auth';
 import mongoose from 'mongoose';
 
 export default async function handler(req, res) {
   await corsMiddleware(req, res);
-  await dbConnect();
 
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
+  await dbConnect();
   const { method } = req;
 
   switch (method) {
     case 'GET':
       try {
-        const user = verifyToken(req);
-        var fontanelle = null;
-        if (!user || !user.userId) {
-          res.status(200).json(fontanelle);
-        } else {
+        const fontanelle = await Fontanella.find().lean(); // Tutte le fontanelle
+
+        let user = null;
+        try {
+          user = verifyToken(req); // Prova a estrarre il token (non obbligatorio)
+        } catch (e) {
+          // Ignora errori se non c'è token
+        }
+
+        // Se l'utente è autenticato, aggiungi `isSaved`
+        if (user && user.userId) {
           const savedEntries = await SavedFontanella.find({ userId: user.userId }).select('fontanellaId').lean();
-          const savedFontanellaIds = savedEntries.map(e => e.fontanellaId.toString());
+          const savedFontanellaIds = new Set(savedEntries.map(e => e.fontanellaId.toString()));
 
           const result = fontanelle.map(f => ({
             ...f,
-            isSaved: savedFontanellaIds.includes(f._id.toString()),
+            isSaved: savedFontanellaIds.has(f._id.toString()),
           }));
 
-          res.status(200).json(result);
+          return res.status(200).json(result);
         }
-      } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: 'Failed to fetch fontanelle' });
-      }
-      break;
 
-     case 'POST':
+        // Non autenticato: restituisci la lista senza `isSaved`
+        return res.status(200).json(fontanelle);
+      } catch (err) {
+        console.error('GET /fontanelle error:', err);
+        return res.status(500).json({ error: 'Errore nel recupero delle fontanelle' });
+      }
+
+    case 'POST':
       try {
         const user = verifyToken(req);
         if (!user || !user.userId) {
@@ -70,6 +81,6 @@ export default async function handler(req, res) {
 
     default:
       res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      return res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
