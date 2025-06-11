@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../../providers/auth_provider.dart';
 import 'dart:convert';
 import '../../helpers/user_session.dart';
 
@@ -28,8 +29,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _checkUserStatus() async {
+    await AuthHelper.checkLogin();
     setState(() {
-      isUserLogged = userSession.isLogged;
+      isUserLogged = AuthHelper.isUserLogged;
       loading = false;
     });
   }
