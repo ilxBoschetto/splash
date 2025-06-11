@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 import 'package:application/notifiers/theme_notifier.dart';
+import 'dart:convert';
 import 'routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   runApp(MyApp());
+  checkAppVersion();
 }
 
 class MyApp extends StatelessWidget {
@@ -53,4 +56,48 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+Future<void> checkAppVersion() async {
+  final String apiUrl = dotenv.env['APP_VERSION_CHECK_URL'] ?? '';
+  final String currentVersion = dotenv.env['APP_VERSION'] ?? '';
+
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      String latestVersion = data['latestVersion'];
+      String minSupportedVersion = data['minSupportedVersion'];
+      String playStoreUrl = data['playStoreUrl'];
+
+      if (_isVersionLower(currentVersion, minSupportedVersion)) {
+        print(
+          'Aggiornamento obbligatorio: la tua versione non è più supportata.',
+        );
+      } else if (_isVersionLower(currentVersion, latestVersion)) {
+        print('Aggiornamento disponibile: nuova versione presente.');
+      } else {
+        print('L\'app è aggiornata.');
+      }
+    } else {
+      print('Errore nella chiamata: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Errore nella richiesta: $e');
+  }
+}
+
+bool _isVersionLower(String current, String target) {
+  final currentParts = current.split('.').map(int.parse).toList();
+  final targetParts = target.split('.').map(int.parse).toList();
+
+  for (int i = 0; i < targetParts.length; i++) {
+    final currentPart = i < currentParts.length ? currentParts[i] : 0;
+    final targetPart = targetParts[i];
+
+    if (currentPart < targetPart) return true;
+    if (currentPart > targetPart) return false;
+  }
+
+  return false;
 }
