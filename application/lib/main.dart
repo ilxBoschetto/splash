@@ -68,7 +68,7 @@ Future<void> checkAppVersion() async {
       final data = jsonDecode(response.body);
       String latestVersion = data['latestVersion'];
       String minSupportedVersion = data['minSupportedVersion'];
-      String playStoreUrl = data['playStoreUrl'];
+      // String playStoreUrl = data['playStoreUrl'];
 
       if (_isVersionLower(currentVersion, minSupportedVersion)) {
         print(
