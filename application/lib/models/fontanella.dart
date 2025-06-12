@@ -8,6 +8,7 @@ class Fontanella {
   final double distanza;
   final User? createdBy;
   final bool isSaved;
+  final String? imageUrl;
 
   Fontanella({
     required this.id,
@@ -17,6 +18,7 @@ class Fontanella {
     required this.distanza,
     this.createdBy,
     this.isSaved = false,
+    this.imageUrl,
   });
 
   factory Fontanella.fromJson(Map<String, dynamic> json, double distanza) {
@@ -39,6 +41,7 @@ class Fontanella {
       distanza: distanza,
       createdBy: createdByUser,
       isSaved: json['isSaved'] ?? false,
+      imageUrl: json['imageUrl'],
     );
   }
 
@@ -54,6 +57,7 @@ class Fontanella {
               ? {'id': createdBy!.id, 'name': createdBy!.name}
               : null,
       'isSaved': isSaved,
+      'imageUrl': imageUrl,
     };
   }
 }

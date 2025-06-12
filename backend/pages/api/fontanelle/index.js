@@ -62,8 +62,11 @@ export default async function handler(req, res) {
             };
           }
 
+          console.log(f);
+
           return {
             ...f,
+            imageUrl: f.imageUrl ?? '',
             isSaved: savedFontanellaIds.has(f._id.toString()),
             createdBy: createdByUser,
           };

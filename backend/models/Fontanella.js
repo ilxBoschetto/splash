@@ -9,7 +9,7 @@ const FontanellaSchema = new mongoose.Schema({
     enum: ['potabile', 'non potabile', 'in manutenzione'],
     default: 'potabile',
   },
-  immagini: [String],
+  imageUrl: { type: String },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 },
 { timestamps: true });

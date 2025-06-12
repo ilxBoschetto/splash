@@ -24,6 +24,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     fontanella = ModalRoute.of(context)!.settings.arguments as Fontanella;
+    print('${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}');
     _checkUserStatusAndFetch();
     _checkUserStatus();
   }
@@ -204,10 +205,16 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                 SizedBox(
                   width: 100,
                   height: 100,
-                  child: Image.asset(
-                    'assets/images/placeholder.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child:
+                      fontanella.imageUrl != null
+                          ? Image.network(
+                            '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
+                            fit: BoxFit.cover,
+                          )
+                          : Image.asset(
+                            'assets/images/placeholder.png',
+                            fit: BoxFit.cover,
+                          ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
