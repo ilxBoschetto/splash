@@ -17,18 +17,26 @@ class FontanelleListScreen extends StatefulWidget {
 }
 
 class _FontanelleListScreenState extends State<FontanelleListScreen> {
+  // data
   List<Fontanella> fontanelle = [];
   List<Fontanella> filteredFontanelle = [];
-  bool isLoading = true;
-  bool _isSearching = false;
-  final TextEditingController _searchController = TextEditingController();
 
+  // page controllers
+  final TextEditingController _searchController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _latController = TextEditingController();
   final TextEditingController _lonController = TextEditingController();
 
+  // arguments
+  String? activeFilter;
+  bool _dependenciesHandled = false;
+
+  // user session
   bool isUserLogged = false;
   final userSession = UserSession();
+
+  bool isLoading = true;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -94,6 +102,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         setState(() {
           fontanelle = loaded;
           filteredFontanelle = loaded;
+          if (activeFilter == 'saved_fontanelle') {
+            filteredFontanelle = fontanelle.where((f) => f.isSaved).toList();
+            fontanelle = fontanelle.where((f) => f.isSaved).toList();
+          }
           isLoading = false;
         });
       } else {
@@ -112,6 +124,17 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     setState(() {
       isUserLogged = AuthHelper.isUserLogged;
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('filter')) {
+      activeFilter = args['filter'];
+    }
+    _dependenciesHandled = true;
   }
 
   void goToDetail(Fontanella f) {
@@ -311,7 +334,9 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   ),
                 )
                 : Text(
-                  'Fontanelle vicine',
+                  activeFilter == 'saved_fontanelle'
+                      ? 'Fontanelle Preferite'
+                      : 'Fontanelle Vicine',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,

@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Aggiungere sezione fontanelle preferite
 - [ ] Aggiungere foto alla creazione e visualizzazione fontanelle
 - [ ] Autospostamento mappa in base alla posizione dell'utente
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
@@ -20,3 +19,4 @@
 - [x] Visualizzazione sezione informazioni app (versione, developer by, usciti al discord)
 - [x] Creare discord community e associarlo all'app
 - [x] Aggiunta possibilità aggiunta/eliminazione fontanella preferita
+- [x] Aggiungere sezione fontanelle preferite

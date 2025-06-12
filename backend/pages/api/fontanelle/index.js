@@ -30,7 +30,6 @@ export default async function handler(req, res) {
           const savedEntries = await SavedFontanella.find({ userId: user.userId }).select('fontanellaId').lean();
           savedFontanellaIds = new Set(savedEntries.map(e => e.fontanellaId.toString()));
         }
-        console.log(fontanelle);
 
         // Raccogli tutti i createdBy validi (solo stringhe)
         const createdByIds = fontanelle
@@ -42,11 +41,8 @@ export default async function handler(req, res) {
 
         let usersMap = {};
         if (objectIds.length > 0) {
-          console.log('Sto cercando utenti con questi ObjectId:', objectIds);
 
           const users = await User.find({ _id: { $in: objectIds } }).lean();
-
-          console.log('Utenti trovati:', users);
 
           usersMap = users.reduce((acc, user) => {
             acc[user._id.toString()] = { id: user._id.toString(), name: user.name ?? '-' };

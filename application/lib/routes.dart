@@ -25,5 +25,6 @@ Map<String, WidgetBuilder> appRoutes(ThemeNotifier themeNotifier) {
     '/app_information': (_) => const AppInformationScreen(),
     '/community': (_) => const CommunityScreen(),
     '/settings': (_) => SettingsScreen(themeNotifier: themeNotifier),
+    '/saved_fontanelle': (_) => const CommunityScreen(),
   };
 }
