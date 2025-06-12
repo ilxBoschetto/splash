@@ -1,53 +1,87 @@
 import dbConnect from '../../../lib/mongodb';
 import Fontanella from '../../../models/Fontanella';
 import SavedFontanella from '../../../models/SavedFontanella';
+import User from '../../../models/User';
 import corsMiddleware from '../../../lib/cors';
 import { verifyToken } from '../../../lib/auth';
 import mongoose from 'mongoose';
 
 export default async function handler(req, res) {
   await corsMiddleware(req, res);
-
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
-
   await dbConnect();
+
   const { method } = req;
 
   switch (method) {
     case 'GET':
       try {
-        const fontanelle = await Fontanella.find().lean(); // Tutte le fontanelle
+        const fontanelle = await Fontanella.find().lean();
+        
 
         let user = null;
         try {
-          user = verifyToken(req); // Prova a estrarre il token (non obbligatorio)
+          user = verifyToken(req);
         } catch (e) {
           // Ignora errori se non c'è token
         }
 
-        // Se l'utente è autenticato, aggiungi `isSaved`
+        let savedFontanellaIds = new Set();
         if (user && user.userId) {
           const savedEntries = await SavedFontanella.find({ userId: user.userId }).select('fontanellaId').lean();
-          const savedFontanellaIds = new Set(savedEntries.map(e => e.fontanellaId.toString()));
+          savedFontanellaIds = new Set(savedEntries.map(e => e.fontanellaId.toString()));
+        }
+        console.log(fontanelle);
 
-          const result = fontanelle.map(f => ({
-            ...f,
-            isSaved: savedFontanellaIds.has(f._id.toString()),
-          }));
+        // Raccogli tutti i createdBy validi (solo stringhe)
+        const createdByIds = fontanelle
+          .map(f => f.createdBy)
+          .filter(id => id);
 
-          return res.status(200).json(result);
+        // Converte gli ID in ObjectId
+        const objectIds = createdByIds.map(id => new mongoose.Types.ObjectId(id));
+
+        let usersMap = {};
+        if (objectIds.length > 0) {
+          console.log('Sto cercando utenti con questi ObjectId:', objectIds);
+
+          const users = await User.find({ _id: { $in: objectIds } }).lean();
+
+          console.log('Utenti trovati:', users);
+
+          usersMap = users.reduce((acc, user) => {
+            acc[user._id.toString()] = { id: user._id.toString(), name: user.name ?? '-' };
+            return acc;
+          }, {});
         }
 
-        // Non autenticato: restituisci la lista senza `isSaved`
-        return res.status(200).json(fontanelle);
+        const result = fontanelle.map(f => {
+          let createdByUser = { id: '-', name: '-' };
+
+          if (f.createdBy) {
+            createdByUser = usersMap[f.createdBy] ?? { id: f.createdBy, name: '-' };
+          } else if (f.createdBy) {
+            createdByUser = {
+              id: f.createdBy._id?.toString() ?? '-',
+              name: f.createdBy.name ?? '-',
+            };
+          }
+
+          return {
+            ...f,
+            isSaved: savedFontanellaIds.has(f._id.toString()),
+            createdBy: createdByUser,
+          };
+        });
+
+        return res.status(200).json(result);
       } catch (err) {
         console.error('GET /fontanelle error:', err);
         return res.status(500).json({ error: 'Errore nel recupero delle fontanelle' });
       }
 
-    case 'POST':
+      break;
+
+     case 'POST':
       try {
         const user = verifyToken(req);
         if (!user || !user.userId) {
@@ -81,6 +115,6 @@ export default async function handler(req, res) {
 
     default:
       res.setHeader('Allow', ['GET', 'POST']);
-      return res.status(405).end(`Method ${method} Not Allowed`);
+      res.status(405).end(`Method ${method} Not Allowed`);
   }
 }

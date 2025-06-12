@@ -68,13 +68,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       final userLon = position.longitude;
       final distance = Distance();
 
-      final response = await http
-          .get(Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
-          headers: {
-              'Authorization': 'Bearer ${userSession.token}',
-              'Content-Type': 'application/json',
-            }
-          );
+      final response = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
+        headers: {
+          'Authorization': 'Bearer ${userSession.token}',
+          'Content-Type': 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         final List<Fontanella> loaded =
@@ -345,12 +345,15 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   return ListTile(
                     title: Text(f.nome),
                     subtitle: Text('${f.distanza.toStringAsFixed(2)} km'),
-                    trailing: f.isSaved
-                        ? Icon(Icons.bookmark, color: Theme.of(context).colorScheme.primary)
-                        : null,
+                    trailing:
+                        f.isSaved
+                            ? Icon(
+                              Icons.bookmark,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                            : null,
                     onTap: () => goToDetail(f),
                   );
-
                 },
               ),
       floatingActionButton: FloatingActionButton(

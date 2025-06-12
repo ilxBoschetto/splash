@@ -25,10 +25,8 @@ class Fontanella {
     final createdByData = json['createdBy'];
     if (createdByData != null) {
       if (createdByData is String) {
-        // createdBy è solo l'ID, quindi creiamo un User con solo id e nome null
-        createdByUser = User(id: createdByData, name: 'Admin');
+        createdByUser = User(id: createdByData, name: '-');
       } else if (createdByData is Map<String, dynamic>) {
-        // createdBy è un oggetto JSON completo
         createdByUser = User.fromJson(createdByData);
       }
     }
@@ -51,9 +49,10 @@ class Fontanella {
       'lat': lat,
       'lon': lon,
       'distanza': distanza,
-      'createdBy': createdBy != null
-          ? {'id': createdBy!.id, 'name': createdBy!.name}
-          : null,
+      'createdBy':
+          createdBy != null
+              ? {'id': createdBy!.id, 'name': createdBy!.name}
+              : null,
       'isSaved': isSaved,
     };
   }
