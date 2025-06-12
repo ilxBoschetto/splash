@@ -29,7 +29,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   // arguments
   String? activeFilter;
-  bool _dependenciesHandled = false;
 
   // user session
   bool isUserLogged = false;
@@ -134,7 +133,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     if (args != null && args.containsKey('filter')) {
       activeFilter = args['filter'];
     }
-    _dependenciesHandled = true;
   }
 
   void goToDetail(Fontanella f) {
