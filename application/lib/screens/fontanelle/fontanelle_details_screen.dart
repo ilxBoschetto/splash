@@ -65,7 +65,6 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
         setState(() {
           isSaved = data['isSaved'] ?? false;
         });

@@ -8,6 +8,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
 import '../../providers/auth_provider.dart';
 import '../../helpers/user_session.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class FontanelleListScreen extends StatefulWidget {
   const FontanelleListScreen({super.key});
@@ -147,10 +149,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     }
   }
 
+  XFile? _selectedImage;
+
   void _showAddFontanellaSheet(Position position) {
     _nomeController.clear();
     _latController.text = position.latitude.toStringAsFixed(6);
     _lonController.text = position.longitude.toStringAsFixed(6);
+    _selectedImage = null;
 
     showModalBottomSheet(
       context: context,
@@ -159,67 +164,105 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder:
-          (context) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: 16,
-              right: 16,
-              top: 24,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _nomeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome fontanella',
+          (context) => StatefulBuilder(
+            builder:
+                (context, setModalState) => Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    left: 16,
+                    right: 16,
+                    top: 24,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: _nomeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Nome fontanella',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _latController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                decoration: const InputDecoration(
+                                  labelText: 'Latitudine',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextField(
+                                controller: _lonController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                decoration: const InputDecoration(
+                                  labelText: 'Longitudine',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Pulsante per caricare immagine
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final ImagePicker picker = ImagePicker();
+                            final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery,
+                            );
+                            if (image != null) {
+                              setModalState(() {
+                                _selectedImage = image;
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.image),
+                          label: const Text("Carica immagine"),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Anteprima immagine
+                        if (_selectedImage != null)
+                          Image.file(
+                            File(_selectedImage!.path),
+                            height: 150,
+                            fit: BoxFit.cover,
+                          ),
+
+                        const SizedBox(height: 20),
+
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.add_location_alt),
+                          label: const Text("Aggiungi fontanella"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            foregroundColor: Colors.white,
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: _submitFontanella,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _latController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Latitudine',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        controller: _lonController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Longitudine',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.add_location_alt),
-                  label: const Text("Aggiungi fontanella"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: _submitFontanella,
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
           ),
     );
   }
