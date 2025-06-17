@@ -165,88 +165,96 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          fontanella.nome,
-          style: TextStyle(
-            fontSize: 20,
-            letterSpacing: 1,
-            fontWeight: FontWeight.w400,
-            color: Theme.of(context).iconTheme.color,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          Navigator.pop(context, true); // true = aggiornamento richiesto
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            fontanella.nome,
+            style: TextStyle(
+              fontSize: 20,
+              letterSpacing: 1,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).iconTheme.color,
+            ),
           ),
-        ),
-        iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
-        actions:
-            isUserLogged
-                ? [
-                  IconButton(
-                    icon: Icon(
-                      isSaved ? Icons.bookmark : Icons.bookmark_border,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    onPressed: () {
-                      isSaved ? _removeFromSaved() : _addToSaved();
-                    },
-                  ),
-                ]
-                : null,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 100,
-                  height: 100,
-                  child:
-                      fontanella.imageUrl != null
-                          ? Image.network(
-                            '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
-                            fit: BoxFit.cover,
-                          )
-                          : Image.asset(
-                            'assets/images/placeholder.png',
-                            fit: BoxFit.cover,
-                          ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Latitudine: ${fontanella.lat}'),
-                      Text('Longitudine: ${fontanella.lon}'),
-                      Text(
-                        'Distanza: ${fontanella.distanza.toStringAsFixed(2)} km',
+          iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
+          actions:
+              isUserLogged
+                  ? [
+                    IconButton(
+                      icon: Icon(
+                        isSaved ? Icons.bookmark : Icons.bookmark_border,
+                        color: Theme.of(context).iconTheme.color,
                       ),
-                      Text('Creato da: ${fontanella.createdBy?.name}'),
-                    ],
+                      onPressed: () {
+                        isSaved ? _removeFromSaved() : _addToSaved();
+                      },
+                    ),
+                  ]
+                  : null,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 100,
+                    child:
+                        fontanella.imageUrl != null
+                            ? Image.network(
+                              '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
+                              fit: BoxFit.cover,
+                            )
+                            : Image.asset(
+                              'assets/images/placeholder.png',
+                              fit: BoxFit.cover,
+                            ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () async {
-                try {
-                  await _openInMaps(fontanella.lat, fontanella.lon);
-                } catch (e) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(e.toString())));
-                }
-              },
-              icon: const Icon(Icons.map),
-              label: const Text('Apri in Google Maps'),
-            ),
-          ],
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Latitudine: ${fontanella.lat}'),
+                        Text('Longitudine: ${fontanella.lon}'),
+                        Text(
+                          'Distanza: ${fontanella.distanza.toStringAsFixed(2)} km',
+                        ),
+                        Text('Creato da: ${fontanella.createdBy?.name}'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    await _openInMaps(fontanella.lat, fontanella.lon);
+                  } catch (e) {
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
+                },
+                icon: const Icon(Icons.map),
+                label: const Text('Apri in Google Maps'),
+              ),
+            ],
+          ),
         ),
       ),
     );

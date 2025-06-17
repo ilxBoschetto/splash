@@ -135,8 +135,16 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     }
   }
 
-  void goToDetail(Fontanella f) {
-    Navigator.pushNamed(context, '/dettagli_fontanella', arguments: f);
+  void goToDetail(Fontanella f) async {
+    final needRefresh = await Navigator.pushNamed(
+      context,
+      '/dettagli_fontanella',
+      arguments: f,
+    );
+
+    if (needRefresh == true) {
+      fetchFontanelle();
+    }
   }
 
   void _showAddFontanellaSheet(Position position) {
