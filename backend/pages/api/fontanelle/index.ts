@@ -33,6 +33,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
         }
 
+        // TODO: make images work
+
         const newFontanella = await createFontanella(req, user);
         return res.status(201).json(newFontanella);
       }

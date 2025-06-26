@@ -3,6 +3,7 @@ import { sendRegistrationEmail } from '@lib/emailTemplates';
 import jwt from 'jsonwebtoken';
 
 export default async function handler(req, res) {
+  // TODO: make this work
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -12,8 +13,6 @@ export default async function handler(req, res) {
   if (!to) {
     return res.status(400).json({ message: 'Missing email' });
   }
-
-  // Potresti aggiungere qui una validazione semplice dell'email con regex
 
   const confirmationCode = jwt.sign(
     { email: to },

@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import { forgotPasswordTemplate } from '@lib/emailTemplates';
 
 export default async function handler(req, res) {
+  // TODO: make this work
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
