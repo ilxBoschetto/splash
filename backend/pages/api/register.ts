@@ -1,35 +1,42 @@
-import dbConnect from '../../lib/mongodb';
-import User from '../../models/User';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '@lib/mongodb';
+import User from '@models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import sendRegistrationEmail from '@/lib/emailTemplates';
+import { sendRegistrationEmail } from '@lib/emailTemplates';
+import withCors from '@lib/withCors';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
 
-export default async function handler(req, res) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'OPTIONS') {
-    return res.status(200).end(); // CORS preflight OK
+    // CORS preflight request
+    return res.status(200).end();
   }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Metodo non consentito' });
   }
 
   const { name, email, password } = req.body;
 
+  // Validazione base dei campi
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'Tutti i campi sono obbligatori' });
   }
 
   await dbConnect();
 
+  // Controlla se l’utente esiste già
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(409).json({ error: 'Utente già registrato' });
   }
 
+  // Hash della password con bcryptjs
   const passwordHash = await bcrypt.hash(password, 10);
 
-  // Creazione account NON confermato
+  // Crea utente NON confermato
   const user = await User.create({
     name,
     email,
@@ -37,25 +44,30 @@ export default async function handler(req, res) {
     isConfirmed: false,
   });
 
-  // Genera codice di conferma (token JWT con email e userId)
+  // Genera codice di conferma JWT (con scadenza 1 giorno)
   const confirmationCode = jwt.sign(
     { userId: user._id, email: user.email },
     JWT_SECRET,
-    { expiresIn: '1d' } // il codice scade in 1 giorno
+    { expiresIn: '1d' }
   );
 
   try {
-    // Manda email di conferma con nome e link con codice
-    await sendRegistrationEmail(user.email, user.name, confirmationCode);
+    // Invia email di conferma con il token
+    await sendRegistrationEmail({
+      email: user.email,
+      name: user.name,
+      confirmationLink: confirmationCode
+    });
   } catch (err) {
     console.error('Errore invio email conferma:', err);
-    // Se vuoi, puoi eliminare l’utente creato o lasciare la registrazione così
-    // Qui decidiamo di rispondere comunque OK ma con warning
+    // Decide di rispondere con errore ma mantiene l’utente creato
     return res.status(500).json({ error: 'Registrazione riuscita ma errore invio email conferma' });
   }
 
-  // NON mandiamo token di sessione, aspettiamo conferma via mail
+  // Non si invia token di sessione, si aspetta conferma email
   return res.status(201).json({
     message: 'Utente registrato con successo. Controlla la tua email per confermare l’account.',
   });
 }
+
+export default withCors(handler);

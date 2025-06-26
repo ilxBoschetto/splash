@@ -1,0 +1,57 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '@lib/mongodb';
+import { verifyToken } from '@lib/auth';
+import { getFontanelle, createFontanella } from '@controllers/fontanellaController';
+import withCors from '@lib/withCors';
+
+//#region Handler principale per /api/fontanelle
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await dbConnect();
+
+  const { method } = req;
+
+  try {
+    switch (method) {
+      //#region GET /api/fontanelle
+      case 'GET': {
+        let user = null;
+        try {
+          user = verifyToken(req);
+        } catch {
+          // Ignora token mancante o invalido
+        }
+
+        const result = await getFontanelle(req, user);
+        return res.status(200).json(result);
+      }
+      //#endregion
+
+      //#region POST /api/fontanelle
+      case 'POST': {
+        const user = verifyToken(req);
+        if (!user || !user.userId) {
+          return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
+        }
+
+        const newFontanella = await createFontanella(req, user);
+        return res.status(201).json(newFontanella);
+      }
+      //#endregion
+
+      //#region Metodo non supportato
+      default:
+        res.setHeader('Allow', ['GET', 'POST']);
+        return res.status(405).end(`Method ${method} Not Allowed`);
+      //#endregion
+    }
+  } catch (err: any) {
+    console.error(`Error ${method} /fontanelle:`, err);
+    if (err.message === 'Missing or invalid fields') {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+//#endregion
+
+export default withCors(handler);

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "paths": {
+      "@models/*": ["models/*"],
+      "@lib/*": ["lib/*"],
+      "@controllers/*": ["controllers/*"],
+      "@api/*": ["pages/api/*"]
+    },
+    "types": ["node"],
+  }
+}

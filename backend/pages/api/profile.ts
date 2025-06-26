@@ -1,11 +1,10 @@
-import dbConnect from '../../lib/mongodb';
-import User from '../../models/User';
-import corsMiddleware from '../../lib/cors';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '@lib/mongodb';
+import User from '@models/User';
 import jwt from 'jsonwebtoken';
+import withCors from '@lib/withCors';
 
-export default async function handler(req, res) {
-  await corsMiddleware(req, res);
-
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Metodo non consentito' });
   }
@@ -18,7 +17,7 @@ export default async function handler(req, res) {
 
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
 
     await dbConnect();
 
@@ -38,3 +37,5 @@ export default async function handler(req, res) {
     return res.status(401).json({ message: 'Token non valido' });
   }
 }
+
+export default withCors(handler);

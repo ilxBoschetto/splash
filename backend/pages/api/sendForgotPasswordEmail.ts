@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { forgotPasswordTemplate } from '@/lib/emailTemplates';
+import { forgotPasswordTemplate } from '@lib/emailTemplates';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
-  const emailContent = forgotPasswordTemplate({ name, resetLink });
+  const emailContent = forgotPasswordTemplate({ email: to, name, resetLink });
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -27,9 +27,10 @@ export default async function handler(req, res) {
   try {
     const info = await transporter.sendMail({
       from: `"Splash" <${process.env.SMTP_USER}>`,
-      to,
+      to: emailContent.to,
       subject: emailContent.subject,
       html: emailContent.html,
+      text: emailContent.text,
     });
 
     return res.status(200).json({ message: 'Email inviata', info });
