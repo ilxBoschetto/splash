@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
@@ -156,6 +157,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     _nomeController.clear();
     _latController.text = position.latitude.toStringAsFixed(6);
     _lonController.text = position.longitude.toStringAsFixed(6);
+
+    LatLng _mapCenter = LatLng(position.latitude, position.longitude);
     _selectedImage = null;
 
     showModalBottomSheet(
@@ -245,6 +248,57 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
                         const SizedBox(height: 20),
 
+                        SizedBox(
+                          height: 250,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: FlutterMap(
+                              options: MapOptions(
+                                center: _mapCenter,
+                                zoom: 16,
+                                onPositionChanged: (
+                                  MapPosition pos,
+                                  bool hasGesture,
+                                ) {
+                                  if (hasGesture && pos.center != null) {
+                                    setModalState(() {
+                                      _mapCenter = pos.center!;
+                                      _latController.text = _mapCenter.latitude
+                                          .toStringAsFixed(6);
+                                      _lonController.text = _mapCenter.longitude
+                                          .toStringAsFixed(6);
+                                    });
+                                  }
+                                },
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate:
+                                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                  subdomains: ['a', 'b', 'c'],
+                                  userAgentPackageName: 'com.example.yourapp',
+                                ),
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      point: _mapCenter,
+                                      width: 40,
+                                      height: 40,
+                                      child: const Icon(
+                                        Icons.person_pin_circle,
+                                        color: Colors.red,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
                         ElevatedButton.icon(
                           icon: const Icon(Icons.add_location_alt),
                           label: const Text("Aggiungi fontanella"),
@@ -276,9 +330,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     if (nome.isEmpty || lat == null || lon == null) {
       showMinimalNotification(
         context,
-        message: 'Fontanella aggiunta!',
+        message: 'Inserisci il nome!',
         duration: 2500,
         position: 'top',
+        backgroundColor: Colors.orange,
       );
 
       return;
@@ -294,7 +349,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     );
 
     if (response.statusCode == 201) {
-      Navigator.pop(context);
+      Navigator.of(context).pop();
       await fetchFontanelle();
       showMinimalNotification(
         context,
