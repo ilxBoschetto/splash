@@ -9,6 +9,7 @@ import 'package:application/models/fontanella.dart';
 import '../../providers/auth_provider.dart';
 import '../../helpers/user_session.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:application/screens/components/minimal_notification.dart';
 import 'dart:io';
 
 class FontanelleListScreen extends StatefulWidget {
@@ -273,11 +274,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     final lon = double.tryParse(_lonController.text.trim());
 
     if (nome.isEmpty || lat == null || lon == null) {
-      showMinimalNotification(context, {
-        'message': 'Inserisci il nome!',
-        'duration': 2500,
-        'position': 'top',
-      });
+      showMinimalNotification(
+        context,
+        message: 'Fontanella aggiunta!',
+        duration: 2500,
+        position: 'top',
+      );
+
       return;
     }
 
@@ -293,71 +296,20 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     if (response.statusCode == 201) {
       Navigator.pop(context);
       await fetchFontanelle();
-      showMinimalNotification(context, {
-        'message': 'Fontanella aggiunta!',
-        'duration': 2500,
-        'position': 'top',
-      });
+      showMinimalNotification(
+        context,
+        message: 'Fontanella aggiunta!',
+        duration: 2500,
+        position: 'top',
+      );
     } else {
-      showMinimalNotification(context, {
-        'message': 'Errore!',
-        'duration': 2500,
-        'position': 'top',
-      });
+      showMinimalNotification(
+        context,
+        message: 'Fontanella aggiunta!',
+        duration: 2500,
+        position: 'top',
+      );
     }
-  }
-
-  void showMinimalNotification(
-    BuildContext context,
-    Map<String, dynamic> options,
-  ) {
-    final overlay = Overlay.of(context);
-    final theme = Theme.of(context);
-    final entry = OverlayEntry(
-      builder:
-          (context) => Positioned(
-            bottom: options['position'] == 'top' ? null : 40,
-            top: options['position'] == 'top' ? 40 : null,
-            left: 20,
-            right: 20,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color:
-                      options['backgroundColor'] ?? theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Text(
-                  options['message'] ?? 'Notifica',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: options['textColor'] ?? theme.colorScheme.onSurface,
-                    fontSize: options['fontSize']?.toDouble() ?? 14.0,
-                  ),
-                ),
-              ),
-            ),
-          ),
-    );
-
-    overlay.insert(entry);
-
-    Future.delayed(
-      Duration(milliseconds: options['duration'] ?? 2000),
-      () => entry.remove(),
-    );
   }
 
   @override
