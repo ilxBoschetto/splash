@@ -254,8 +254,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                             borderRadius: BorderRadius.circular(12),
                             child: FlutterMap(
                               options: MapOptions(
-                                center: _mapCenter,
-                                zoom: 16,
+                                initialCenter: _mapCenter,
+                                initialZoom: 16,
                                 onPositionChanged: (
                                   MapPosition pos,
                                   bool hasGesture,
