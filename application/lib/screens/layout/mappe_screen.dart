@@ -17,6 +17,7 @@ class MappeScreen extends StatefulWidget {
 }
 
 class _MappeScreenState extends State<MappeScreen> {
+  final MapController _mapController = MapController();
   List<LatLng> fontanelleCoords = [];
   LatLng? userPosition;
 
@@ -56,6 +57,9 @@ class _MappeScreenState extends State<MappeScreen> {
         userPosition = LatLng(position.latitude, position.longitude);
       });
       await cacheUserPosition(position); // salva in cache
+      if (userPosition != null) {
+        _mapController.move(userPosition!, 14.0);
+      }
     } catch (e) {
       print('Errore posizione utente: $e');
     }
@@ -80,9 +84,11 @@ class _MappeScreenState extends State<MappeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final initialCenter = userPosition ?? const LatLng(45.72064772402749, 11.309933083088417);
+    final initialCenter =
+        userPosition ?? const LatLng(45.72064772402749, 11.309933083088417);
     return Scaffold(
       body: FlutterMap(
+        mapController: _mapController,
         options: MapOptions(initialCenter: initialCenter, initialZoom: 14.0),
         children: [
           TileLayer(

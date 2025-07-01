@@ -275,7 +275,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                                 TileLayer(
                                   urlTemplate:
                                       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                  subdomains: ['a', 'b', 'c'],
                                   userAgentPackageName: 'com.example.yourapp',
                                 ),
                                 MarkerLayer(

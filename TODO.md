@@ -1,7 +1,6 @@
 ## TODO
 
 - [ ] Aggiungere foto alla creazione e visualizzazione fontanelle
-- [ ] Autospostamento mappa in base alla posizione dell'utente
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [ ] Aggiungere refresh token
@@ -20,3 +19,4 @@
 - [x] Creare discord community e associarlo all'app
 - [x] Aggiunta possibilità aggiunta/eliminazione fontanella preferita
 - [x] Aggiungere sezione fontanelle preferite
+- [X] Autospostamento mappa in base alla posizione dell'utente
