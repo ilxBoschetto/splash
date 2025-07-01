@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:application/screens/components/minimal_notification.dart';
 
 class CommunityScreen extends StatelessWidget {
   const CommunityScreen({super.key});
@@ -7,9 +8,14 @@ class CommunityScreen extends StatelessWidget {
   void _openDiscordInvite(BuildContext context) async {
     final url = Uri.parse("https://discord.gg/3tw6qh3t9b");
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Impossibile aprire il link Discord.")),
-      );
+      showMinimalNotification(
+          context,
+          message: 'Impossibile aprire il link discord',
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
     }
   }
 

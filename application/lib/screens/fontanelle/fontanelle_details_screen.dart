@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../helpers/user_session.dart';
 import '../../providers/auth_provider.dart';
+import 'package:application/screens/components/minimal_notification.dart';
 import 'dart:convert';
 
 class FontanellaDetailScreen extends StatefulWidget {
@@ -100,20 +101,33 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
       if (response.statusCode == 201) {
         setState(() => isSaved = true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fontanella salvata con successo')),
+        showMinimalNotification(
+          context,
+          message: 'Fontanella salvata tra i preferiti!',
+          duration: 2500,
+          position: 'bottom',
         );
       } else {
         debugPrint('Errore nel salvataggio: ${response.statusCode}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Errore durante il salvataggio')),
+        showMinimalNotification(
+          context,
+          message: 'Errore durante il salvataggio',
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
       }
     } catch (e) {
       debugPrint('Errore nel salvataggio: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Errore di connessione: $e')));
+      showMinimalNotification(
+          context,
+          message: 'Errore di connessione',
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
     }
   }
 
@@ -133,20 +147,35 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
       if (response.statusCode == 200) {
         setState(() => isSaved = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fontanella rimossa dai preferiti')),
+        showMinimalNotification(
+          context,
+          message: 'Fontanella rimossa dai preferiti',
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
       } else {
         debugPrint('Errore nella rimozione: ${response.statusCode}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Errore durante la rimozione')),
+        showMinimalNotification(
+          context,
+          message: 'Errore durante la rimozione',
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
       }
     } catch (e) {
       debugPrint('Errore nella rimozione: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Errore di connessione: $e')));
+      showMinimalNotification(
+          context,
+          message: 'Errore di connessione',
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
     }
   }
 
@@ -244,9 +273,14 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                   try {
                     await _openInMaps(fontanella.lat, fontanella.lon);
                   } catch (e) {
-                    ScaffoldMessenger.of(
+                    showMinimalNotification(
                       context,
-                    ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      message: e.toString(),
+                      duration: 2500,
+                      position: 'bottom',
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                    );
                   }
                 },
                 icon: const Icon(Icons.map),
