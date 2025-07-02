@@ -5,6 +5,7 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   isConfirmed: boolean;
+  confirmationCode: string;
   createdAt: Date;
 }
 
@@ -32,6 +33,11 @@ const UserSchema: Schema<IUser> = new Schema(
     isConfirmed: {
       type: Boolean,
       default: false,
+    },
+
+    confirmationCode:{
+      type: String,
+      required: true,
     },
 
     createdAt: {

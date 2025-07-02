@@ -1,10 +1,10 @@
 ## TODO
 
+- [ ] Aggiungere SMTP per invio di email per registrazione e password dimenticata
 - [ ] Aggiungere foto alla creazione e visualizzazione fontanelle
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [ ] Aggiungere refresh token
-- [ ] Aggiungere SMTP per invio di email per registrazione e password dimenticata
 - [ ] Aggiungere un rate limit alle richieste
 
 ## DONE
