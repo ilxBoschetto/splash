@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'package:application/screens/components/minimal_notification.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -42,8 +43,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         body: json.encode({'name': name, 'email': email, 'password': password}),
       );
 
-      if (response.statusCode == 200) {
-        Navigator.pushReplacementNamed(context, '/app');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        showMinimalNotification(
+          context,
+          message: json.decode(response.body)['message'],
+          duration: 2500,
+          position: 'bottom',
+        );
+        Navigator.pushReplacementNamed(context, '/login');
       } else {
         final data = json.decode(response.body);
         setState(
