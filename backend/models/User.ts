@@ -37,7 +37,7 @@ const UserSchema: Schema<IUser> = new Schema(
 
     confirmationCode:{
       type: String,
-      required: true,
+      required: false,
     },
 
     createdAt: {

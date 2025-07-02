@@ -4,19 +4,18 @@ import { useRouter } from "next/router";
 export default function ConfirmEmailPage() {
   const router = useRouter();
   const [message, setMessage] = useState("Conferma in corso...");
+  const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
-    const { token } = router.query;
+    const token = router.query.token;
 
-    if (!token || typeof token !== "string") {
-      setMessage("Token non valido.");
-      return;
-    }
+    if (!token || typeof token !== "string" || hasFetched) return;
 
-    // Chiama l'endpoint API con il codice
+    setHasFetched(true);
+
     const confirm = async () => {
       try {
-        const res = await fetch("/api/confirm-email", {
+        const res = await fetch("/api/user/confirm-email", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -24,8 +23,9 @@ export default function ConfirmEmailPage() {
           body: JSON.stringify({ token }),
         });
 
+        const data = await res.json();
+
         if (!res.ok) {
-          const data = await res.json();
           throw new Error(data.error || "Errore durante la conferma");
         }
 
@@ -36,7 +36,7 @@ export default function ConfirmEmailPage() {
     };
 
     confirm();
-  }, [router.query]);
+  }, [router.query.token, hasFetched]);
 
   return (
     <div
@@ -44,6 +44,7 @@ export default function ConfirmEmailPage() {
         fontFamily: "sans-serif",
         textAlign: "center",
         marginTop: "50px",
+        padding: "20px",
       }}
     >
       <h1>{message}</h1>
