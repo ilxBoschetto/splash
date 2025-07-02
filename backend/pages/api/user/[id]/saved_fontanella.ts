@@ -1,27 +1,31 @@
-// /pages/api/user/[id]/saved_fontanella.js
-import dbConnect from '../../../../lib/mongodb';
-import SavedFontanella from '../../../../models/SavedFontanella';
-import corsMiddleware from '../../../../lib/cors';
+// /pages/api/user/[id]/saved_fontanella.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import dbConnect from '@lib/mongodb';
+import SavedFontanella from '@models/SavedFontanella';
+import withCors from '@lib/withCors';
 
-export default async function handler(req, res) {
-  await corsMiddleware(req, res);
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
 
   const { id } = req.query;
+
+  if (typeof id !== 'string') {
+    return res.status(400).json({ error: 'ID utente non valido' });
+  }
 
   switch (req.method) {
     case 'GET':
       try {
         const savedList = await SavedFontanella.find({ userId: id });
         return res.status(200).json({ count: savedList.length, saved: savedList });
-      } catch (err) {
+      } catch (err: any) {
         return res.status(500).json({ error: 'Errore nel recupero delle fontanelle salvate' });
       }
 
     case 'POST':
       try {
         const { fontanellaId } = req.body;
-        if (!fontanellaId) {
+        if (!fontanellaId || typeof fontanellaId !== 'string') {
           return res.status(400).json({ error: 'fontanellaId è richiesto' });
         }
 
@@ -32,14 +36,14 @@ export default async function handler(req, res) {
 
         const newSaved = await SavedFontanella.create({ userId: id, fontanellaId });
         return res.status(201).json({ message: 'Fontanella salvata', saved: newSaved });
-      } catch (err) {
+      } catch (err: any) {
         return res.status(500).json({ error: 'Errore nel salvataggio della fontanella' });
       }
 
     case 'DELETE':
       try {
         const { fontanellaId } = req.body;
-        if (!fontanellaId) {
+        if (!fontanellaId || typeof fontanellaId !== 'string') {
           return res.status(400).json({ error: 'fontanellaId è richiesto per la cancellazione' });
         }
 
@@ -49,7 +53,7 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json({ message: 'Fontanella rimossa' });
-      } catch (err) {
+      } catch (err: any) {
         return res.status(500).json({ error: 'Errore nella rimozione della fontanella' });
       }
 
@@ -57,3 +61,4 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Metodo non consentito' });
   }
 }
+export default withCors(handler);
