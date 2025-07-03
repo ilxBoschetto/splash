@@ -1,3 +1,5 @@
+import { registrationEmailHtml, registrationEmailText } from "@/templates/registrationEmailTemplate"
+
 export interface EmailTemplate {
   to: string
   subject: string
@@ -22,16 +24,13 @@ export function sendRegistrationEmail({
   name,
   confirmationLink
 }: RegistrationParams): EmailTemplate {
+  const safeName = sanitize(name)
+
   return {
     to: email,
     subject: 'Conferma la tua registrazione',
-    html: `
-      <h1>Ciao ${sanitize(name)}!</h1>
-      <p>Grazie per esserti registrato. Clicca qui per confermare il tuo account:</p>
-      <a href="${confirmationLink}">Conferma registrazione</a>
-      <p>Se non hai richiesto questa registrazione, ignora questa email.</p>
-    `,
-    text: `Ciao ${sanitize(name)}!\n\nGrazie per esserti registrato. Conferma il tuo account qui: ${confirmationLink}\n\nSe non hai richiesto questa registrazione, ignora questa email.`
+    html: registrationEmailHtml(safeName, confirmationLink),
+    text: registrationEmailText(safeName, confirmationLink)
   }
 }
 
