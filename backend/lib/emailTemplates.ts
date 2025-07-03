@@ -1,4 +1,5 @@
 import { registrationEmailHtml, registrationEmailText } from "@/templates/registrationEmailTemplate"
+import { forgotPasswordEmailHtml, forgotPasswordEmailText } from "@/templates/forgotPasswordEmailTemplate"
 
 export interface EmailTemplate {
   to: string
@@ -39,16 +40,13 @@ export function forgotPasswordTemplate({
   name,
   resetLink
 }: ForgotPasswordParams): EmailTemplate {
+  const safeName = sanitize(name)
+
   return {
     to: email,
     subject: 'Reset della password',
-    html: `
-      <h1>Ciao ${sanitize(name)}!</h1>
-      <p>Hai richiesto il reset della password. Clicca qui per procedere:</p>
-      <a href="${resetLink}">Reset Password</a>
-      <p>Se non hai richiesto il reset, ignora questa email.</p>
-    `,
-    text: `Ciao ${sanitize(name)}!\n\nHai richiesto il reset della password. Procedi qui: ${resetLink}\n\nSe non hai richiesto il reset, ignora questa email.`
+    html: forgotPasswordEmailHtml(safeName, resetLink),
+    text: forgotPasswordEmailText(safeName, resetLink)
   }
 }
 
