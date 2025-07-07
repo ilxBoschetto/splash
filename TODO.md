@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Aggiungere SMTP per invio di email per registrazione e password dimenticata
 - [ ] Aggiungere foto alla creazione e visualizzazione fontanelle
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
@@ -21,3 +20,4 @@
 - [x] Aggiunta possibilità aggiunta/eliminazione fontanella preferita
 - [x] Aggiungere sezione fontanelle preferite
 - [X] Autospostamento mappa in base alla posizione dell'utente
+- [x] Aggiungere SMTP per invio di email per registrazione e password dimenticata
