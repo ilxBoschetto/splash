@@ -201,9 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       InkWell(
                         child: Text(
                           "Password dimenticata?",
-                          style: TextStyle(
-                            color: Colors.blue,
-                          ),
+                          style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () => _showSendRecoverPasswordSheet(),
                       ),
@@ -211,9 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       InkWell(
                         child: Text(
                           "Non hai ancora un' account?",
-                          style: TextStyle(
-                            color: Colors.blue,
-                          ),
+                          style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
                           Navigator.pushReplacementNamed(context, '/register');
@@ -234,17 +230,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: loading ? null : login,
                       child:
                           loading
-                              ? const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              )
+                              ? const _BouncingDotsLoader()
                               : Text(
                                 'LOGIN',
-                                style: (TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.w900,
                                   color:
                                       Theme.of(context).scaffoldBackgroundColor,
-                                )),
+                                ),
                               ),
                     ),
                   ),
@@ -253,6 +246,81 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _BouncingDotsLoader extends StatefulWidget {
+  const _BouncingDotsLoader();
+
+  @override
+  State<_BouncingDotsLoader> createState() => _BouncingDotsLoaderState();
+}
+
+class _BouncingDotsLoaderState extends State<_BouncingDotsLoader>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late List<Animation<double>> _animations;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    )..repeat();
+
+    _animations = List.generate(3, (index) {
+      return Tween(begin: 0.6, end: 1.4).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: Interval(
+            index * 0.2,
+            0.6 + index * 0.2,
+            curve: Curves.easeInOut,
+          ),
+        ),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildDot(int index) {
+    return ScaleTransition(
+      scale: _animations[index],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2.5),
+        child: const Dot(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, _buildDot),
+    );
+  }
+}
+
+class Dot extends StatelessWidget {
+  const Dot({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
       ),
     );
   }
