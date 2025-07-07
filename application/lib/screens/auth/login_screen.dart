@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../helpers/auth_helper.dart';
 import 'package:application/screens/components/minimal_notification.dart';
 import 'dart:convert';
+import 'package:application/components/loaders.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -230,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: loading ? null : login,
                       child:
                           loading
-                              ? const _BouncingDotsLoader()
+                              ? const BouncingDotsLoader()
                               : Text(
                                 'LOGIN',
                                 style: TextStyle(
@@ -246,81 +247,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _BouncingDotsLoader extends StatefulWidget {
-  const _BouncingDotsLoader();
-
-  @override
-  State<_BouncingDotsLoader> createState() => _BouncingDotsLoaderState();
-}
-
-class _BouncingDotsLoaderState extends State<_BouncingDotsLoader>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late List<Animation<double>> _animations;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    )..repeat();
-
-    _animations = List.generate(3, (index) {
-      return Tween(begin: 0.6, end: 1.4).animate(
-        CurvedAnimation(
-          parent: _controller,
-          curve: Interval(
-            index * 0.2,
-            0.6 + index * 0.2,
-            curve: Curves.easeInOut,
-          ),
-        ),
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Widget _buildDot(int index) {
-    return ScaleTransition(
-      scale: _animations[index],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2.5),
-        child: const Dot(),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, _buildDot),
-    );
-  }
-}
-
-class Dot extends StatelessWidget {
-  const Dot({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
       ),
     );
   }
