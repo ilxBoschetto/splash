@@ -25,7 +25,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(404).json({ message: 'Utente non trovato' });
   }
 
-  // 🔐 Genera token e scadenza (1 ora)
   const token = crypto.randomBytes(32).toString('hex');
   const expires = new Date(Date.now() + 1000 * 60 * 60);
 
@@ -33,18 +32,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   user.resetPasswordExpires = expires;
   await user.save();
 
-  // 🌐 Link al form di reset
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
-  // 📧 Crea contenuto email
   const emailContent = forgotPasswordTemplate({
     email,
     name: user.name || 'utente',
     resetLink,
   });
 
-  // 📬 Invia l'email
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT),
