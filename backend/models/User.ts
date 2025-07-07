@@ -7,6 +7,8 @@ export interface IUser extends Document {
   isConfirmed: boolean;
   confirmationCode: string;
   createdAt: Date;
+  resetPasswordToken: string;
+  resetPasswordExpires: Date;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
@@ -38,6 +40,15 @@ const UserSchema: Schema<IUser> = new Schema(
     confirmationCode:{
       type: String,
       required: false,
+    },
+    
+    resetPasswordToken: {
+      type: String,
+      default: null
+    },
+    resetPasswordExpires: {
+      type: Date,
+      default: null
     },
 
     createdAt: {

@@ -17,7 +17,7 @@ export function forgotPasswordEmailHtml(name: string, resetLink: string): string
 
       <footer style="font-size: 12px; color: #999;">
         <p>Questa email è stata inviata automaticamente dal nostro sistema. Ti preghiamo di non rispondere a questo messaggio.</p>
-        <p>&copy; ${new Date().getFullYear()} La Tua Azienda. Tutti i diritti riservati.</p>
+        <p>&copy; ${new Date().getFullYear()} Splash. Tutti i diritti riservati.</p>
       </footer>
     </div>
   `
@@ -38,6 +38,6 @@ Se non hai richiesto il reset della password, puoi ignorare questa email. Nessun
 
 Questa email è stata inviata automaticamente dal nostro sistema. Ti preghiamo di non rispondere a questo messaggio.
 
-© ${new Date().getFullYear()} La Tua Azienda. Tutti i diritti riservati.
+© ${new Date().getFullYear()} Splash. Tutti i diritti riservati.
   `.trim()
 }

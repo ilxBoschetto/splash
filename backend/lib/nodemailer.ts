@@ -22,7 +22,7 @@ export async function sendMail({
   text: string;
 }) {
   await transporter.sendMail({
-    from: `"Splash App" <${process.env.SMTP_USER}>`,
+    from: `"Splash" <${process.env.SMTP_USER}>`,
     to,
     subject,
     html,
