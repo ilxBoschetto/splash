@@ -6,6 +6,7 @@
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [ ] Aggiungere refresh token
 - [ ] Aggiungere un rate limit alle richieste
+- [ ] Aggiungere marker sulla mappa cliccabili
 
 ## DONE
 
