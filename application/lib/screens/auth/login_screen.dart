@@ -35,12 +35,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => loading = true);
 
-    final success = await AuthHelper.login(email, password);
+    final result = await AuthHelper.login(email, password);
 
-    if (success) {
+    if (result.success) {
       Navigator.pushReplacementNamed(context, '/');
     } else {
-      setState(() => error = 'Credenziali non valide o errore di rete.');
+      setState(() {
+        error = result.message;
+      });
     }
 
     setState(() => loading = false);

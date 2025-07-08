@@ -3,12 +3,11 @@ import dbConnect from '@lib/mongodb';
 import User from '@models/User';
 import * as bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import corsMiddleware from '@lib/cors';
+import withCors from '@lib/withCors';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await corsMiddleware(req, res);
+async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method !== 'POST') {
     return res.status(405).end('Method Not Allowed');
@@ -22,32 +21,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   await dbConnect();
 
-  let isDevMode = false;
-  let user = null;
+  let user = await User.findOne({ email });
 
-  // Controllo DEV: bcrypt.compare è async, va awaitato
-  if (
-    email === process.env.ADMIN_USERNAME &&
-    await bcrypt.compare(password, process.env.ADMIN_PASSWORD || '')
-  ) {
-    isDevMode = true;
+  if (!user) {
+    return res.status(401).json({ error: 'Email o password errati' });
   }
-
-  if (!isDevMode) {
-    user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ error: 'Email o password errati' });
-    }
-    const passwordMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!passwordMatch) {
-      return res.status(401).json({ error: 'Email o password errati' });
-    }
-  } else {
-    // In dev mode, carichiamo utente admin per avere _id
-    user = await User.findOne({ email: process.env.ADMIN_USERNAME });
-    if (!user) {
-      return res.status(401).json({ error: 'Utente admin non trovato' });
-    }
+  if(!user.isConfirmed){
+    return res.status(403).json({ error: 'Account non confermato. Controlla la tua email per completare la registrazione.' });
+  }
+  const passwordMatch = await bcrypt.compare(password, user.passwordHash);
+  if (!passwordMatch) {
+    return res.status(401).json({ error: 'Email o password errati' });
   }
 
   const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, { expiresIn: '7d' });
@@ -57,3 +41,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     user: { id: user._id, email: user.email, name: user.name },
   });
 }
+
+export default withCors(handler);
