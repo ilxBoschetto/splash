@@ -2,10 +2,13 @@
 
 - [ ] Aggiungere foto alla creazione e visualizzazione fontanelle
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
+- [ ] Aggiungere marker sulla mappa cliccabili
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
+- [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
+- [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
+- [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Aggiungere refresh token
 - [ ] Aggiungere un rate limit alle richieste
-- [ ] Aggiungere marker sulla mappa cliccabili
 
 ## DONE
 
