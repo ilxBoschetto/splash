@@ -197,8 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: const InputDecoration(labelText: 'Password'),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       InkWell(
@@ -208,10 +207,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         onTap: () => _showSendRecoverPasswordSheet(),
                       ),
-                      SizedBox(width: 20),
+                      SizedBox(height: 10),
                       InkWell(
                         child: Text(
-                          "Non hai ancora un' account?",
+                          "Non hai ancora un account?",
                           style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
