@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       valueListenable: themeNotifier,
       builder: (context, currentThemeMode, _) {
         return MaterialApp(
-          title: 'Fontanelle App',
+          title: 'Splash',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             brightness: Brightness.light,
