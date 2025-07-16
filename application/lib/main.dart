@@ -1,15 +1,15 @@
+import 'package:application/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:application/notifiers/theme_notifier.dart';
-import 'helpers/user_session.dart';
 import 'dart:convert';
 import 'routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  UserSession().clearSession();
+  await AuthHelper.checkLogin();
   runApp(MyApp());
   checkAppVersion();
 }

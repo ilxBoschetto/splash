@@ -24,6 +24,7 @@ class AuthHelper {
       isUserLogged = true;
     } else {
       isUserLogged = false;
+      AuthHelper.logout();
     }
   }
 
