@@ -207,88 +207,81 @@ class _DashboardCard extends StatelessWidget {
 }
 
 class _LoginPrompt extends StatelessWidget {
-  const _LoginPrompt();
+  const _LoginPrompt({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 10,
-      left: 10,
-      right: 10,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.info_outline, color: Colors.blue),
-                  const SizedBox(width: 8),
-                  const Expanded(
-                    child: Text(
-                      'Salva le tue fontanelle creando un account o facendo il login.',
-                      style: TextStyle(fontSize: 14),
-                    ),
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.blue),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Salva le tue fontanelle creando un account o facendo il login.',
+                    style: TextStyle(fontSize: 14),
                   ),
-                  Center(
-                    child: Container(
-                      width: 200,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/register');
-                            },
-                            child: Text(
-                              'REGISTRATI',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                              ),
+                ),
+                Center(
+                  child: Container(
+                    width: 200,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
                             ),
                           ),
-                          const SizedBox(height: 12),
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/login');
-                            },
-                            child: Text(
-                              'LOGIN',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                              ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/register');
+                          },
+                          child: Text(
+                            'REGISTRATI',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          child: Text(
+                            'LOGIN',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

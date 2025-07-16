@@ -46,8 +46,6 @@ class MinimalNotification extends StatelessWidget {
   }
 }
 
-// lib/widgets/minimal_notification.dart (nello stesso file)
-
 void showMinimalNotification(
   BuildContext context, {
   required String message,
@@ -61,18 +59,22 @@ void showMinimalNotification(
   final theme = Theme.of(context);
 
   final entry = OverlayEntry(
-    builder: (context) => Positioned(
-      bottom: position == 'top' ? null : 40,
-      top: position == 'top' ? 40 : null,
-      left: 20,
-      right: 20,
-      child: MinimalNotification(
-        message: message,
-        backgroundColor:
-            backgroundColor ?? theme.colorScheme.surfaceVariant,
-        textColor: textColor ?? theme.colorScheme.onSurface,
-        fontSize: fontSize,
-      ),
+    builder: (context) => Stack(
+      children: [
+        Positioned(
+          bottom: position == 'top' ? null : 40,
+          top: position == 'top' ? 40 : null,
+          left: 20,
+          right: 20,
+          child: MinimalNotification(
+            message: message,
+            backgroundColor:
+                backgroundColor ?? theme.colorScheme.surfaceVariant,
+            textColor: textColor ?? theme.colorScheme.onSurface,
+            fontSize: fontSize,
+          ),
+        ),
+      ],
     ),
   );
 
