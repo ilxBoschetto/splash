@@ -96,6 +96,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Image.asset(
+            'assets/icons/logo.png',
+            height: 150, // imposta una height massima
+          ),
+
           if (!isUserLogged) ...[
             const _LoginPrompt(),
             const SizedBox(height: 16),
