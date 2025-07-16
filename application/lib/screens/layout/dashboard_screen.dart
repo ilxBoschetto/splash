@@ -207,7 +207,7 @@ class _DashboardCard extends StatelessWidget {
 }
 
 class _LoginPrompt extends StatelessWidget {
-  const _LoginPrompt({super.key});
+  const _LoginPrompt();
 
   @override
   Widget build(BuildContext context) {
