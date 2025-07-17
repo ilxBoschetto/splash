@@ -183,7 +183,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
   Future<void> _openInMaps(double lat, double lon) async {
     final Uri url = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=$lat,$lon', // URL corretto per Google Maps
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lon',
     );
 
     if (await canLaunchUrl(url)) {
@@ -199,7 +199,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       canPop: false,
       onPopInvoked: (didPop) async {
         if (!didPop) {
-          Navigator.pop(context, true); // true = aggiornamento richiesto
+          Navigator.pop(context, true);
         }
       },
       child: Scaffold(
