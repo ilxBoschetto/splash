@@ -30,6 +30,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _latController = TextEditingController();
   final TextEditingController _lonController = TextEditingController();
+  final modalMapController = MapController();
 
   // arguments
   String? activeFilter;
@@ -157,8 +158,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     _nomeController.clear();
     _latController.text = position.latitude.toStringAsFixed(6);
     _lonController.text = position.longitude.toStringAsFixed(6);
+    double latitude = position.latitude;
+    double longitude = position.longitude;
 
-    LatLng _mapCenter = LatLng(position.latitude, position.longitude);
+    LatLng _mapCenter = LatLng(latitude, longitude);
     _selectedImage = null;
 
     showModalBottomSheet(
@@ -169,154 +172,177 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       ),
       builder:
           (context) => StatefulBuilder(
-            builder:
-                (context, setModalState) => Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                    left: 16,
-                    right: 16,
-                    top: 24,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          controller: _nomeController,
-                          decoration: const InputDecoration(
-                            labelText: 'Nome fontanella',
-                          ),
+            builder: (context, setModalState) {
+
+              void _updateMapCenterFromText() {
+                final lat = double.tryParse(_latController.text);
+                final lon = double.tryParse(_lonController.text);
+                if (lat != null && lon != null) {
+                  final newCenter = LatLng(lat, lon);
+                  setModalState(() {
+                    _mapCenter = newCenter;
+                  });
+                  modalMapController.move(newCenter, modalMapController.camera.zoom); // 👈 centra la mappa
+                }
+              }
+
+              bool listenersAdded = false;
+              if (!listenersAdded) {
+                _latController.addListener(_updateMapCenterFromText);
+                _lonController.addListener(_updateMapCenterFromText);
+                listenersAdded = true;
+              }
+
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  left: 16,
+                  right: 16,
+                  top: 24,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: _nomeController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nome fontanella',
                         ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _latController,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                      decimal: true,
-                                    ),
-                                decoration: const InputDecoration(
-                                  labelText: 'Latitudine',
-                                ),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _latController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                              decoration: const InputDecoration(
+                                labelText: 'Latitudine',
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextField(
-                                controller: _lonController,
-                                keyboardType:
-                                    const TextInputType.numberWithOptions(
-                                      decimal: true,
-                                    ),
-                                decoration: const InputDecoration(
-                                  labelText: 'Longitudine',
-                                ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextField(
+                              controller: _lonController,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
+                              decoration: const InputDecoration(
+                                labelText: 'Longitudine',
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Pulsante per caricare immagine
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(
-                              source: ImageSource.gallery,
-                            );
-                            if (image != null) {
-                              setModalState(() {
-                                _selectedImage = image;
-                              });
-                            }
-                          },
-                          icon: const Icon(Icons.image),
-                          label: const Text("Carica immagine"),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        // Anteprima immagine
-                        if (_selectedImage != null)
-                          Image.file(
-                            File(_selectedImage!.path),
-                            height: 150,
-                            fit: BoxFit.cover,
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
 
-                        const SizedBox(height: 20),
+                      // Pulsante per caricare immagine
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                            source: ImageSource.gallery,
+                          );
+                          if (image != null) {
+                            setModalState(() {
+                              _selectedImage = image;
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.image),
+                        label: const Text("Carica immagine"),
+                      ),
 
-                        SizedBox(
-                          height: 250,
-                          child: ClipRRect(
+                      const SizedBox(height: 12),
+
+                      // Anteprima immagine
+                      if (_selectedImage != null)
+                        Image.file(
+                          File(_selectedImage!.path),
+                          height: 150,
+                          fit: BoxFit.cover,
+                        ),
+
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        height: 250,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: FlutterMap(
+                            mapController: modalMapController,
+                            options: MapOptions(
+                              initialCenter: _mapCenter,
+                              initialZoom: 16,
+                              onPositionChanged: (
+                                MapPosition pos,
+                                bool hasGesture,
+                              ) {
+                                if (hasGesture && pos.center != null) {
+                                  setModalState(() {
+                                    _mapCenter = pos.center!;
+                                    _latController.text = _mapCenter.latitude
+                                        .toStringAsFixed(6);
+                                    _lonController.text = _mapCenter.longitude
+                                        .toStringAsFixed(6);
+                                  });
+                                }
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                                subdomains: ['a', 'b', 'c'],
+                                userAgentPackageName: 'com.splash.app',
+                              ),
+                              MarkerLayer(
+                                markers: [
+                                  Marker(
+                                    point: _mapCenter,
+                                    width: 40,
+                                    height: 40,
+                                    child: const Icon(
+                                      Icons.person_pin_circle,
+                                      color: Colors.red,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.add_location_alt),
+                        label: const Text("Aggiungi fontanella"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size.fromHeight(50),
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            child: FlutterMap(
-                              options: MapOptions(
-                                initialCenter: _mapCenter,
-                                initialZoom: 16,
-                                onPositionChanged: (
-                                  MapPosition pos,
-                                  bool hasGesture,
-                                ) {
-                                  if (hasGesture && pos.center != null) {
-                                    setModalState(() {
-                                      _mapCenter = pos.center!;
-                                      _latController.text = _mapCenter.latitude
-                                          .toStringAsFixed(6);
-                                      _lonController.text = _mapCenter.longitude
-                                          .toStringAsFixed(6);
-                                    });
-                                  }
-                                },
-                              ),
-                              children: [
-                                TileLayer(
-                                  urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-                                  subdomains: ['a', 'b', 'c'],
-                                  userAgentPackageName: 'com.splash.app',
-                                ),
-                                MarkerLayer(
-                                  markers: [
-                                    Marker(
-                                      point: _mapCenter,
-                                      width: 40,
-                                      height: 40,
-                                      child: const Icon(
-                                        Icons.person_pin_circle,
-                                        color: Colors.red,
-                                        size: 40,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
                           ),
                         ),
-
-                        const SizedBox(height: 20),
-
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.add_location_alt),
-                          label: const Text("Aggiungi fontanella"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: _submitFontanella,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                        onPressed: _submitFontanella,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
+              );
+            },
           ),
     );
   }
