@@ -106,6 +106,8 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
           message: 'Fontanella salvata tra i preferiti!',
           duration: 2500,
           position: 'bottom',
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
         );
       } else {
         debugPrint('Errore nel salvataggio: ${response.statusCode}');
@@ -136,13 +138,13 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     if (uid == null) return;
 
     try {
+      final fontanellaId = fontanella.id;
       final response = await http.delete(
-        Uri.parse('${dotenv.env['API_URL']}/user/$uid/saved_fontanella'),
+        Uri.parse('${dotenv.env['API_URL']}/user/$uid/saved_fontanella/$fontanellaId'),
         headers: {
           'Authorization': 'Bearer ${userSession.token}',
           'Content-Type': 'application/json',
         },
-        body: json.encode({'fontanellaId': fontanella.id}),
       );
 
       if (response.statusCode == 200) {
@@ -152,7 +154,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
           message: 'Fontanella rimossa dai preferiti',
           duration: 2500,
           position: 'bottom',
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.green,
           textColor: Colors.white,
         );
       } else {
