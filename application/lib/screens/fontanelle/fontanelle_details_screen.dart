@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../helpers/user_session.dart';
@@ -20,6 +22,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   bool isSaved = false;
   bool isUserLogged = false;
   final userSession = UserSession();
+  LatLng? userPosition;
 
   @override
   void didChangeDependencies() {
@@ -28,6 +31,17 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     print('${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}');
     _checkUserStatusAndFetch();
     _checkUserStatus();
+  }
+
+  Future<void> loadCachedUserPosition() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lat = prefs.getDouble('cached_lat');
+    final lon = prefs.getDouble('cached_lon');
+    if (lat != null && lon != null) {
+      setState(() {
+        userPosition = LatLng(lat, lon);
+      });
+    }
   }
 
   void _checkUserStatusAndFetch() async {
@@ -184,8 +198,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   }
 
   Future<void> _openInMaps(double lat, double lon) async {
+    final userLat = userPosition?.latitude;
+    final userLon = userPosition?.longitude;
     final Uri url = Uri.parse(
-      'https://www.google.com/maps/search/?api=1&query=$lat,$lon',
+      'https://www.google.com/maps/dir/?api=1&origin=$userLat,$userLon&destination=$lat,$lon&travelmode=walking'
     );
 
     if (await canLaunchUrl(url)) {
