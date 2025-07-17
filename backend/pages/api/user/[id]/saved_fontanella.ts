@@ -40,23 +40,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(500).json({ error: 'Errore nel salvataggio della fontanella' });
       }
 
-    case 'DELETE':
-      try {
-        const { fontanellaId } = req.body;
-        if (!fontanellaId || typeof fontanellaId !== 'string') {
-          return res.status(400).json({ error: 'fontanellaId è richiesto per la cancellazione' });
-        }
-
-        const deleted = await SavedFontanella.findOneAndDelete({ userId: id, fontanellaId });
-        if (!deleted) {
-          return res.status(404).json({ error: 'Fontanella non trovata per questo utente' });
-        }
-
-        return res.status(200).json({ message: 'Fontanella rimossa' });
-      } catch (err: any) {
-        return res.status(500).json({ error: 'Errore nella rimozione della fontanella' });
-      }
-
     default:
       return res.status(405).json({ error: 'Metodo non consentito' });
   }
