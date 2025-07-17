@@ -131,6 +131,10 @@ export const createFontanella = async (req: NextApiRequest, user: DecodedToken) 
     name: name.trim(),
     lat,
     lon,
+    location: {
+      type: 'Point',
+      coordinates: [lon, lat],
+    },
     createdBy: userObjectId,
   });
 
