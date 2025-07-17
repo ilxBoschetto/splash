@@ -123,13 +123,13 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     } catch (e) {
       debugPrint('Errore nel salvataggio: $e');
       showMinimalNotification(
-          context,
-          message: 'Errore di connessione',
-          duration: 2500,
-          position: 'bottom',
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        context,
+        message: 'Errore di connessione',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -140,7 +140,9 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     try {
       final fontanellaId = fontanella.id;
       final response = await http.delete(
-        Uri.parse('${dotenv.env['API_URL']}/user/$uid/saved_fontanella/$fontanellaId'),
+        Uri.parse(
+          '${dotenv.env['API_URL']}/user/$uid/saved_fontanella/$fontanellaId',
+        ),
         headers: {
           'Authorization': 'Bearer ${userSession.token}',
           'Content-Type': 'application/json',
@@ -171,13 +173,13 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     } catch (e) {
       debugPrint('Errore nella rimozione: $e');
       showMinimalNotification(
-          context,
-          message: 'Errore di connessione',
-          duration: 2500,
-          position: 'bottom',
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        context,
+        message: 'Errore di connessione',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -187,9 +189,15 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     );
 
     if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+      await launchUrl(url);
     } else {
-      throw 'Impossibile aprire Google Maps. Assicurati che l\'app sia installata.';
+      showMinimalNotification(
+        context,
+        message: 'Errore nell\'apertura di Google Maps',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
