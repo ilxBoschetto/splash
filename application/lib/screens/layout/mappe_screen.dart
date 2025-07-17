@@ -1,3 +1,4 @@
+import 'package:application/models/fontanella.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -18,8 +19,9 @@ class MappeScreen extends StatefulWidget {
 
 class _MappeScreenState extends State<MappeScreen> {
   final MapController _mapController = MapController();
-  List<LatLng> fontanelleCoords = [];
+  List<Fontanella> fontanelle = [];
   LatLng? userPosition;
+  final Distance distance = const Distance();
 
   @override
   void initState() {
@@ -36,6 +38,18 @@ class _MappeScreenState extends State<MappeScreen> {
       setState(() {
         userPosition = LatLng(lat, lon);
       });
+    }
+  }
+
+  void goToDetail(Fontanella f) async {
+    final needRefresh = await Navigator.pushNamed(
+      context,
+      '/dettagli_fontanella',
+      arguments: f,
+    );
+
+    if (needRefresh == true) {
+      fetchFontanelle();
     }
   }
 
@@ -69,13 +83,26 @@ class _MappeScreenState extends State<MappeScreen> {
     final url = '${dotenv.env['API_URL']}/fontanelle';
     final response = await http.get(Uri.parse(url));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && userPosition != null) {
       final List<dynamic> data = json.decode(response.body);
+
+      final userLat = userPosition!.latitude;
+      final userLon = userPosition!.longitude;
+
+      final parsedFontanelle = data.map((f) {
+        final lat = (f['lat'] as num).toDouble();
+        final lon = (f['lon'] as num).toDouble();
+        final dist = distance.as(
+          LengthUnit.Kilometer,
+          LatLng(userLat, userLon),
+          LatLng(lat, lon),
+        );
+
+        return Fontanella.fromJson(f, dist);
+      }).toList();
+
       setState(() {
-        fontanelleCoords =
-            data
-                .map((f) => LatLng(f['lat'].toDouble(), f['lon'].toDouble()))
-                .toList();
+        fontanelle = parsedFontanelle;
       });
     } else {
       print('Errore nel caricamento delle fontanelle');
@@ -111,18 +138,22 @@ class _MappeScreenState extends State<MappeScreen> {
                     size: 35,
                   ),
                 ),
-              ...fontanelleCoords.map(
-                (coord) => Marker(
+              ...fontanelle.map(
+                (f) => Marker(
                   width: 40,
                   height: 40,
-                  point: coord,
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.lightBlue,
-                    size: 30,
+                  point: LatLng(f.lat, f.lon),
+                  child: GestureDetector(
+                    onTap: () => goToDetail(f),
+                    child: const Icon(
+                      Icons.location_on,
+                      color: Colors.lightBlue,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),
+
             ],
           ),
         ],
