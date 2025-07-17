@@ -96,7 +96,7 @@ class _MappeScreenState extends State<MappeScreen> {
                 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
             subdomains: ['a', 'b', 'c'],
             userAgentPackageName:
-                'com.splash.app', // o il tuo vero package name
+                'com.splash.app',
           ),
           MarkerLayer(
             markers: [
