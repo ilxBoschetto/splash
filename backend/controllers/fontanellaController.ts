@@ -102,6 +102,29 @@ export const createFontanella = async (req: NextApiRequest, user: DecodedToken) 
     throw new Error('Missing or invalid fields');
   }
 
+  const trimmedName = name.trim();
+
+  const existingByName = await Fontanella.findOne({ name: { $regex: `^${trimmedName}$`, $options: 'i' } });
+  if (existingByName) {
+    throw new Error('Esiste già una fontanella con lo stesso nome');
+  }
+
+  const existingNearby = await Fontanella.findOne({
+    location: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [lon, lat], // attenzione: [lon, lat]
+        },
+        $maxDistance: 10, // metri
+      },
+    },
+  });
+
+  if (existingNearby) {
+    throw new Error('Esiste già una fontanella vicina (<10m)');
+  }
+
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
 
   const newFontanella = await Fontanella.create({
