@@ -92,8 +92,11 @@ class _MappeScreenState extends State<MappeScreen> {
         options: MapOptions(initialCenter: initialCenter, initialZoom: 14.0),
         children: [
           TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.app',
+            urlTemplate:
+                'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+            subdomains: ['a', 'b', 'c'],
+            userAgentPackageName:
+                'com.splash.app', // o il tuo vero package name
           ),
           MarkerLayer(
             markers: [
