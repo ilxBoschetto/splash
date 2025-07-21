@@ -78,6 +78,15 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     });
   }
 
+    String formatDistanza(double distanzaMetri) {
+      final distanzaKm = distanzaMetri / 1000;
+      if (distanzaMetri < 5000) {
+        return '$distanzaMetri m';
+      } else {
+        return '${distanzaKm.toStringAsFixed(2)} km';
+      }
+    }
+
   Future<void> _checkIfSaved(String uid) async {
     try {
       final response = await http.get(
@@ -270,39 +279,78 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child:
-                        fontanella.imageUrl != null
-                            ? Image.network(
-                              '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
-                              fit: BoxFit.cover,
-                            )
-                            : Image.asset(
-                              'assets/images/placeholder.png',
-                              fit: BoxFit.cover,
-                            ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Latitudine: ${fontanella.lat}'),
-                        Text('Longitudine: ${fontanella.lon}'),
-                        Text(
-                          'Distanza: ${fontanella.distanza.toStringAsFixed(2)} km',
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          width: 150,
+                          height: 150,
+                          child:
+                              fontanella.imageUrl != null
+                                  ? Image.network(
+                                    '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
+                                    fit: BoxFit.cover,
+                                  )
+                                  : Image.asset(
+                                    'assets/images/placeholder.png',
+                                    fit: BoxFit.cover,
+                                  ),
                         ),
-                        Text('Creato da: ${fontanella.createdBy?.name}'),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Distanza',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    Text(
+                      formatDistanza(fontanella.distanza),
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Latitudine',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    Text('${fontanella.lat}', style: TextStyle(fontSize: 20)),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Longitudine',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    Text('${fontanella.lon}', style: TextStyle(fontSize: 20)),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Creato da',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    Text(
+                      fontanella.createdBy?.name ?? '-',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
               ),
+
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -328,7 +376,11 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Icon(Icons.map, color: Colors.white),
+                  child: const Icon(
+                    Icons.map, 
+                    color: Colors.white,
+                    size: 28,
+                    ),
                 ),
               ),
             ],

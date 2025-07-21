@@ -93,8 +93,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
             data.map((jsonItem) {
               final lat = jsonItem['lat'].toDouble();
               final lon = jsonItem['lon'].toDouble();
-              final dist = distance.as(
-                LengthUnit.Kilometer,
+              double dist = distance.as(
+                LengthUnit.Meter,
                 LatLng(userLat, userLon),
                 LatLng(lat, lon),
               );
@@ -173,7 +173,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       builder:
           (context) => StatefulBuilder(
             builder: (context, setModalState) {
-
               void _updateMapCenterFromText() {
                 final lat = double.tryParse(_latController.text);
                 final lon = double.tryParse(_lonController.text);
@@ -182,7 +181,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   setModalState(() {
                     _mapCenter = newCenter;
                   });
-                  modalMapController.move(newCenter, modalMapController.camera.zoom); // 👈 centra la mappa
+                  modalMapController.move(
+                    newCenter,
+                    modalMapController.camera.zoom,
+                  ); // 👈 centra la mappa
                 }
               }
 
@@ -347,6 +349,15 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     );
   }
 
+  String formatDistanza(double distanzaMetri) {
+    final distanzaKm = distanzaMetri / 1000;
+    if (distanzaMetri < 5000) {
+      return '$distanzaMetri m';
+    } else {
+      return '${distanzaKm.toStringAsFixed(2)} km';
+    }
+  }
+
   void _submitFontanella() async {
     final nome = _nomeController.text.trim();
     final lat = double.tryParse(_latController.text.trim());
@@ -450,7 +461,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   final f = filteredFontanelle[index];
                   return ListTile(
                     title: Text(f.nome),
-                    subtitle: Text('${f.distanza.toStringAsFixed(2)} km'),
+                    subtitle: Text(formatDistanza(f.distanza)),
                     trailing:
                         f.isSaved
                             ? Icon(
