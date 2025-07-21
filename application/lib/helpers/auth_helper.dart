@@ -69,7 +69,7 @@ class AuthHelper {
   static Future<void> logout() async {
     UserSession().clearSession();
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('jwt_token');
+    await prefs.clear();
     isUserLogged = false;
   }
 }
