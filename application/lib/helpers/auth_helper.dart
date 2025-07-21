@@ -1,5 +1,4 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'user_session.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -19,12 +18,16 @@ class AuthHelper {
   static Future<void> checkLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
+    final userJson = prefs.getString('user_data');
+    print(userJson);
 
-    if (token != null && !JwtDecoder.isExpired(token)) {
-      isUserLogged = true;
-    } else {
+    if (token == null || userJson == null) {
+      await logout();
       isUserLogged = false;
-      AuthHelper.logout();
+    } else {
+      final user = json.decode(userJson);
+      UserSession().saveSession(token: token, userData: user);
+      isUserLogged = true;
     }
   }
 
@@ -44,12 +47,12 @@ class AuthHelper {
 
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', token);
+        await prefs.setString('user_data', json.encode(user));
         UserSession().saveSession(token: token, userData: user);
 
         isUserLogged = true;
         return LoginResult(success: true);
       } else {
-        // Errori con messaggio + codice dal backend
         return LoginResult(
           success: false,
           errorCode: data['code'],
@@ -57,7 +60,6 @@ class AuthHelper {
         );
       }
     } catch (e) {
-      // Errore di rete o altro imprevisto
       return LoginResult(
         success: false,
         errorCode: 'NETWORK_ERROR',
