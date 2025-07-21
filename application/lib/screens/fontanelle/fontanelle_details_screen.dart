@@ -291,13 +291,13 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           width: 150,
                           height: 150,
                           child:
-                              fontanella.imageUrl != null
+                              fontanella.imageUrl != ""
                                   ? Image.network(
                                     '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
                                     fit: BoxFit.cover,
                                   )
                                   : Image.asset(
-                                    'assets/images/placeholder.png',
+                                    'assets/icons/favicon.png',
                                     fit: BoxFit.cover,
                                   ),
                         ),
