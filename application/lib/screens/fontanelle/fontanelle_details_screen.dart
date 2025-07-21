@@ -25,12 +25,24 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   LatLng? userPosition;
 
   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    fontanella = ModalRoute.of(context)!.settings.arguments as Fontanella;
-    print('${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}');
-    _checkUserStatusAndFetch();
-    _checkUserStatus();
+
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args == null || args is! Fontanella) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pop();
+      });
+      return;
+    }
+
+    fontanella = args;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUserStatusAndFetch();
+      _checkUserStatus();
+    });
   }
 
   Future<void> loadCachedUserPosition() async {
@@ -198,10 +210,8 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   }
 
   Future<void> _openInMaps(double lat, double lon) async {
-    final userLat = userPosition?.latitude;
-    final userLon = userPosition?.longitude;
     final Uri url = Uri.parse(
-      'https://www.google.com/maps/dir/?api=1&origin=$userLat,$userLon&destination=$lat,$lon&travelmode=walking'
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lon&travelmode=walking',
     );
 
     if (await canLaunchUrl(url)) {
@@ -294,23 +304,32 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  try {
-                    await _openInMaps(fontanella.lat, fontanella.lon);
-                  } catch (e) {
-                    showMinimalNotification(
-                      context,
-                      message: e.toString(),
-                      duration: 2500,
-                      position: 'bottom',
-                      backgroundColor: Colors.red,
-                      textColor: Colors.white,
-                    );
-                  }
-                },
-                icon: const Icon(Icons.map),
-                label: const Text('Apri in Google Maps'),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    try {
+                      await _openInMaps(fontanella.lat, fontanella.lon);
+                    } catch (e) {
+                      showMinimalNotification(
+                        context,
+                        message: e.toString(),
+                        duration: 2500,
+                        position: 'bottom',
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightBlue,
+                    minimumSize: const Size.fromHeight(48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: const Icon(Icons.map, color: Colors.white),
+                ),
               ),
             ],
           ),
