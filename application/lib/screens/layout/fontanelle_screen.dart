@@ -473,6 +473,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   );
                 },
               ),
+
       floatingActionButton: FloatingActionButton(
         onPressed:
             isUserLogged

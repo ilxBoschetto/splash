@@ -43,9 +43,18 @@ class MyApp extends StatelessWidget {
         ),
       ),
       textTheme: const TextTheme(
-        bodyMedium: TextStyle(color: Colors.black87, fontSize: 16),
-        bodySmall: TextStyle(color: Colors.black54, fontSize: 14),
+        titleMedium: TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+        titleSmall: TextStyle(
+          color: Colors.black54,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
       ),
+
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -68,11 +77,14 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _buildDarkTheme() {
-    return ThemeData(
-      brightness: Brightness.dark,
-      fontFamily: 'Roboto',
-      primarySwatch: Colors.blue,
+    final base = ThemeData.dark();
+    return base.copyWith(
+      primaryColor: Colors.blue,
       scaffoldBackgroundColor: const Color(0xFF121212),
+      colorScheme: base.colorScheme.copyWith(
+        primary: Colors.blue,
+        secondary: Colors.blueAccent,
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF1B1B1B),
         foregroundColor: Colors.white,
@@ -85,22 +97,24 @@ class MyApp extends StatelessWidget {
         ),
       ),
       textTheme: const TextTheme(
+        titleMedium: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+        titleSmall: TextStyle(
+          color: Colors.white70,
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
         bodyMedium: TextStyle(color: Colors.white70, fontSize: 16),
         bodySmall: TextStyle(color: Color(0xFFA0A0A0), fontSize: 14),
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: const Color(0xFF1E1E1E),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blueAccent),
-        ),
-      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.blueAccent,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
