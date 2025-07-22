@@ -26,11 +26,18 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _buildLightTheme() {
-    return ThemeData(
+    final base = ThemeData(
       brightness: Brightness.light,
       fontFamily: 'Roboto',
-      primarySwatch: Colors.blue,
+    );
+    return base.copyWith(
+      brightness: Brightness.light,
+      primaryColor: Colors.blue,
       scaffoldBackgroundColor: const Color(0xFFF8F9FA),
+      colorScheme: base.colorScheme.copyWith(
+        primary: Colors.blue,
+        secondary: Colors.blueAccent,
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
@@ -53,8 +60,15 @@ class MyApp extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.normal,
         ),
+        bodyMedium: TextStyle(
+          color: Colors.black87,
+          fontSize: 16,
+        ),
+        bodySmall: TextStyle(
+          color: Colors.black54,
+          fontSize: 14,
+        ),
       ),
-
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -62,6 +76,8 @@ class MyApp extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Colors.blueAccent),
         ),
+        labelStyle: const TextStyle(color: Colors.black87),
+        hintStyle: const TextStyle(color: Colors.black45),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -110,7 +126,6 @@ class MyApp extends StatelessWidget {
         bodyMedium: TextStyle(color: Colors.white70, fontSize: 16),
         bodySmall: TextStyle(color: Color(0xFFA0A0A0), fontSize: 14),
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
