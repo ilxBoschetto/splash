@@ -1,3 +1,5 @@
+import 'package:application/helpers/auth_helper.dart';
+import 'package:application/helpers/user_session.dart';
 import 'package:flutter/material.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:http/http.dart' as http;
@@ -5,8 +7,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../helpers/user_session.dart';
-import '../../providers/auth_provider.dart';
 import 'package:application/screens/components/minimal_notification.dart';
 import 'dart:convert';
 

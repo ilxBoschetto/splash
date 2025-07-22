@@ -1,3 +1,4 @@
+import 'package:application/helpers/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +8,6 @@ import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
-import '../../providers/auth_provider.dart';
 import '../../helpers/user_session.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:application/screens/components/minimal_notification.dart';

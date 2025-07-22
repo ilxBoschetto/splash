@@ -1,4 +1,4 @@
-import 'package:application/providers/auth_provider.dart';
+import 'package:application/helpers/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:application/notifiers/theme_notifier.dart';

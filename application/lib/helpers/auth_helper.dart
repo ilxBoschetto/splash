@@ -19,7 +19,6 @@ class AuthHelper {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
     final userJson = prefs.getString('user_data');
-    print(userJson);
 
     if (token == null || userJson == null) {
       await logout();

@@ -1,7 +1,7 @@
+import 'package:application/helpers/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../providers/auth_provider.dart';
 import 'dart:convert';
 import '../../helpers/user_session.dart';
 
