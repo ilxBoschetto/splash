@@ -93,10 +93,6 @@ export const createFontanella = async (
   }: { name: string; lat: number; lon: number; imageUrl: string | null },
   user: DecodedToken
 ) => {
-  if (isNaN(lat) || isNaN(lon) ) {
-    throw new Error('Missing or invalid fields');
-  }
-
   const trimmedName = name.trim();
 
   const existingByName = await Fontanella.findOne({
