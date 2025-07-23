@@ -72,8 +72,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             }
 
             const name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
-            const lat = Array.isArray(fields.lat) ? fields.lat[0] : fields.lat;
-            const lon = Array.isArray(fields.lon) ? fields.lon[0] : fields.lon;
+            const lat = fields.lat;
+            const lon = fields.lon;
 
             const fontanella = await createFontanella(
               {
