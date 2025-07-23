@@ -71,19 +71,19 @@ class MyApp extends StatelessWidget {
         labelStyle: const TextStyle(color: Colors.black87),
         hintStyle: const TextStyle(color: Colors.black45),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.blueAccent, width: 1.2),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.blue, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.redAccent),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
@@ -147,19 +147,19 @@ class MyApp extends StatelessWidget {
         hintStyle: const TextStyle(color: Colors.white38),
         floatingLabelStyle: const TextStyle(color: Colors.blueAccent),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 1.2),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.lightBlue, width: 1.2),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blue, width: 2),
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.lightBlue, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.redAccent),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       ),
