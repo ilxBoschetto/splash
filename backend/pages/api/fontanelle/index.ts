@@ -52,7 +52,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         form.parse(req, async (err, fields, files) => {
           if (err) return res.status(500).json({ error: 'Errore durante il parsing' });
 
-          const { name, lat, lon } = fields;
           const imageFiles = files.image as formidable.File[];
           const imageFile = Array.isArray(imageFiles) ? imageFiles[0] : imageFiles;
           console.log(imageFile);
@@ -71,6 +70,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 fs.renameSync(imageFile.filepath, finalPath);
               }
             }
+
+            const name = Array.isArray(fields.name) ? fields.name[0] : fields.name;
+            const lat = Array.isArray(fields.lat) ? fields.lat[0] : fields.lat;
+            const lon = Array.isArray(fields.lon) ? fields.lon[0] : fields.lon;
 
             const fontanella = await createFontanella(
               {
