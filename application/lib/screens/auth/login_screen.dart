@@ -70,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextField(
+                          style: TextStyle(color: Colors.white),
                           controller: emailController,
                           decoration: const InputDecoration(labelText: 'Email'),
                         ),
@@ -186,12 +187,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   TextField(
+                    style: TextStyle(color: Colors.white),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(labelText: 'Email'),
                   ),
                   const SizedBox(height: 8),
                   TextField(
+                    style: TextStyle(color: Colors.white),
                     controller: passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(labelText: 'Password'),

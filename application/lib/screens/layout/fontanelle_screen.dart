@@ -207,6 +207,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextField(
+                        style: TextStyle(color: Colors.white),
                         controller: _nomeController,
                         decoration: const InputDecoration(
                           labelText: 'Nome fontanella',
@@ -217,6 +218,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                         children: [
                           Expanded(
                             child: TextField(
+                              style: TextStyle(color: Colors.white),
                               controller: _latController,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
@@ -230,6 +232,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: TextField(
+                              style: TextStyle(color: Colors.white),
                               controller: _lonController,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
@@ -421,7 +424,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     border: InputBorder.none,
                   ),
                   style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                    color: Colors.white,
                     fontSize: 20,
                   ),
                 )

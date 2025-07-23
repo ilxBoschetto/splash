@@ -26,10 +26,7 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData _buildLightTheme() {
-    final base = ThemeData(
-      brightness: Brightness.light,
-      fontFamily: 'Roboto',
-    );
+    final base = ThemeData(brightness: Brightness.light, fontFamily: 'Roboto');
     return base.copyWith(
       brightness: Brightness.light,
       primaryColor: Colors.blue,
@@ -50,6 +47,11 @@ class MyApp extends StatelessWidget {
         ),
       ),
       textTheme: const TextTheme(
+        headlineSmall: TextStyle(
+          color: Colors.black87,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
         titleMedium: TextStyle(
           color: Colors.black87,
           fontSize: 16,
@@ -60,25 +62,32 @@ class MyApp extends StatelessWidget {
           fontSize: 14,
           fontWeight: FontWeight.normal,
         ),
-        bodyMedium: TextStyle(
-          color: Colors.black87,
-          fontSize: 16,
-        ),
-        bodySmall: TextStyle(
-          color: Colors.black54,
-          fontSize: 14,
-        ),
+        bodyMedium: TextStyle(color: Colors.black87, fontSize: 16),
+        bodySmall: TextStyle(color: Colors.black54, fontSize: 14),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.blueAccent),
-        ),
         labelStyle: const TextStyle(color: Colors.black87),
         hintStyle: const TextStyle(color: Colors.black45),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 1.2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.redAccent),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
+        ),
       ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -113,6 +122,11 @@ class MyApp extends StatelessWidget {
         ),
       ),
       textTheme: const TextTheme(
+        headlineSmall: TextStyle(
+          color: Colors.white,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
         titleMedium: TextStyle(
           color: Colors.white,
           fontSize: 16,
@@ -126,6 +140,30 @@ class MyApp extends StatelessWidget {
         bodyMedium: TextStyle(color: Colors.white70, fontSize: 16),
         bodySmall: TextStyle(color: Color(0xFFA0A0A0), fontSize: 14),
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF1E1E1E),
+        labelStyle: const TextStyle(color: Colors.white70),
+        hintStyle: const TextStyle(color: Colors.white38),
+        floatingLabelStyle: const TextStyle(color: Colors.blueAccent),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blueAccent, width: 1.2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.blue, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.redAccent),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
+        ),
+      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,

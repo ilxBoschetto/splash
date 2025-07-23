@@ -114,17 +114,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   TextField(
+                    style: TextStyle(color: Colors.white),
                     controller: nameController,
                     decoration: const InputDecoration(labelText: 'Nome (*)'),
                   ),
                   const SizedBox(height: 12),
                   TextField(
+                    style: TextStyle(color: Colors.white),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(labelText: 'Email (*)'),
                   ),
                   const SizedBox(height: 12),
                   TextField(
+                    style: TextStyle(color: Colors.white),
                     controller: passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(
