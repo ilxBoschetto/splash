@@ -93,7 +93,7 @@ export const createFontanella = async (
   }: { name: string; lat: number; lon: number; imageUrl: string | null },
   user: DecodedToken
 ) => {
-  if (!name || isNaN(lat) || isNaN(lon) ) {
+  if (isNaN(lat) || isNaN(lon) ) {
     throw new Error('Missing or invalid fields');
   }
 
