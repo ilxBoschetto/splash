@@ -2,6 +2,7 @@ import 'package:application/helpers/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'dart:async';
@@ -378,25 +379,47 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       return;
     }
 
-    final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
-      headers: {
-        'Authorization': 'Bearer ${userSession.token}',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon}),
-    );
+    inviaFontanella(nome: nome, lat: lat, lon: lon, token: userSession.token, image: _selectedImage);
+  }
 
-    if (response.statusCode == 201) {
-      Navigator.of(context).pop();
-      await fetchFontanelle();
+  Future<void> inviaFontanella({
+    required String nome,
+    required double lat,
+    required double lon,
+    required String? token,
+    XFile? image,
+  }) async {
+    final uri = Uri.parse('${dotenv.env['API_URL']}/fontanelle');
+    final request =
+        http.MultipartRequest('POST', uri)
+          ..headers['Authorization'] = 'Bearer $token'
+          ..fields['name'] = nome
+          ..fields['lat'] = lat.toString()
+          ..fields['lon'] = lon.toString();
+
+    if (image != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 201) {
       showMinimalNotification(
         context,
-        message: 'Fontanella aggiunta!',
+        message: response.body,
         duration: 2500,
         position: 'top',
       );
     } else {
+      Navigator.of(context).pop();
+      await fetchFontanelle();
       showMinimalNotification(
         context,
         message: 'Fontanella aggiunta!',
@@ -423,10 +446,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     hintStyle: TextStyle(color: Theme.of(context).hintColor),
                     border: InputBorder.none,
                   ),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 20),
                 )
                 : Text(
                   activeFilter == 'saved_fontanelle'

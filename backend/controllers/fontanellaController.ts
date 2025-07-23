@@ -84,27 +84,24 @@ export const getFontanelle = async (req: NextApiRequest, user: DecodedToken | nu
 
 //#region POST /fontanelle
 
-/**
- * Crea una nuova fontanella. Richiede:
- * - name: string
- * - lat: number
- * - lon: number
- * Viene assegnato il creatore (`createdBy`) tramite user.userId
- */
-export const createFontanella = async (req: NextApiRequest, user: DecodedToken) => {
-  const { name, lat, lon } = req.body;
-
-  if (
-    !name || typeof name !== 'string' || name.trim() === '' ||
-    typeof lat !== 'number' || isNaN(lat) ||
-    typeof lon !== 'number' || isNaN(lon)
-  ) {
+export const createFontanella = async (
+  {
+    name,
+    lat,
+    lon,
+    imageUrl,
+  }: { name: string; lat: number; lon: number; imageUrl: string | null },
+  user: DecodedToken
+) => {
+  if (!name.toString() || isNaN(lat) || isNaN(lon) ) {
     throw new Error('Missing or invalid fields');
   }
 
-  const trimmedName = name.trim();
+  const trimmedName = name.toString().trim();
 
-  const existingByName = await Fontanella.findOne({ name: { $regex: `^${trimmedName}$`, $options: 'i' } });
+  const existingByName = await Fontanella.findOne({
+    name: { $regex: `^${trimmedName}$`, $options: 'i' },
+  });
   if (existingByName) {
     throw new Error('Esiste già una fontanella con lo stesso nome');
   }
@@ -114,9 +111,9 @@ export const createFontanella = async (req: NextApiRequest, user: DecodedToken) 
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: [lon, lat], // attenzione: [lon, lat]
+          coordinates: [lon, lat],
         },
-        $maxDistance: 10, // metri
+        $maxDistance: 10,
       },
     },
   });
@@ -128,13 +125,14 @@ export const createFontanella = async (req: NextApiRequest, user: DecodedToken) 
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
 
   const newFontanella = await Fontanella.create({
-    name: name.trim(),
+    name: trimmedName,
     lat,
     lon,
     location: {
       type: 'Point',
       coordinates: [lon, lat],
     },
+    imageUrl,
     createdBy: userObjectId,
   });
 

@@ -3,6 +3,16 @@ import dbConnect from '@lib/mongodb';
 import { verifyToken } from '@lib/auth';
 import { getFontanelle, createFontanella } from '@controllers/fontanellaController';
 import withCors from '@lib/withCors';
+import formidable from 'formidable';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 //#region Handler principale per /api/fontanelle
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -33,10 +43,51 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           return res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
         }
 
-        // TODO: make images work
+        const form = formidable({
+          multiples: false,
+          uploadDir: './public/uploads',
+          keepExtensions: true,
+        });
 
-        const newFontanella = await createFontanella(req, user);
-        return res.status(201).json(newFontanella);
+        form.parse(req, async (err, fields, files) => {
+          if (err) return res.status(500).json({ error: 'Errore durante il parsing' });
+
+          const { name, lat, lon } = fields;
+          const imageFiles = files.image as formidable.File[];
+          const imageFile = Array.isArray(imageFiles) ? imageFiles[0] : imageFiles;
+          console.log(imageFile);
+
+          let finalFilename: string | null = null;
+          try {
+            if (imageFile) {
+              const originalFilename = imageFile.originalFilename || 'immagine.jpg';
+              const filepath = imageFile.filepath || '';
+              if (typeof filepath === 'string' && filepath !== '') {
+                const ext = path.extname(imageFile.originalFilename);
+                const randomName = crypto.randomBytes(16).toString('hex');
+                finalFilename = `${randomName}${ext}`;
+
+                const finalPath = path.join(process.cwd(), 'public/uploads', finalFilename);
+                fs.renameSync(imageFile.filepath, finalPath);
+              }
+            }
+
+            const fontanella = await createFontanella(
+              {
+                name: name as string,
+                lat: parseFloat(lat as string),
+                lon: parseFloat(lon as string),
+                imageUrl: finalFilename,
+              },
+              user
+            );
+
+            res.status(201).json(fontanella);
+          } catch (e: any) {
+            res.status(400).json({ error: e.message });
+          }
+        });
+        break;
       }
       //#endregion
 
