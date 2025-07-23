@@ -93,11 +93,11 @@ export const createFontanella = async (
   }: { name: string; lat: number; lon: number; imageUrl: string | null },
   user: DecodedToken
 ) => {
-  if (!name.toString() || isNaN(lat) || isNaN(lon) ) {
+  if (!name || isNaN(lat) || isNaN(lon) ) {
     throw new Error('Missing or invalid fields');
   }
 
-  const trimmedName = name.toString().trim();
+  const trimmedName = name.trim();
 
   const existingByName = await Fontanella.findOne({
     name: { $regex: `^${trimmedName}$`, $options: 'i' },
