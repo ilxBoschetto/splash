@@ -1,3 +1,4 @@
+import 'package:application/components/loaders.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -18,6 +19,7 @@ class MappeScreen extends StatefulWidget {
 }
 
 class _MappeScreenState extends State<MappeScreen> {
+  bool isLoading = true;
   final MapController _mapController = MapController();
   List<Fontanella> fontanelle = [];
   LatLng? userPosition;
@@ -60,8 +62,10 @@ class _MappeScreenState extends State<MappeScreen> {
   }
 
   Future<void> fetchData() async {
+    setState(() => isLoading = true);
     await fetchUserPosition();
     await fetchFontanelle();
+    setState(() => isLoading = false);
   }
 
   Future<void> fetchUserPosition() async {
@@ -114,7 +118,19 @@ class _MappeScreenState extends State<MappeScreen> {
     final initialCenter =
         userPosition ?? const LatLng(45.72064772402749, 11.309933083088417);
     return Scaffold(
-      body: FlutterMap(
+      body: isLoading
+      ? const Center(
+            child: SizedBox(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  BouncingDotsLoader(),
+                ],
+              ),
+            ),
+          )
+      : FlutterMap(
         mapController: _mapController,
         options: MapOptions(initialCenter: initialCenter, initialZoom: 14.0),
         children: [
