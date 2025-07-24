@@ -11,6 +11,19 @@ const nextConfig = {
     config.resolve.alias['@helpers'] = path.resolve('./helpers');
     return config;
   },
+  async headers() {
+    return [
+      {
+        source: '/uploads/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
