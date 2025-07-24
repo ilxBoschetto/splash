@@ -93,6 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
+            color: Theme.of(context).colorScheme.surface,
             elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(24),

@@ -163,6 +163,7 @@ class _DashboardCard extends StatelessWidget {
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 3,
+        color: Theme.of(context).colorScheme.surface,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
           child: Row(
@@ -214,6 +215,7 @@ class _LoginPrompt extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 4,
+      color: Theme.of(context).colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

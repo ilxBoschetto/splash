@@ -35,6 +35,7 @@ class CommunityScreen extends StatelessWidget {
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            color: Theme.of(context).colorScheme.surface,
             child: ListTile(
               onTap: () => _openDiscordInvite(context),
               leading: const Icon(Icons.discord, color: Colors.indigo),

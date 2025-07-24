@@ -85,6 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  color: Theme.of(context).colorScheme.surface,
                   elevation: 4,
                   child: Column(
                     children: [

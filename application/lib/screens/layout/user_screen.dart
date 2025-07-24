@@ -48,106 +48,97 @@ class _UserScreenState extends State<UserScreen> {
         children: [
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color.fromARGB(
-                    255,
-                    97,
-                    96,
-                    96,
-                  ).withAlpha((0.1 * 255).round()),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildMenuItem(
-                  context,
-                  label: 'Profilo',
-                  icon: Icons.person,
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      isUserLogged ? '/profile' : '/login',
-                    );
-                  },
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context,
-                  label: 'Impostazioni',
-                  icon: Icons.settings,
-                  onTap: () => Navigator.pushNamed(context, '/settings'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context,
-                  label: 'Community',
-                  icon: Icons.people,
-                  onTap: () => Navigator.pushNamed(context, '/community'),
-                ),
-                _buildDivider(),
-                _buildMenuItem(
-                  context,
-                  label: 'Informazioni Applicazione',
-                  icon: Icons.info_outline,
-                  onTap: () => Navigator.pushNamed(context, '/app_information'),
-                ),
-                if (isUserLogged) ...[
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  _buildMenuItem(
+                    context,
+                    label: 'Profilo',
+                    icon: Icons.person,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        isUserLogged ? '/profile' : '/login',
+                      );
+                    },
+                  ),
                   _buildDivider(),
                   _buildMenuItem(
                     context,
-                    label: 'Logout',
-                    icon: Icons.logout,
-                    textColor: Colors.red,
-                    onTap: () async {
-                      final confirmed = await showDialog<bool>(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              title: const Text('Conferma Logout'),
-                              content: const Text(
-                                'Sei sicuro di voler effettuare il logout?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.of(context).pop(false),
-                                  child: const Text('Annulla'),
-                                ),
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.of(context).pop(true),
-                                  child: const Text(
-                                    'Logout',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            ),
-                      );
-
-                      if (confirmed == true) {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.remove('jwt_token');
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/',
-                          (route) => false,
-                        );
-                      }
-                    },
+                    label: 'Impostazioni',
+                    icon: Icons.settings,
+                    onTap: () => Navigator.pushNamed(context, '/settings'),
                   ),
+                  _buildDivider(),
+                  _buildMenuItem(
+                    context,
+                    label: 'Community',
+                    icon: Icons.people,
+                    onTap: () => Navigator.pushNamed(context, '/community'),
+                  ),
+                  _buildDivider(),
+                  _buildMenuItem(
+                    context,
+                    label: 'Informazioni Applicazione',
+                    icon: Icons.info_outline,
+                    onTap:
+                        () => Navigator.pushNamed(context, '/app_information'),
+                  ),
+                  if (isUserLogged) ...[
+                    _buildDivider(),
+                    _buildMenuItem(
+                      context,
+                      label: 'Logout',
+                      icon: Icons.logout,
+                      textColor: Colors.red,
+                      onTap: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder:
+                              (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                title: const Text('Conferma Logout'),
+                                content: const Text(
+                                  'Sei sicuro di voler effettuare il logout?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(false),
+                                    child: const Text('Annulla'),
+                                  ),
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(true),
+                                    child: const Text(
+                                      'Logout',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                        );
+
+                        if (confirmed == true) {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.remove('jwt_token');
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/',
+                            (route) => false,
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ],
@@ -194,6 +185,7 @@ class MenuItemCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color: Theme.of(context).colorScheme.surface,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
