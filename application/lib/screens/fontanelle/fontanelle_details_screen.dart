@@ -293,7 +293,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           child:
                               fontanella.imageUrl != ""
                                   ? Image.network(
-                                    '${dotenv.env['API_URI']}/uploads/${fontanella.imageUrl}',
+                                    '${dotenv.env['API_URI']}/api/uploads/${fontanella.imageUrl}',
                                     fit: BoxFit.cover,
                                   )
                                   : Image.asset(
