@@ -67,7 +67,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
                 finalFilename = `${randomName}${ext}`;
 
                 const finalPath = path.join(process.cwd(), 'public/uploads', finalFilename);
-                fs.renameSync(imageFile.filepath, finalPath);
+                fs.copyFileSync(imageFile.filepath, finalPath);
+                fs.unlinkSync(imageFile.filepath);
               }
             }
 
