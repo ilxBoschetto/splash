@@ -50,6 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           message: json.decode(response.body)['message'],
           duration: 2500,
           position: 'bottom',
+          backgroundColor: Colors.green,
         );
         Navigator.pushReplacementNamed(context, '/login');
       } else {

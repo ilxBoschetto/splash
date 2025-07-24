@@ -126,6 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
         message: 'Controlla l\'email per recuperare una nuova password!',
         duration: 2500,
         position: 'bottom',
+        backgroundColor: Colors.green,
       );
     } else {
       Navigator.of(context).pop();
@@ -134,6 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
         message: 'Qualcosa è andato storto',
         duration: 2500,
         position: 'bottom',
+         backgroundColor: Colors.orange,
       );
       throw Exception('Errore ${response.statusCode}');
     }

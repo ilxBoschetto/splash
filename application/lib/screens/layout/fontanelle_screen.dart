@@ -415,7 +415,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         context,
         message: response.body,
         duration: 2500,
-        position: 'top',
+        position: 'bottom',
+        backgroundColor: Colors.red,
       );
     } else {
       Navigator.of(context).pop();
@@ -424,7 +425,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         context,
         message: 'Fontanella aggiunta!',
         duration: 2500,
-        position: 'top',
+        position: 'bottom',
+        backgroundColor: Colors.green,
       );
     }
   }
