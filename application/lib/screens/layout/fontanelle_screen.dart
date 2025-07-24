@@ -410,7 +410,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
-    if (response.statusCode != 201) {
+    if (response.statusCode != 200) {
       showMinimalNotification(
         context,
         message: response.body,

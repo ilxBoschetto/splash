@@ -86,7 +86,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               user
             );
 
-            res.status(201).json(fontanella);
+            res.status(200).json(fontanella);
           } catch (e: any) {
             res.status(400).json({ error: e.message });
           }
