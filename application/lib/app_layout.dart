@@ -3,6 +3,7 @@ import 'screens/layout/dashboard_screen.dart';
 import 'screens/layout/fontanelle_screen.dart';
 import 'screens/layout/mappe_screen.dart';
 import 'screens/layout/user_screen.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 
 class AppLayout extends StatefulWidget {
   const AppLayout({super.key});
@@ -30,62 +31,40 @@ class _AppLayoutState extends State<AppLayout> {
           final offsetAnimation = Tween<Offset>(
             begin: const Offset(0.1, 0),
             end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
-          ));
+          ).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeInBack),
+          );
 
           return FadeTransition(
             opacity: animation,
-            child: SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            ),
+            child: SlideTransition(position: offsetAnimation, child: child),
           );
         },
         child: _pages[_selectedIndex],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 8,
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          if (_selectedIndex != index) {
+      bottomNavigationBar: PhysicalModel(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 20,
+        child: ConvexAppBar(
+          style: TabStyle.react,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          color: Colors.grey.shade500,
+          activeColor: Theme.of(context).colorScheme.primary,
+          curveSize: 90,
+          height: 60,
+          initialActiveIndex: _selectedIndex,
+          onTap: (int index) {
             setState(() {
               _selectedIndex = index;
             });
-          }
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey.shade500,
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+          },
+          items: const [
+            TabItem(icon: Icons.dashboard_outlined, title: 'Dashboard'),
+            TabItem(icon: Icons.water_drop_outlined, title: 'Fontanelle'),
+            TabItem(icon: Icons.map_outlined, title: 'Mappe'),
+            TabItem(icon: Icons.account_circle_outlined, title: 'Utente'),
+          ],
         ),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 12,
-        ),
-        selectedIconTheme: const IconThemeData(size: 26),
-        unselectedIconTheme: const IconThemeData(size: 22),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.water_drop_outlined),
-            label: 'Fontanelle',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            label: 'Mappe',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined),
-            label: 'Utente',
-          ),
-        ],
       ),
     );
   }

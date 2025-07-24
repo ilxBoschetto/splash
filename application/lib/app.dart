@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
       colorScheme: base.colorScheme.copyWith(
         primary: Colors.blue,
         secondary: Colors.blueAccent,
+        surface: const Color.fromARGB(255, 231, 230, 230)
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.blue,
@@ -109,6 +110,7 @@ class MyApp extends StatelessWidget {
       colorScheme: base.colorScheme.copyWith(
         primary: Colors.blue,
         secondary: Colors.blueAccent,
+        surface: const Color(0xFF1E1E1E),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF1B1B1B),
