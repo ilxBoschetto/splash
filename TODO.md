@@ -1,10 +1,10 @@
 ## TODO
 
-- [ ] Aggiungere foto alla creazione e visualizzazione fontanelle
+- [ ] Aggiungere la possibilità di votare le fontanelle
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
+- [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
-- [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Aggiungere refresh token
 - [ ] Aggiungere un rate limit alle richieste
@@ -24,3 +24,4 @@
 - [X] Autospostamento mappa in base alla posizione dell'utente
 - [x] Aggiungere SMTP per invio di email per registrazione e password dimenticata
 - [X] Aggiungere marker sulla mappa cliccabili
+- [x] Aggiungere foto alla creazione e visualizzazione fontanelle
