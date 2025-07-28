@@ -1,10 +1,17 @@
 ## TODO
 
+- [ ] Aggiungere checkbox per privacy e termini di servizio
+- [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere la possibilità di votare le fontanelle
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
+
+## IMPROVEMENTS
+
+- [ ] Tasto visualizzazione password quando si scrive
+- [ ] Riproporre all'utente di accettare l'accesso alla posizione se declina
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Aggiungere refresh token
 - [ ] Aggiungere un rate limit alle richieste
