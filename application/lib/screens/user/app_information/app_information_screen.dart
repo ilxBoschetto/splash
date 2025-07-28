@@ -136,7 +136,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                         child: GestureDetector(
                           onTap: () async {
                             final uri = Uri.parse(
-                              '${dotenv.env['API_URL']}/privacy-policy',
+                              '${dotenv.env['API_URI']}/privacy-policy',
                             );
                             if (await canLaunchUrl(uri)) {
                               await launchUrl(
