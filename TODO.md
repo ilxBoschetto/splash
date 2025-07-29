@@ -1,6 +1,6 @@
 ## TODO
 
-- [ ] Salvare la theme in sessione utente
+
 - [ ] Aggiungere la possibilità di votare le fontanelle
 - [ ] Implementare multilingua
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
@@ -15,6 +15,7 @@
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] Riproporre all'utente di accettare l'accesso alla posizione se declina
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
+- [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere l'edit delle fontanelle se utente Admin
 - [ ] Aggiungere refresh token
 - [ ] Aggiungere un rate limit alle richieste

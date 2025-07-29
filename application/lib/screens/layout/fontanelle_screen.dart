@@ -42,6 +42,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   bool isLoading = true;
   bool _isSearching = false;
+  bool _isAdding = false;
 
   @override
   void initState() {
@@ -513,15 +514,35 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
       floatingActionButton: FloatingActionButton(
         onPressed:
-            isUserLogged
+            isUserLogged && !_isAdding
                 ? () async {
-                  final position = await Geolocator.getCurrentPosition();
-                  _showAddFontanellaSheet(position);
+                  setState(() {
+                    _isAdding = true;
+                  });
+
+                  try {
+                    final position = await Geolocator.getCurrentPosition();
+                    _showAddFontanellaSheet(position);
+                  } finally {
+                    setState(() {
+                      _isAdding = false;
+                    });
+                  }
                 }
                 : null,
         backgroundColor:
             isUserLogged ? Theme.of(context).colorScheme.primary : Colors.grey,
-        child: const Icon(Icons.add, size: 28),
+        child:
+            _isAdding
+                ? SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2.5,
+                  ),
+                )
+                : const Icon(Icons.add, size: 28),
       ),
     );
   }
