@@ -6,6 +6,7 @@
 - [ ] Aggiungere la possibilità di votare le fontanelle
 - [ ] Implementare multilingua
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
+- [ ] Aggiungere segnalazioni fontanella (con frasi già preimpostate)
 - [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [ ] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
