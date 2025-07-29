@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Aggiungere checkbox per privacy e termini di servizio
 - [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere la possibilità di votare le fontanelle
 - [ ] Implementare multilingua
@@ -32,8 +31,9 @@
 - [x] Creare discord community e associarlo all'app
 - [x] Aggiunta possibilità aggiunta/eliminazione fontanella preferita
 - [x] Aggiungere sezione fontanelle preferite
-- [X] Autospostamento mappa in base alla posizione dell'utente
+- [x] Autospostamento mappa in base alla posizione dell'utente
 - [x] Aggiungere SMTP per invio di email per registrazione e password dimenticata
-- [X] Aggiungere marker sulla mappa cliccabili
+- [x] Aggiungere marker sulla mappa cliccabili
 - [x] Aggiungere foto alla creazione e visualizzazione fontanelle
 - [x] Migliorare scrittura coordinate (basta impostare un minimo di lunghezza di coordiante) (l'app crusha)
+- [x] Aggiungere checkbox per privacy e termini di servizio
