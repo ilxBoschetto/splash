@@ -10,6 +10,7 @@
 
 ## IMPROVEMENTS
 
+- [ ] Aggiungere salvare in cache le info dashboard (per evitare che ogni volta che si clicchi su dashboard mostri tutto a 0 per poco)
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] Riproporre all'utente di accettare l'accesso alla posizione se declina
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
