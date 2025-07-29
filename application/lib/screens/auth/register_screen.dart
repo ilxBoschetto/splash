@@ -182,7 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         ..onTap = () {
                                           launchUrl(
                                             Uri.parse(
-                                              '${dotenv.env['API_URI']}/termsofservice',
+                                              '${dotenv.env['API_URI']}/terms-of-service',
                                             ),
                                           );
                                         },
