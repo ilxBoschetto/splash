@@ -1,9 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:application/screens/components/minimal_notification.dart';
 import 'package:application/components/loaders.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,6 +15,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  bool acceptedTerms = false;
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -31,6 +34,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       setState(() => error = 'Compila tutti i campi');
+      return;
+    }
+
+    if (!acceptedTerms) {
+      setState(() => error = 'Accetta termini di servizo e privacy policy');
       return;
     }
 
@@ -118,7 +126,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextField(
                     style: TextStyle(color: Colors.white),
                     controller: nameController,
-                    decoration: const InputDecoration(labelText: 'Username (*)'),
+                    decoration: const InputDecoration(
+                      labelText: 'Username (*)',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
@@ -137,6 +147,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: acceptedTerms,
+                        onChanged: (value) {
+                          setState(() {
+                            acceptedTerms = value ?? false;
+                          });
+                        },
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              acceptedTerms = !acceptedTerms;
+                            });
+                          },
+                          child: RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              children: [
+                                const TextSpan(
+                                  text: 'Continuando, accetti i nostri ',
+                                ),
+                                TextSpan(
+                                  text: 'Termini di Servizio',
+                                  style: const TextStyle(color: Colors.blue),
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap = () {
+                                          launchUrl(
+                                            Uri.parse(
+                                              '${dotenv.env['API_URI']}/termsofservice',
+                                            ),
+                                          );
+                                        },
+                                ),
+                                const TextSpan(text: ' e la nostra '),
+                                TextSpan(
+                                  text: 'Privacy Policy',
+                                  style: const TextStyle(color: Colors.blue),
+                                  recognizer:
+                                      TapGestureRecognizer()
+                                        ..onTap = () {
+                                          launchUrl(
+                                            Uri.parse(
+                                              '${dotenv.env['API_URI']}/privacy-policy',
+                                            ),
+                                          );
+                                        },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
@@ -146,7 +218,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                      onPressed: loading ? null : register,
+                      onPressed: loading || !acceptedTerms ? null : register,
                       child:
                           loading
                               ? const BouncingDotsLoader()
