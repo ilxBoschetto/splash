@@ -174,25 +174,31 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       builder:
           (context) => StatefulBuilder(
             builder: (context, setModalState) {
-              void _updateMapCenterFromText() {
-                final lat = double.tryParse(_latController.text);
-                final lon = double.tryParse(_lonController.text);
-                if (lat != null && lon != null) {
-                  final newCenter = LatLng(lat, lon);
-                  setModalState(() {
-                    _mapCenter = newCenter;
-                  });
-                  modalMapController.move(
-                    newCenter,
-                    modalMapController.camera.zoom,
-                  ); // 👈 centra la mappa
+              void updateMapCenterFromText() {
+                final latText = _latController.text;
+                final lonText = _lonController.text;
+
+                if (latText.length >= 6 && lonText.length >= 6) {
+                  final lat = double.tryParse(latText);
+                  final lon = double.tryParse(lonText);
+
+                  if (lat != null && lon != null) {
+                    final newCenter = LatLng(lat, lon);
+                    setModalState(() {
+                      _mapCenter = newCenter;
+                    });
+                    modalMapController.move(
+                      newCenter,
+                      modalMapController.camera.zoom,
+                    );
+                  }
                 }
               }
 
               bool listenersAdded = false;
               if (!listenersAdded) {
-                _latController.addListener(_updateMapCenterFromText);
-                _lonController.addListener(_updateMapCenterFromText);
+                _latController.addListener(updateMapCenterFromText);
+                _lonController.addListener(updateMapCenterFromText);
                 listenersAdded = true;
               }
 
@@ -379,7 +385,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       return;
     }
 
-    inviaFontanella(nome: nome, lat: lat, lon: lon, token: userSession.token, image: _selectedImage);
+    inviaFontanella(
+      nome: nome,
+      lat: lat,
+      lon: lon,
+      token: userSession.token,
+      image: _selectedImage,
+    );
   }
 
   Future<void> inviaFontanella({
