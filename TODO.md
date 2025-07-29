@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] Migliorare scrittura coordinate (basta impostare un minimo di lunghezza di coordiante) (l'app crusha)
 - [ ] Aggiungere checkbox per privacy e termini di servizio
 - [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere la possibilità di votare le fontanelle
@@ -15,6 +16,7 @@
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] Riproporre all'utente di accettare l'accesso alla posizione se declina
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
+- [ ] Aggiungere l'edit delle fontanelle se utente Admin
 - [ ] Aggiungere refresh token
 - [ ] Aggiungere un rate limit alle richieste
 
