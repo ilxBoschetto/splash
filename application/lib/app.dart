@@ -3,12 +3,13 @@ import 'package:application/notifiers/theme_notifier.dart';
 import 'routes.dart';
 
 class MyApp extends StatelessWidget {
-  final ThemeNotifier themeNotifier = ThemeNotifier();
+  final ThemeNotifier themeNotifier;
 
-  MyApp({super.key});
+  MyApp({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
+    print(themeNotifier);
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, currentThemeMode, _) {

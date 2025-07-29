@@ -26,33 +26,27 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
+          /*
           RadioListTile<ThemeMode>(
             title: const Text("Tema Chiaro"),
             secondary: const Icon(Icons.light_mode),
             value: ThemeMode.light,
             groupValue: themeNotifier.value,
             onChanged: (mode) {
-              if (mode != null) themeNotifier.setTheme(mode);
+              if (mode != null) themeNotifier.setTheme(ThemeMode.light);
             },
           ),
+          */
           RadioListTile<ThemeMode>(
             title: const Text("Tema Scuro"),
             secondary: const Icon(Icons.dark_mode),
             value: ThemeMode.dark,
             groupValue: themeNotifier.value,
             onChanged: (mode) {
-              if (mode != null) themeNotifier.setTheme(mode);
+              if (mode != null) themeNotifier.setTheme(ThemeMode.dark);
             },
           ),
-          RadioListTile<ThemeMode>(
-            title: const Text("Sistema"),
-            secondary: const Icon(Icons.settings),
-            value: ThemeMode.system,
-            groupValue: themeNotifier.value,
-            onChanged: (mode) {
-              if (mode != null) themeNotifier.setTheme(mode);
-            },
-          ),
+          
         ],
       ),
     );
