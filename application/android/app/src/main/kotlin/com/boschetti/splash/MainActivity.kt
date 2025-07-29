@@ -1,4 +1,4 @@
-package com.example.application
+package com.boschetti.splash
 
 import io.flutter.embedding.android.FlutterActivity
 
