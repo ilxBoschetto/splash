@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Migliorare scrittura coordinate (basta impostare un minimo di lunghezza di coordiante) (l'app crusha)
 - [ ] Aggiungere checkbox per privacy e termini di servizio
 - [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere la possibilità di votare le fontanelle
@@ -37,3 +36,4 @@
 - [x] Aggiungere SMTP per invio di email per registrazione e password dimenticata
 - [X] Aggiungere marker sulla mappa cliccabili
 - [x] Aggiungere foto alla creazione e visualizzazione fontanelle
+- [x] Migliorare scrittura coordinate (basta impostare un minimo di lunghezza di coordiante) (l'app crusha)
