@@ -306,7 +306,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                                 urlTemplate:
                                     'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
                                 subdomains: ['a', 'b', 'c'],
-                                userAgentPackageName: 'com.splash.app',
+                                userAgentPackageName: 'com.boschetti.splash',
                               ),
                               MarkerLayer(
                                 markers: [
