@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import '../../helpers/user_session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -38,6 +39,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadDashboardStats() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+
+      setState(() {
+        totalFontanelle = prefs.getInt('totalFontanelle') ?? 0;
+        fontanelleOggi = prefs.getInt('fontanelleOggi') ?? 0;
+        fontanelleUser = prefs.getInt('fontanelleUser') ?? 0;
+      });
       final userSession = UserSession();
       final res1 = await http.get(
         Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'),
@@ -54,15 +62,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
         if (res3.statusCode == 200) {
           fontanelleUser = json.decode(res3.body)['count'];
+          prefs.setInt('fontanelleUser', fontanelleUser);
         }
       }
 
       if (res1.statusCode == 200) {
         totalFontanelle = json.decode(res1.body)['count'];
+        prefs.setInt('totalFontanelle', totalFontanelle);
       }
 
       if (res2.statusCode == 200) {
         fontanelleOggi = json.decode(res2.body)['count'];
+        prefs.setInt('fontanelleUser', fontanelleUser);
       }
 
       setState(() {});
