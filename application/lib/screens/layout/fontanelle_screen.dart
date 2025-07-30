@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
+import '../../helpers/location_helper.dart';
 import '../../helpers/user_session.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:application/screens/components/minimal_notification.dart';
@@ -81,7 +82,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       isLoading = true;
     });
 
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final serviceEnabled = await LocationHelper.isServiceEnabled();
     if (!serviceEnabled) {
       setState(() {
         isLocationEnabled = false;
@@ -90,23 +91,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       return;
     }
 
-    await _requestPermissionAndLoadFontanelle();
-  }
-
-  Future<void> _requestPermissionAndLoadFontanelle() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        setState(() {
-          isLocationEnabled = false;
-          isLoading = false;
-        });
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
+    final hasPermission = await LocationHelper.checkAndRequestPermission();
+    if (!hasPermission) {
       setState(() {
         isLocationEnabled = false;
         isLoading = false;
@@ -119,7 +105,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   Future<void> fetchFontanelle() async {
     try {
-      final position = await Geolocator.getCurrentPosition();
+      final position = await LocationHelper.getCurrentPosition();
+      if (position == null) {
+        return;
+      }
       final userLat = position.latitude;
       final userLon = position.longitude;
       final distance = Distance();
@@ -556,7 +545,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                       icon: const Icon(Icons.settings),
                       label: const Text('Apri impostazioni'),
                       onPressed: () {
-                        Geolocator.openLocationSettings();
+                        LocationHelper.openLocationSettings();
                       },
                     ),
                   ],
@@ -590,7 +579,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   });
 
                   try {
-                    final position = await Geolocator.getCurrentPosition();
+                    final position = await LocationHelper.getCurrentPosition();
+                    if (position == null) {
+                      return;
+                    }
                     _showAddFontanellaSheet(position);
                   } finally {
                     setState(() {
