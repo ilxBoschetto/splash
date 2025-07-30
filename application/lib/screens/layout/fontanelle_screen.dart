@@ -41,13 +41,14 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   final userSession = UserSession();
 
   bool isLoading = true;
+  bool isLocationEnabled = true;
   bool _isSearching = false;
   bool _isAdding = false;
 
   @override
   void initState() {
     super.initState();
-    fetchFontanelle();
+    _checkLocationAndLoad();
     _checkUserStatus();
     _searchController.addListener(() => filterFontanelle());
   }
@@ -73,6 +74,47 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 .toList();
       }
     });
+  }
+
+  Future<void> _checkLocationAndLoad() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        isLocationEnabled = false;
+        isLoading = false;
+      });
+      return;
+    }
+
+    await _requestPermissionAndLoadFontanelle();
+  }
+
+  Future<void> _requestPermissionAndLoadFontanelle() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          isLocationEnabled = false;
+          isLoading = false;
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      setState(() {
+        isLocationEnabled = false;
+        isLoading = false;
+      });
+      return;
+    }
+
+    await fetchFontanelle();
   }
 
   Future<void> fetchFontanelle() async {
@@ -493,6 +535,33 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
+              : !isLocationEnabled
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.location_off, size: 64, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Posizione disattivata',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Per visualizzare le fontanelle vicine,\nattiva la posizione del dispositivo.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.settings),
+                      label: const Text('Apri impostazioni'),
+                      onPressed: () {
+                        Geolocator.openLocationSettings();
+                      },
+                    ),
+                  ],
+                ),
+              )
               : ListView.builder(
                 itemCount: filteredFontanelle.length,
                 itemBuilder: (context, index) {
