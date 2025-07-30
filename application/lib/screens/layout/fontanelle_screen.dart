@@ -391,15 +391,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     );
   }
 
-  String formatDistanza(double distanzaMetri) {
-    final distanzaKm = distanzaMetri / 1000;
-    if (distanzaMetri < 5000) {
-      return '$distanzaMetri m';
-    } else {
-      return '${distanzaKm.toStringAsFixed(2)} km';
-    }
-  }
-
   void _submitFontanella() async {
     final nome = _nomeController.text.trim();
     final lat = double.tryParse(_latController.text.trim());
@@ -557,7 +548,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   final f = filteredFontanelle[index];
                   return ListTile(
                     title: Text(f.nome),
-                    subtitle: Text(formatDistanza(f.distanza)),
+                    subtitle: Text(LocationHelper.formatDistanza(f.distanza)),
                     trailing:
                         f.isSaved
                             ? Icon(

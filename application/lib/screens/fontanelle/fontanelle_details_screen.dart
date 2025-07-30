@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:application/screens/components/minimal_notification.dart';
+import '../../helpers/location_helper.dart';
 import 'dart:convert';
 
 class FontanellaDetailScreen extends StatefulWidget {
@@ -77,15 +78,6 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       isUserLogged = AuthHelper.isUserLogged;
     });
   }
-
-    String formatDistanza(double distanzaMetri) {
-      final distanzaKm = distanzaMetri / 1000;
-      if (distanzaMetri < 5000) {
-        return '$distanzaMetri m';
-      } else {
-        return '${distanzaKm.toStringAsFixed(2)} km';
-      }
-    }
 
   Future<void> _checkIfSaved(String uid) async {
     try {
@@ -314,7 +306,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                       ),
                     ),
                     Text(
-                      formatDistanza(fontanella.distanza),
+                      LocationHelper.formatDistanza(fontanella.distanza),
                       style: TextStyle(fontSize: 20),
                     ),
                     const SizedBox(height: 12),

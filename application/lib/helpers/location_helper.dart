@@ -40,4 +40,13 @@ class LocationHelper {
   static Future<void> openLocationSettings() async {
     await Geolocator.openLocationSettings();
   }
+
+  static String formatDistanza(double distanzaMetri) {
+    final distanzaKm = distanzaMetri / 1000;
+    if (distanzaMetri < 5000) {
+      return '$distanzaMetri m';
+    } else {
+      return '${distanzaKm.toStringAsFixed(2)} km';
+    }
+  }
 }
