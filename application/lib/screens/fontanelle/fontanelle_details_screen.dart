@@ -24,6 +24,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   bool isUserLogged = false;
   final userSession = UserSession();
   int fontanellaVotes = 0;
+  String userVote = '';
   LatLng? userPosition;
 
   @override
@@ -171,6 +172,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       final data = json.decode(response.body);
       setState(() {
         fontanellaVotes = data['total'] ?? 0;
+        userVote = data['userVote'] ?? '';
       });
     } else {
       debugPrint('Errore nel salvataggio: ${response.statusCode}');
@@ -370,14 +372,23 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                      userVote == 'up'
+                                          ? Colors.green
+                                          : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                   width: 1,
                                 ),
                               ),
                               padding: EdgeInsets.all(8),
                               child: Icon(
                                 Icons.thumb_up_alt,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color:
+                                    userVote == 'up'
+                                        ? Colors.green
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                 size: 25,
                               ),
                             ),
@@ -406,14 +417,23 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                      userVote == 'down'
+                                          ? Colors.red
+                                          : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
                                   width: 1,
                                 ),
                               ),
                               padding: EdgeInsets.all(8),
                               child: Icon(
                                 Icons.thumb_down_alt,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color:
+                                    userVote == 'down'
+                                        ? Colors.red
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
                                 size: 25,
                               ),
                             ),
