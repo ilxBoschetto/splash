@@ -62,7 +62,7 @@ void showMinimalNotification(
     builder: (context) => Stack(
       children: [
         Positioned(
-          bottom: position == 'top' ? null : 40,
+          bottom: position == 'top' ? null : 80,
           top: position == 'top' ? 40 : null,
           left: 20,
           right: 20,
