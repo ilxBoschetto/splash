@@ -23,9 +23,9 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   bool isSaved = false;
   bool isUserLogged = false;
   final userSession = UserSession();
+  int fontanellaVotes = 0;
   LatLng? userPosition;
 
-  @override
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -42,7 +42,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUserStatusAndFetch();
-      _checkUserStatus();
+      _getFontanellaVotes();
     });
   }
 
@@ -58,6 +58,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   }
 
   void _checkUserStatusAndFetch() async {
+    await AuthHelper.checkLogin();
+    setState(() {
+      isUserLogged = AuthHelper.isUserLogged;
+    });
     final uid = userSession.userId;
 
     if (userSession.isLogged && uid != null) {
@@ -70,13 +74,6 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         isUserLogged = false;
       });
     }
-  }
-
-  void _checkUserStatus() async {
-    await AuthHelper.checkLogin();
-    setState(() {
-      isUserLogged = AuthHelper.isUserLogged;
-    });
   }
 
   Future<void> _checkIfSaved(String uid) async {
@@ -160,6 +157,31 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     }
   }
 
+  Future<void> _getFontanellaVotes() async {
+    final fontanellaId = fontanella.id;
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle/$fontanellaId/vote'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      fontanellaVotes = json.decode(response.body)['total'];
+    } else {
+      debugPrint('Errore nel salvataggio: ${response.statusCode}');
+      showMinimalNotification(
+        context,
+        message: 'Errore',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
   Future<void> _voteFontanella(String vote) async {
     final fontanellaId = fontanella.id;
     final response = await http.post(
@@ -172,7 +194,6 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     );
 
     if (response.statusCode == 200) {
-      setState(() => isSaved = true);
       showMinimalNotification(
         context,
         message: 'Fontanella votata!',
@@ -362,7 +383,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
                         const SizedBox(width: 16),
                         Text(
-                          '150',
+                          fontanellaVotes.toString(),
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
