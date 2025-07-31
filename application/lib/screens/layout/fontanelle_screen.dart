@@ -234,9 +234,12 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 listenersAdded = true;
               }
 
+              final mediaQuery = MediaQuery.of(context);
+              final bottomPadding = mediaQuery.viewInsets.bottom + mediaQuery.padding.bottom;
+
               return Padding(
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  bottom: bottomPadding > 20 ? bottomPadding : 20,
                   left: 16,
                   right: 16,
                   top: 24,
