@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class VersionCheckWrapper extends StatefulWidget {
   const VersionCheckWrapper({super.key});
@@ -30,9 +31,11 @@ class _VersionCheckWrapperState extends State<VersionCheckWrapper> {
 
   Future<void> checkAppVersion() async {
     final String apiUrl = dotenv.env['APP_VERSION_CHECK_URL'] ?? '';
-    final String currentVersion = dotenv.env['APP_VERSION'] ?? '';
 
     try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final String currentVersion = packageInfo.version;
+      print('Current version: $currentVersion');
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
