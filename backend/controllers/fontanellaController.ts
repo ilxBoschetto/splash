@@ -2,8 +2,9 @@ import type { NextApiRequest } from 'next';
 import mongoose from 'mongoose';
 import Fontanella, { IFontanella } from '@models/Fontanella';
 import SavedFontanella from '@models/SavedFontanella';
-import User from '@models/User';
+import User, { IUser }  from '@models/User';
 import type { DecodedToken } from '@lib/auth';
+import Vote, { IVote } from '@/models/VOte';
 
 
 //#region Utility
@@ -23,6 +24,59 @@ export const countFontanelleToday = async (): Promise<number> => {
 
   return await Fontanella.countDocuments({ createdAt: { $gte: startOfToday } });
 };
+
+export const voteFontanella = async ( 
+  fontanella: IFontanella,
+  user: IUser,
+  voteType: 'up' | 'down'
+) : Promise<void> => {
+  if (!['up', 'down'].includes(voteType)) {
+    throw new Error('Tipo di voto non valido');
+  }
+
+  const fontanellaId = fontanella.id;
+  const userId = user.id;
+
+  if (!mongoose.Types.ObjectId.isValid(fontanellaId)) {
+    throw new Error('ID fontanella non valido');
+  }
+
+  const existingVote = await Vote.findOne({
+    userId: userId,
+    fontanellaId: fontanellaId,
+  });
+
+  if (existingVote) {
+    if (existingVote.value === voteType) {
+      existingVote.deleteOne();
+      return;
+    }
+
+    
+    if (existingVote.value === 'up') fontanella.votes.positive--;
+    else fontanella.votes.negative--;
+
+    if (voteType === 'up') fontanella.votes.positive++;
+    else fontanella.votes.negative++;
+    
+    existingVote.value = voteType;
+    await existingVote.save();
+    await fontanella.save();
+    return;
+  }
+
+  await Vote.create({
+    userId: userId,
+    fontanellaId: fontanellaId,
+    vote: voteType,
+  });
+
+  
+  if (voteType === 'up') fontanella.votes.positive++;
+  else fontanella.votes.negative++;
+
+  await fontanella.save();
+}
 
 //#endregion
 

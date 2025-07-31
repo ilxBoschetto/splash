@@ -8,6 +8,10 @@ export interface IFontanella extends Document {
     type: 'Point';
     coordinates: [number, number];
   };
+  votes: {
+    positive: number;
+    negative: number;
+  };
   stato: 'potabile' | 'non potabile' | 'in manutenzione';
   imageUrl?: String;
   createdBy: mongoose.Types.ObjectId;
@@ -32,6 +36,14 @@ const FontanellaSchema: Schema<IFontanella> = new Schema(
         type: [Number],
         required: true,
       },
+    },
+    votes: {
+      positive: {
+        type: Number
+      },
+      negative: {
+        type: Number
+      }
     },
 
     stato: {

@@ -54,7 +54,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
           const imageFiles = files.image as formidable.File[];
           const imageFile = Array.isArray(imageFiles) ? imageFiles[0] : imageFiles;
-          console.log(imageFile);
 
           let finalFilename: string | null = null;
           try {
