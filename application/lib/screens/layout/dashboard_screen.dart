@@ -73,7 +73,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       if (res2.statusCode == 200) {
         fontanelleOggi = json.decode(res2.body)['count'];
-        prefs.setInt('fontanelleUser', fontanelleUser);
+        prefs.setInt('fontanelleOggi', fontanelleOggi);
       }
 
       setState(() {});
