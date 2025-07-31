@@ -23,9 +23,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   bool isSaved = false;
   bool isUserLogged = false;
   final userSession = UserSession();
+  int fontanellaVotes = 0;
+  String userVote = '';
   LatLng? userPosition;
 
-  @override
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -42,7 +43,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkUserStatusAndFetch();
-      _checkUserStatus();
+      _getFontanellaVotes();
     });
   }
 
@@ -58,6 +59,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
   }
 
   void _checkUserStatusAndFetch() async {
+    await AuthHelper.checkLogin();
+    setState(() {
+      isUserLogged = AuthHelper.isUserLogged;
+    });
     final uid = userSession.userId;
 
     if (userSession.isLogged && uid != null) {
@@ -70,13 +75,6 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         isUserLogged = false;
       });
     }
-  }
-
-  void _checkUserStatus() async {
-    await AuthHelper.checkLogin();
-    setState(() {
-      isUserLogged = AuthHelper.isUserLogged;
-    });
   }
 
   Future<void> _checkIfSaved(String uid) async {
@@ -152,6 +150,68 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       showMinimalNotification(
         context,
         message: 'Errore di connessione',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  Future<void> _getFontanellaVotes() async {
+    final fontanellaId = fontanella.id;
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle/$fontanellaId/vote'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        fontanellaVotes = data['total'] ?? 0;
+        userVote = data['userVote'] ?? '';
+      });
+    } else {
+      debugPrint('Errore nel salvataggio: ${response.statusCode}');
+      showMinimalNotification(
+        context,
+        message: 'Errore',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
+  Future<void> _voteFontanella(String vote) async {
+    final fontanellaId = fontanella.id;
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle/$fontanellaId/vote'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({'vote': vote}),
+    );
+    if (response.statusCode == 200) {
+      _getFontanellaVotes();
+      showMinimalNotification(
+        context,
+        message: 'Fontanella votata!',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+    } else {
+      debugPrint('Errore nel salvataggio: ${response.statusCode}');
+      showMinimalNotification(
+        context,
+        message: 'Errore durante il salvataggio',
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -295,6 +355,103 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Material(
+                          color: Colors.transparent,
+                          shape: CircleBorder(),
+                          child: InkWell(
+                            customBorder: CircleBorder(),
+                            onTap: () {
+                              if(isUserLogged){
+                                _voteFontanella('up');
+                              } else {
+                                Navigator.pushNamed(context, '/login');
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color:
+                                      userVote == 'up'
+                                          ? Colors.green
+                                          : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                  width: 1,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.thumb_up_alt,
+                                color:
+                                    userVote == 'up'
+                                        ? Colors.green
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                size: 25,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 16),
+                        Text(
+                          fontanellaVotes.toString(),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Material(
+                          color: Colors.transparent,
+                          shape: CircleBorder(),
+                          child: InkWell(
+                            customBorder: CircleBorder(),
+                            onTap: () {
+                              if(isUserLogged){
+                                _voteFontanella('down');
+                              } else {
+                                Navigator.pushNamed(context, '/login');
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color:
+                                      userVote == 'down'
+                                          ? Colors.red
+                                          : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                  width: 1,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.thumb_down_alt,
+                                color:
+                                    userVote == 'down'
+                                        ? Colors.red
+                                        : Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                size: 25,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+
                     const SizedBox(height: 24),
                     const Divider(),
                     const SizedBox(height: 8),
@@ -368,11 +525,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Icon(
-                    Icons.map, 
-                    color: Colors.white,
-                    size: 28,
-                    ),
+                  child: const Icon(Icons.map, color: Colors.white, size: 28),
                 ),
               ),
             ],

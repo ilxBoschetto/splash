@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Aggiungere la possibilità di votare le fontanelle
 - [ ] Implementare multilingua
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Aggiungere segnalazioni fontanella (con frasi già preimpostate)
@@ -37,3 +36,4 @@
 - [x] Migliorare scrittura coordinate (basta impostare un minimo di lunghezza di coordiante) (l'app crusha)
 - [x] Aggiungere checkbox per privacy e termini di servizio
 - [x] Aggiungere salvare in cache le info dashboard (per evitare che ogni volta che si clicchi su dashboard mostri tutto a 0 per poco)
+- [x] Aggiungere la possibilità di votare le fontanelle

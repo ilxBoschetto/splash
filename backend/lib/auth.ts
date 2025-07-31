@@ -1,3 +1,4 @@
+import User, { IUser } from '@/models/User'
 import jwt from 'jsonwebtoken'
 import type { NextApiRequest } from 'next'
 
@@ -6,7 +7,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key'
 export interface DecodedToken {
   userId: string
   email?: string
-  // Aggiungi altri campi se ne hai nel payload
 }
 
 export function verifyToken(req: NextApiRequest): DecodedToken {
@@ -20,4 +20,12 @@ export function verifyToken(req: NextApiRequest): DecodedToken {
   const decoded = jwt.verify(token, JWT_SECRET)
 
   return decoded as DecodedToken
+}
+
+export async function getUserFromRequest(req: NextApiRequest): Promise<IUser | null> {
+  let user = verifyToken(req);
+  const userModel = await User.findById(user.userId).select('-password')
+  if (!userModel) return null
+
+  return userModel;
 }

@@ -1,10 +1,10 @@
-import type { NextApiRequest } from 'next';
-import mongoose from 'mongoose';
-import Fontanella, { IFontanella } from '@models/Fontanella';
-import SavedFontanella from '@models/SavedFontanella';
-import User from '@models/User';
-import type { DecodedToken } from '@lib/auth';
-
+import type { NextApiRequest } from "next";
+import mongoose from "mongoose";
+import Fontanella, { IFontanella } from "@models/Fontanella";
+import SavedFontanella from "@models/SavedFontanella";
+import User, { IUser } from "@models/User";
+import type { DecodedToken } from "@lib/auth";
+import Vote, { IVote } from "@/models/Vote";
 
 //#region Utility
 
@@ -24,8 +24,91 @@ export const countFontanelleToday = async (): Promise<number> => {
   return await Fontanella.countDocuments({ createdAt: { $gte: startOfToday } });
 };
 
-//#endregion
+export const getFontanellaVotes = async (
+  fontanellaId: string | string[]
+): Promise<object> => {
+  try {
+    const fontanella = await Fontanella.findById(fontanellaId).select("votes");
+    if (!fontanella) {
+      return null;
+    }
 
+    const { positive = 0, negative = 0 } = fontanella.votes || {};
+
+    return {
+      total: positive - negative,
+      positive,
+      negative,
+    };
+  } catch (error: any) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const voteFontanella = async (
+  fontanella: IFontanella,
+  user: IUser,
+  vote: "up" | "down"
+): Promise<void> => {
+  if (!["up", "down"].includes(vote)) {
+    throw new Error("Tipo di voto non valido");
+  }
+
+  const fontanellaId = fontanella.id;
+  const userId = user.id;
+
+  if (!mongoose.Types.ObjectId.isValid(fontanellaId)) {
+    throw new Error("ID fontanella non valido");
+  }
+
+  const existingVote = await Vote.findOne({
+    userId: userId,
+    fontanellaId: fontanellaId,
+  });
+
+  if (!fontanella.votes) {
+    fontanella.votes = { positive: 0, negative: 0 };
+  }
+
+  fontanella.votes.positive = fontanella.votes.positive ?? 0;
+  fontanella.votes.negative = fontanella.votes.negative ?? 0;
+
+  if (existingVote) {
+    if (existingVote.value === vote) {
+      if (existingVote.value === "up") fontanella.votes.positive--;
+      else fontanella.votes.negative--;
+      await existingVote.deleteOne();
+      await fontanella.save();
+      return;
+    }
+
+    if (existingVote.value === "up") fontanella.votes.positive--;
+    else fontanella.votes.negative--;
+
+    if (vote === "up") fontanella.votes.positive++;
+    else fontanella.votes.negative++;
+
+    existingVote.value = vote;
+    await existingVote.save();
+    await fontanella.save();
+    return;
+  }
+
+  await Vote.create({
+    userId: userId,
+    fontanellaId: fontanellaId,
+    value: vote,
+  });
+
+  if (vote === "up") fontanella.votes.positive++;
+  else fontanella.votes.negative++;
+
+  await fontanella.save();
+  return;
+};
+
+//#endregion
 
 //#region GET /fontanelle + utenti e salvataggi
 
@@ -34,22 +117,23 @@ export const countFontanelleToday = async (): Promise<number> => {
  * - Dati del creatore (se presente)
  * - Stato "isSaved" se l'utente ha salvato la fontanella
  */
-export const getFontanelle = async (req: NextApiRequest, user: DecodedToken | null) => {
+export const getFontanelle = async (
+  req: NextApiRequest,
+  user: DecodedToken | null
+) => {
   const fontanelle = await Fontanella.find().lean();
 
   // Salvataggi dell’utente (se autenticato)
   let savedFontanellaIds = new Set<string>();
   if (user?.userId) {
     const saved = await SavedFontanella.find({ userId: user.userId })
-      .select('fontanellaId')
+      .select("fontanellaId")
       .lean();
     savedFontanellaIds = new Set(saved.map((e) => e.fontanellaId.toString()));
   }
 
   // Recupera gli ID dei creatori
-  const createdByIds = fontanelle
-    .map(f => f.createdBy!)
-    .map(id => id);
+  const createdByIds = fontanelle.map((f) => f.createdBy!).map((id) => id);
 
   // Mappa utenti (per assegnare nome e id)
   let usersMap: Record<string, { id: string; name: string }> = {};
@@ -58,7 +142,7 @@ export const getFontanelle = async (req: NextApiRequest, user: DecodedToken | nu
     usersMap = users.reduce((acc, user) => {
       acc[user._id.toString()] = {
         id: user._id.toString(),
-        name: user.name ?? '-',
+        name: user.name ?? "-",
       };
       return acc;
     }, {} as Record<string, { id: string; name: string }>);
@@ -67,12 +151,15 @@ export const getFontanelle = async (req: NextApiRequest, user: DecodedToken | nu
   // Ritorna fontanelle con info arricchite
   return fontanelle.map((f) => {
     const createdByUser = f.createdBy
-      ? usersMap[f.createdBy.toString()] ?? { id: f.createdBy.toString(), name: '-' }
-      : { id: '-', name: '-' };
+      ? usersMap[f.createdBy.toString()] ?? {
+          id: f.createdBy.toString(),
+          name: "-",
+        }
+      : { id: "-", name: "-" };
 
     return {
       ...f,
-      imageUrl: f.imageUrl ?? '',
+      imageUrl: f.imageUrl ?? "",
       isSaved: savedFontanellaIds.has(f._id.toString()),
       createdBy: createdByUser,
     };
@@ -80,7 +167,6 @@ export const getFontanelle = async (req: NextApiRequest, user: DecodedToken | nu
 };
 
 //#endregion
-
 
 //#region POST /fontanelle
 
@@ -96,17 +182,17 @@ export const createFontanella = async (
   const trimmedName = name.trim();
 
   const existingByName = await Fontanella.findOne({
-    name: { $regex: `^${trimmedName}$`, $options: 'i' },
+    name: { $regex: `^${trimmedName}$`, $options: "i" },
   });
   if (existingByName) {
-    throw new Error('Esiste già una fontanella con lo stesso nome');
+    throw new Error("Esiste già una fontanella con lo stesso nome");
   }
 
   const existingNearby = await Fontanella.findOne({
     location: {
       $near: {
         $geometry: {
-          type: 'Point',
+          type: "Point",
           coordinates: [lon, lat],
         },
         $maxDistance: 10,
@@ -115,7 +201,7 @@ export const createFontanella = async (
   });
 
   if (existingNearby) {
-    throw new Error('Esiste già una fontanella vicina (<10m)');
+    throw new Error("Esiste già una fontanella vicina (<10m)");
   }
 
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
@@ -125,7 +211,7 @@ export const createFontanella = async (
     lat,
     lon,
     location: {
-      type: 'Point',
+      type: "Point",
       coordinates: [lon, lat],
     },
     imageUrl,
@@ -137,21 +223,22 @@ export const createFontanella = async (
 
 //#endregion
 
-
 //#region Operazioni su singola fontanella (GET, PUT, DELETE)
 
 /**
  * Trova una fontanella tramite il suo ID e popola il campo createdBy.
  */
-export const getFontanellaById = async (id: string): Promise<IFontanella | null> =>
-  Fontanella.findById(id).populate('createdBy').lean();
+export const getFontanellaById = async (
+  id: string
+): Promise<IFontanella | null> =>
+  Fontanella.findById(id).populate("createdBy").lean();
 
 /**
  * Aggiorna una fontanella (solo name, lat, lon). Valida automaticamente.
  */
 export const updateFontanella = async (
   id: string,
-  data: Partial<Pick<IFontanella, 'name' | 'lat' | 'lon'>>
+  data: Partial<Pick<IFontanella, "name" | "lat" | "lon">>
 ): Promise<IFontanella | null> =>
   Fontanella.findByIdAndUpdate(id, data, {
     new: true,
@@ -161,7 +248,8 @@ export const updateFontanella = async (
 /**
  * Elimina una fontanella dal database.
  */
-export const deleteFontanella = async (id: string): Promise<IFontanella | null> =>
-  Fontanella.findByIdAndDelete(id);
+export const deleteFontanella = async (
+  id: string
+): Promise<IFontanella | null> => Fontanella.findByIdAndDelete(id);
 
 //#endregion
