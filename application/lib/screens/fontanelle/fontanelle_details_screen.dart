@@ -295,6 +295,64 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              width: 2,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              Icons.thumb_up_alt,
+                              color:
+                                  Theme.of(context).colorScheme.onSurface,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          '150',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color:
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .onSurface,
+                              width: 2,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 18,
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              Icons.thumb_down_alt,
+                              color:
+                                  Theme.of(context).colorScheme.onSurface,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+
                     const SizedBox(height: 24),
                     const Divider(),
                     const SizedBox(height: 8),
@@ -368,11 +426,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Icon(
-                    Icons.map, 
-                    color: Colors.white,
-                    size: 28,
-                    ),
+                  child: const Icon(Icons.map, color: Colors.white, size: 28),
                 ),
               ),
             ],
