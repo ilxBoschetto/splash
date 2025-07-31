@@ -168,7 +168,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     );
 
     if (response.statusCode == 200) {
-      fontanellaVotes = json.decode(response.body)['total'];
+      final data = json.decode(response.body);
+      setState(() {
+        fontanellaVotes = data['total'] ?? 0;
+      });
     } else {
       debugPrint('Errore nel salvataggio: ${response.statusCode}');
       showMinimalNotification(
@@ -192,8 +195,8 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       },
       body: json.encode({'vote': vote}),
     );
-
     if (response.statusCode == 200) {
+      _getFontanellaVotes();
       showMinimalNotification(
         context,
         message: 'Fontanella votata!',
