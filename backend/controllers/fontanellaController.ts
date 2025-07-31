@@ -54,11 +54,13 @@ export const voteFontanella = async (
   fontanella.votes.negative = fontanella.votes.negative ?? 0;
 
   if (existingVote) {
-    if (existingVote.value === vote) {
-      await existingVote.deleteOne();
-      return;
-    }
-
+      if (existingVote.value === vote) {
+        if (existingVote.value === 'up') fontanella.votes.positive--;
+        else fontanella.votes.negative--;
+        await existingVote.deleteOne();
+        await fontanella.save();
+        return;
+      }
     
     if (existingVote.value === 'up') fontanella.votes.positive--;
     else fontanella.votes.negative--;
