@@ -4,7 +4,8 @@ import Fontanella, { IFontanella } from '@models/Fontanella';
 import SavedFontanella from '@models/SavedFontanella';
 import User, { IUser }  from '@models/User';
 import type { DecodedToken } from '@lib/auth';
-import Vote, { IVote } from '@/models/VOte';
+import Vote, { IVote } from '@/models/Vote';
+import { VoteAction } from '@/enums/voteAction';
 
 
 //#region Utility
@@ -76,6 +77,7 @@ export const voteFontanella = async (
   else fontanella.votes.negative++;
 
   await fontanella.save();
+  return;
 }
 
 //#endregion
