@@ -23,11 +23,9 @@ export function verifyToken(req: NextApiRequest): DecodedToken {
 }
 
 export async function getUserFromRequest(req: NextApiRequest): Promise<IUser | null> {
-  const decoded = (req as any).user as DecodedToken | undefined
-  if (!decoded?.userId) return null
+  let user = verifyToken(req);
+  const userModel = await User.findById(user.userId).select('-password')
+  if (!userModel) return null
 
-  const user = await User.findById(decoded.userId).select('-password')
-  if (!user) return null
-
-  return user
+  return userModel;
 }

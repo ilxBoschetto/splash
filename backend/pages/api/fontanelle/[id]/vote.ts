@@ -3,19 +3,23 @@ import dbConnect from '@lib/mongodb';
 import withCors from '@lib/withCors';
 import Fontanella from '@models/Fontanella';
 import { voteFontanella } from '@controllers/fontanellaController';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest, verifyToken } from '@/lib/auth';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
+    if(req.method !== 'POST'){
+        return res.status(405).json({ error: 'Metodo non supportato' });
+    }
+
     await dbConnect();
     const { id } = req.query;
-    const { voteType } = req.body;
+    const { vote } = req.body;
 
     if (!id || typeof id !== 'string') {
         return res.status(400).json({ message: 'ID fontanella mancante o non valido' });
     }
 
-    if (!['up', 'down'].includes(voteType)) {
+    if (!['up', 'down'].includes(vote)) {
         return res.status(400).json({ message: 'Tipo di voto non valido' });
     }
 
@@ -30,7 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     try{
-        await voteFontanella(fontanella, user, voteType as 'up' | 'down');
+        await voteFontanella(fontanella, user, vote as 'up' | 'down');
         return res.status(200).json({ message: 'Fontanella votata' });
     } catch (error: any) {
         console.error(error);

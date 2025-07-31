@@ -5,7 +5,6 @@ import SavedFontanella from '@models/SavedFontanella';
 import User, { IUser }  from '@models/User';
 import type { DecodedToken } from '@lib/auth';
 import Vote, { IVote } from '@/models/Vote';
-import { VoteAction } from '@/enums/voteAction';
 
 
 //#region Utility
@@ -29,9 +28,9 @@ export const countFontanelleToday = async (): Promise<number> => {
 export const voteFontanella = async ( 
   fontanella: IFontanella,
   user: IUser,
-  voteType: 'up' | 'down'
+  vote: 'up' | 'down'
 ) : Promise<void> => {
-  if (!['up', 'down'].includes(voteType)) {
+  if (!['up', 'down'].includes(vote)) {
     throw new Error('Tipo di voto non valido');
   }
 
@@ -47,9 +46,16 @@ export const voteFontanella = async (
     fontanellaId: fontanellaId,
   });
 
+  if (!fontanella.votes) {
+    fontanella.votes = { positive: 0, negative: 0 };
+  }
+
+  fontanella.votes.positive = fontanella.votes.positive ?? 0;
+  fontanella.votes.negative = fontanella.votes.negative ?? 0;
+
   if (existingVote) {
-    if (existingVote.value === voteType) {
-      existingVote.deleteOne();
+    if (existingVote.value === vote) {
+      await existingVote.deleteOne();
       return;
     }
 
@@ -57,10 +63,10 @@ export const voteFontanella = async (
     if (existingVote.value === 'up') fontanella.votes.positive--;
     else fontanella.votes.negative--;
 
-    if (voteType === 'up') fontanella.votes.positive++;
+    if (vote === 'up') fontanella.votes.positive++;
     else fontanella.votes.negative++;
     
-    existingVote.value = voteType;
+    existingVote.value = vote;
     await existingVote.save();
     await fontanella.save();
     return;
@@ -69,11 +75,11 @@ export const voteFontanella = async (
   await Vote.create({
     userId: userId,
     fontanellaId: fontanellaId,
-    vote: voteType,
+    value: vote,
   });
 
   
-  if (voteType === 'up') fontanella.votes.positive++;
+  if (vote === 'up') fontanella.votes.positive++;
   else fontanella.votes.negative++;
 
   await fontanella.save();

@@ -160,6 +160,40 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     }
   }
 
+  Future<void> _voteFontanella(String vote) async {
+    final fontanellaId = fontanella.id;
+    final response = await http.post(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle/$fontanellaId/vote'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({'vote': vote}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() => isSaved = true);
+      showMinimalNotification(
+        context,
+        message: 'Fontanella votata!',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+    } else {
+      debugPrint('Errore nel salvataggio: ${response.statusCode}');
+      showMinimalNotification(
+        context,
+        message: 'Errore durante il salvataggio',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
   Future<void> _removeFromSaved() async {
     final uid = userSession.userId;
     if (uid == null) return;
@@ -299,25 +333,33 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              width: 2,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.thumb_up_alt,
-                              color:
-                                  Theme.of(context).colorScheme.onSurface,
-                              size: 20,
+                        Material(
+                          color: Colors.transparent,
+                          shape: CircleBorder(),
+                          child: InkWell(
+                            customBorder: CircleBorder(),
+                            onTap: () {
+                              _voteFontanella('up');
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                  width: 1,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.thumb_up_alt,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 25,
+                              ),
                             ),
                           ),
                         ),
+
                         const SizedBox(width: 16),
                         Text(
                           '150',
@@ -327,28 +369,33 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color:
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .onSurface,
-                              width: 2,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 18,
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.thumb_down_alt,
-                              color:
-                                  Theme.of(context).colorScheme.onSurface,
-                              size: 20,
+                        Material(
+                          color: Colors.transparent,
+                          shape: CircleBorder(),
+                          child: InkWell(
+                            customBorder: CircleBorder(),
+                            onTap: () {
+                              _voteFontanella('down');
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                  width: 1,
+                                ),
+                              ),
+                              padding: EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.thumb_down_alt,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 25,
+                              ),
                             ),
                           ),
                         ),
+
                         const SizedBox(width: 8),
                       ],
                     ),
