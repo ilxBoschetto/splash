@@ -365,7 +365,11 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           child: InkWell(
                             customBorder: CircleBorder(),
                             onTap: () {
-                              _voteFontanella('up');
+                              if(isUserLogged){
+                                _voteFontanella('up');
+                              } else {
+                                Navigator.pushNamed(context, '/login');
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -410,7 +414,11 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           child: InkWell(
                             customBorder: CircleBorder(),
                             onTap: () {
-                              _voteFontanella('down');
+                              if(isUserLogged){
+                                _voteFontanella('down');
+                              } else {
+                                Navigator.pushNamed(context, '/login');
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
