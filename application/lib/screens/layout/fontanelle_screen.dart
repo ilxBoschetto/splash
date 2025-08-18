@@ -30,6 +30,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   // page controllers
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _cittaController = TextEditingController();
   final TextEditingController _latController = TextEditingController();
   final TextEditingController _lonController = TextEditingController();
   final modalMapController = MapController();
@@ -58,6 +59,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   void dispose() {
     _searchController.dispose();
     _nomeController.dispose();
+    _cittaController.dispose();
     _latController.dispose();
     _lonController.dispose();
     super.dispose();
@@ -189,6 +191,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   void _showAddFontanellaSheet(Position position) {
     _nomeController.clear();
+    _cittaController.clear();
     _latController.text = position.latitude.toStringAsFixed(6);
     _lonController.text = position.longitude.toStringAsFixed(6);
     double latitude = position.latitude;
@@ -235,7 +238,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
               }
 
               final mediaQuery = MediaQuery.of(context);
-              final bottomPadding = mediaQuery.viewInsets.bottom + mediaQuery.padding.bottom;
+              final bottomPadding =
+                  mediaQuery.viewInsets.bottom + mediaQuery.padding.bottom;
 
               return Padding(
                 padding: EdgeInsets.only(
@@ -255,7 +259,27 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                           labelText: 'Nome fontanella',
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: TextField(
+                              style: const TextStyle(color: Colors.white),
+                              controller: _cittaController,
+                              decoration: const InputDecoration(
+                                labelText: 'Città',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Expanded(
+                            flex: 6,
+                            child: SizedBox(),
+                          ), // col vuoto
+                        ],
+                      ),
+                      const SizedBox(height: 24),
                       Row(
                         children: [
                           Expanded(
@@ -271,7 +295,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 6),
                           Expanded(
                             child: TextField(
                               style: TextStyle(color: Colors.white),
@@ -326,7 +350,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                             mapController: modalMapController,
                             options: MapOptions(
                               initialCenter: _mapCenter,
-                              initialZoom: 16,
+                              initialZoom: 17,
                               onPositionChanged: (
                                 MapPosition pos,
                                 bool hasGesture,
@@ -395,7 +419,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   void _submitFontanella() async {
-    final nome = _nomeController.text.trim();
+    String nome = _nomeController.text.trim();
+    if (_cittaController.text.trim() != "") {
+      nome += " - ${_cittaController.text.trim()}";
+    }
     final lat = double.tryParse(_latController.text.trim());
     final lon = double.tryParse(_lonController.text.trim());
 
