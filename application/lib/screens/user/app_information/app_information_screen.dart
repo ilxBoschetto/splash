@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:application/screens/components/minimal_notification.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AppInformationScreen extends StatefulWidget {
   const AppInformationScreen({super.key});
@@ -16,7 +17,9 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final version = dotenv.env['APP_VERSION'] ?? 'v?';
+    final packageInfo = await PackageInfo.fromPlatform();
+    final String currentVersion = packageInfo.version;
+    print('Current version: $currentVersion');
 
     return Scaffold(
       appBar: AppBar(
@@ -100,7 +103,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       const Icon(Icons.verified_outlined, size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        'Versione: $version',
+                        'Versione: $currentVersion',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
