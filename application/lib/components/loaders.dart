@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class BouncingDotsLoader extends StatefulWidget {
-  const BouncingDotsLoader({super.key});
+  final double dotSize;
+  final Color color;
+
+  const BouncingDotsLoader({
+    super.key,
+    this.dotSize = 8,
+    this.color = Colors.white,
+  });
 
   @override
   State<BouncingDotsLoader> createState() => _BouncingDotsLoaderState();
@@ -43,9 +50,9 @@ class _BouncingDotsLoaderState extends State<BouncingDotsLoader>
   Widget _buildDot(int index) {
     return ScaleTransition(
       scale: _animations[index],
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 2.5),
-        child: Dot(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2.5),
+        child: Dot(size: widget.dotSize, color: widget.color),
       ),
     );
   }
@@ -60,15 +67,18 @@ class _BouncingDotsLoaderState extends State<BouncingDotsLoader>
 }
 
 class Dot extends StatelessWidget {
-  const Dot({super.key});
+  final double size;
+  final Color color;
+
+  const Dot({super.key, required this.size, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 8,
-      height: 8,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
         shape: BoxShape.circle,
       ),
     );

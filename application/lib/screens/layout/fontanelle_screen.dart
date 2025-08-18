@@ -1,3 +1,4 @@
+import 'package:application/components/loaders.dart';
 import 'package:application/helpers/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -616,12 +617,11 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
             isUserLogged ? Theme.of(context).colorScheme.primary : Colors.grey,
         child:
             _isAdding
-                ? SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2.5,
+                ? const Center(
+                  child: SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: BouncingDotsLoader(dotSize: 4),
                   ),
                 )
                 : const Icon(Icons.add, size: 28),
