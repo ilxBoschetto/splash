@@ -41,6 +41,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   // user session
   bool isUserLogged = false;
+  bool _isSubmitting = false;
   final userSession = UserSession();
 
   bool isLoading = true;
@@ -395,9 +396,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
                       const SizedBox(height: 20),
 
-                      ElevatedButton.icon(
-                        icon: const Icon(Icons.add_location_alt),
-                        label: const Text("Aggiungi fontanella"),
+                      ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
@@ -408,6 +407,17 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                           ),
                         ),
                         onPressed: _submitFontanella,
+                        child:
+                            _isSubmitting
+                                ? const BouncingDotsLoader()
+                                : Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    Icon(Icons.add_location_alt),
+                                    SizedBox(width: 8),
+                                    Text("Aggiungi fontanella"),
+                                  ],
+                                ),
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -420,32 +430,47 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   void _submitFontanella() async {
-    String nome = _nomeController.text.trim();
-    if (_cittaController.text.trim() != "") {
-      nome += " - ${_cittaController.text.trim()}";
-    }
-    final lat = double.tryParse(_latController.text.trim());
-    final lon = double.tryParse(_lonController.text.trim());
+    setState(() {
+      _isSubmitting = true;
+    });
 
-    if (nome.isEmpty || lat == null || lon == null) {
-      showMinimalNotification(
-        context,
-        message: 'Inserisci il nome!',
-        duration: 2500,
-        position: 'top',
-        backgroundColor: Colors.orange,
+    try {
+      String nome = _nomeController.text.trim();
+      final lat = double.tryParse(_latController.text.trim());
+      final lon = double.tryParse(_lonController.text.trim());
+
+      if (nome.isEmpty || lat == null || lon == null) {
+        showMinimalNotification(
+          context,
+          message: 'Inserisci il nome!',
+          duration: 2500,
+          position: 'top',
+          backgroundColor: Colors.orange,
+        );
+        setState(() {
+          _isSubmitting = false;
+        });
+        return;
+      }
+
+      if (_cittaController.text.trim().isNotEmpty) {
+        nome += " - ${_cittaController.text.trim()}";
+      }
+
+      await inviaFontanella(
+        nome: nome,
+        lat: lat,
+        lon: lon,
+        token: userSession.token,
+        image: _selectedImage,
       );
-
-      return;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
-
-    inviaFontanella(
-      nome: nome,
-      lat: lat,
-      lon: lon,
-      token: userSession.token,
-      image: _selectedImage,
-    );
   }
 
   Future<void> inviaFontanella({
@@ -485,7 +510,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         backgroundColor: Colors.red,
       );
     } else {
-      Navigator.of(context).pop();
+      // Navigator.of(context).pop();
       await fetchFontanelle();
       showMinimalNotification(
         context,
@@ -617,9 +642,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
             isUserLogged ? Theme.of(context).colorScheme.primary : Colors.grey,
         child:
             _isAdding
-                ? const Center(
-                  child: BouncingDotsLoader(dotSize: 8),
-                )
+                ? const Center(child: BouncingDotsLoader(dotSize: 8))
                 : const Icon(Icons.add, size: 28),
       ),
     );
