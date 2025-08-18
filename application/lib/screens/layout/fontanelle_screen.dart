@@ -618,11 +618,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         child:
             _isAdding
                 ? const Center(
-                  child: SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: BouncingDotsLoader(dotSize: 4),
-                  ),
+                  child: BouncingDotsLoader(dotSize: 8),
                 )
                 : const Icon(Icons.add, size: 28),
       ),
