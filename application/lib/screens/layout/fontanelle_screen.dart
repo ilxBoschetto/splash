@@ -189,6 +189,36 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     }
   }
 
+  Future<void> deleteFontanella(Fontanella fontanella) async {
+    final response = await http.delete(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle/${fontanella.id}'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      showMinimalNotification(
+        context,
+        message: 'Fontanella eliminata!',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+      );
+      fetchFontanelle();
+    } else {
+      showMinimalNotification(
+        context,
+        message: 'Errore durante l\'eliminazione',
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
   XFile? _selectedImage;
 
   void _showAddFontanellaSheet(Position position) {
@@ -593,21 +623,67 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 itemCount: filteredFontanelle.length,
                 itemBuilder: (context, index) {
                   final f = filteredFontanelle[index];
-                  return ListTile(
-                    title: Text(f.nome),
-                    subtitle: Text(LocationHelper.formatDistanza(f.distanza)),
-                    trailing:
-                        f.isSaved
-                            ? Icon(
-                              Icons.bookmark,
-                              color: Theme.of(context).colorScheme.primary,
-                            )
-                            : null,
-                    onTap: () => goToDetail(f),
+                  Timer? _longPressTimer;
+
+                  return Material(
+                    color: Colors.transparent,
+                    child: GestureDetector(
+                      onTap: () => goToDetail(f),
+                      onLongPressStart: (details) {
+                        if (userSession.email == "matbos2003@gmail.com") {
+                          _longPressTimer = Timer(const Duration(seconds: 5), () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Elimina fontanella?'),
+                                  content: Text(
+                                    'Sei sicuro di voler eliminare "${f.nome}"?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed:
+                                          () => Navigator.of(context).pop(),
+                                      child: const Text('Annulla'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        deleteFontanella(f);
+                                      },
+                                      child: const Text('Elimina'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          });
+                        }
+                      },
+                      onLongPressEnd: (details) {
+                        _longPressTimer?.cancel();
+                      },
+                      child: InkWell(
+                        onTap: () => goToDetail(f), // per il ripple
+                        child: ListTile(
+                          title: Text(f.nome),
+                          subtitle: Text(
+                            LocationHelper.formatDistanza(f.distanza),
+                          ),
+                          trailing:
+                              f.isSaved
+                                  ? Icon(
+                                    Icons.bookmark,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  )
+                                  : null,
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
-
       floatingActionButton: FloatingActionButton(
         onPressed:
             isUserLogged && !_isAdding
