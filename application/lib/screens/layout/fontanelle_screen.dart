@@ -411,6 +411,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                                     point: _mapCenter,
                                     width: 40,
                                     height: 40,
+                                    // TODO: Add offset so the icon is precise
                                     child: const Icon(
                                       Icons.person_pin_circle,
                                       color: Colors.red,

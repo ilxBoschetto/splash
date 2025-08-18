@@ -134,23 +134,35 @@ class _MappeScreenState extends State<MappeScreen> {
                           point: userPosition!,
                           width: 40,
                           height: 40,
-                          child: const Icon(
-                            Icons.person_pin_circle,
-                            color: Colors.red,
-                            size: 35,
+                          child: Transform.translate(
+                            offset: const Offset(
+                                0,
+                                -15,
+                              ), // move the icon so the bottom is aligned
+                            child: const Icon(
+                              Icons.person_pin_circle,
+                              color: Colors.red,
+                              size: 30,
+                            ),
                           ),
                         ),
                       ...fontanelle.map(
                         (f) => Marker(
+                          point: LatLng(f.lat, f.lon),
                           width: 40,
                           height: 40,
-                          point: LatLng(f.lat, f.lon),
                           child: GestureDetector(
                             onTap: () => goToDetail(f),
-                            child: const Icon(
-                              Icons.location_on,
-                              color: Colors.lightBlue,
-                              size: 30,
+                            child: Transform.translate(
+                              offset: const Offset(
+                                0,
+                                -15,
+                              ), // move the icon so the bottom is aligned
+                              child: const Icon(
+                                Icons.location_on,
+                                color: Colors.lightBlue,
+                                size: 30,
+                              ),
                             ),
                           ),
                         ),
