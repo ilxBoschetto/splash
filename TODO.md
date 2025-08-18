@@ -1,5 +1,7 @@
 ## TODO
 
+- [ ] Aggiungere modifica ed elimina per admin
+- [ ] Aggiungere modifica ed elimina per creatore della fontanella
 - [ ] Aggiungere backup in cloud o salvarli da qualche parte
 - [ ] Implementare multilingua
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
