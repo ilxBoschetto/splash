@@ -41,7 +41,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   // user session
   bool isUserLogged = false;
-  bool _isSubmitting = false;
+  ValueNotifier<bool> _isSubmitting = ValueNotifier(false);
   final userSession = UserSession();
 
   bool isLoading = true;
@@ -396,29 +396,26 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
                       const SizedBox(height: 20),
 
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size.fromHeight(50),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: _submitFontanella,
-                        child:
-                            _isSubmitting
-                                ? const BouncingDotsLoader()
-                                : Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: const [
-                                    Icon(Icons.add_location_alt),
-                                    SizedBox(width: 8),
-                                    Text("Aggiungi fontanella"),
-                                  ],
-                                ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _isSubmitting,
+                        builder: (context, isSubmitting, child) {
+                          return ElevatedButton.icon(
+                            onPressed: isSubmitting ? null : _submitFontanella,
+                            icon: const Icon(Icons.add_location_alt),
+                            label:
+                                isSubmitting
+                                    ? const SizedBox(
+                                      height: 20,
+                                      child: BouncingDotsLoader(),
+                                    )
+                                    : const Text("Aggiungi fontanella"),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                          );
+                        },
                       ),
+
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -430,9 +427,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   void _submitFontanella() async {
-    setState(() {
-      _isSubmitting = true;
-    });
+    _isSubmitting.value = true;
 
     try {
       String nome = _nomeController.text.trim();
@@ -447,9 +442,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
           position: 'top',
           backgroundColor: Colors.orange,
         );
-        setState(() {
-          _isSubmitting = false;
-        });
+        _isSubmitting.value = false;
         return;
       }
 
@@ -466,9 +459,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       );
     } finally {
       if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
+        _isSubmitting.value = false;
       }
     }
   }
@@ -510,7 +501,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         backgroundColor: Colors.red,
       );
     } else {
-      // Navigator.of(context).pop();
+      Navigator.of(context).pop();
       await fetchFontanelle();
       showMinimalNotification(
         context,
