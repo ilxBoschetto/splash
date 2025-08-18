@@ -6,7 +6,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class MappeScreen extends StatefulWidget {
@@ -81,7 +80,7 @@ class _MappeScreenState extends State<MappeScreen> {
           data.map((f) {
             final lat = (f['lat'] as num).toDouble();
             final lon = (f['lon'] as num).toDouble();
-            
+
             final dist = distance.as(
               LengthUnit.Meter,
               LatLng(userLat, userLon),
