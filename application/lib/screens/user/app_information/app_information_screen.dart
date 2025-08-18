@@ -14,13 +14,24 @@ class AppInformationScreen extends StatefulWidget {
 class _AppInformationScreenState extends State<AppInformationScreen> {
   bool isUserLogged = false;
   bool loading = true;
+  String? currentVersion;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPackageInfo();
+  }
+
+  Future<void> _loadPackageInfo() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      currentVersion = packageInfo.version;
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final packageInfo = await PackageInfo.fromPlatform();
-    final String currentVersion = packageInfo.version;
-    print('Current version: $currentVersion');
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
