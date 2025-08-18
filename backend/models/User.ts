@@ -5,6 +5,7 @@ export interface IUser extends Document {
   email: string;
   passwordHash: string;
   isConfirmed: boolean;
+  isAdmin: boolean;
   confirmationCode: string;
   createdAt: Date;
   resetPasswordToken: string;
@@ -25,6 +26,10 @@ const UserSchema: Schema<IUser> = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+    },
+
+    isAdmin: {
+      type: Boolean
     },
 
     passwordHash: {
@@ -57,7 +62,7 @@ const UserSchema: Schema<IUser> = new Schema(
     },
   },
   {
-    timestamps: false, // hai creato manualmente createdAt, quindi non usiamo timestamps automatici
+    timestamps: false,
   }
 );
 

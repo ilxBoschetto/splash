@@ -8,7 +8,6 @@ import withCors from '@lib/withCors';
 import { sendMail } from '@lib/nodemailer';
 import { generateCode } from '@/helpers/generator';
 
-const JWT_SECRET = process.env.JWT_SECRET;
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -43,6 +42,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       email,
       passwordHash,
       isConfirmed: false,
+      isAdmin: false,
       confirmationCode: code,
     });
 

@@ -47,6 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       //#endregion
 
       //#region DELETE /api/fontanelle/[id]
+      // TODO: Check for user admin
       case 'DELETE': {
         const deleted = await deleteFontanella(id);
         if (!deleted) return res.status(404).json({ error: 'Not found' });
