@@ -524,9 +524,16 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode != 200) {
+      String message;
+      try {
+        final Map<String, dynamic> bodyJson = jsonDecode(response.body);
+        message = bodyJson['error']?.toString() ?? 'Errore sconosciuto';
+      } catch (e) {
+        message = 'Errore: ${response.body}';
+      }
       showMinimalNotification(
         context,
-        message: response.body,
+        message: message,
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
