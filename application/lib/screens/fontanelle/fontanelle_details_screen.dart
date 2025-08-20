@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:application/screens/components/minimal_notification.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../helpers/location_helper.dart';
 import 'dart:convert';
 
@@ -343,10 +345,30 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           width: 150,
                           height: 150,
                           child:
-                              fontanella.imageUrl != ""
-                                  ? Image.network(
-                                    '${dotenv.env['API_URI']}/api/uploads/${fontanella.imageUrl}',
+                              fontanella.imageUrl != null
+                                  ? CachedNetworkImage(
+                                    imageUrl:
+                                        '${dotenv.env['API_URI']}/api/uploads/${fontanella.imageUrl}',
                                     fit: BoxFit.cover,
+                                    placeholder:
+                                        (context, url) => Shimmer.fromColors(
+                                          baseColor: Colors.grey[800]!,
+                                          highlightColor: Colors.grey[700]!,
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 200, // puoi adattare
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[800],
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                        ),
+                                    errorWidget:
+                                        (context, url, error) => Image.asset(
+                                          'assets/icons/favicon.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                   )
                                   : Image.asset(
                                     'assets/icons/favicon.png',
@@ -365,7 +387,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           child: InkWell(
                             customBorder: CircleBorder(),
                             onTap: () {
-                              if(isUserLogged){
+                              if (isUserLogged) {
                                 _voteFontanella('up');
                               } else {
                                 Navigator.pushNamed(context, '/login');
@@ -414,7 +436,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           child: InkWell(
                             customBorder: CircleBorder(),
                             onTap: () {
-                              if(isUserLogged){
+                              if (isUserLogged) {
                                 _voteFontanella('down');
                               } else {
                                 Navigator.pushNamed(context, '/login');
