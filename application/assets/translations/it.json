@@ -1,0 +1,24 @@
+{
+  "general":{
+    "yes": "Si",
+    "no": "No",
+    "cancel": "Annulla",
+    "add": "Aggiungi",
+    "create": "Crea",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "update": "Aggiorna",
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "drinking_fountain": "Fontanelle",
+    "maps": "Mappe",
+    "user": "Utente",
+  },
+  "app_information": "Informazioni Applicazione",
+  "developed_by": "Sviluppato da",
+  "contact_me": "Contattami",
+  "maps_powered_by": "Mappe motorizzate da",
+  "version": "Versione",
+  "read_privacy_policy": "Leggi le Privacy Policy"
+}
