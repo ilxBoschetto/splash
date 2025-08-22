@@ -1,0 +1,24 @@
+{
+  "general":{
+    "yes": "yes",
+    "no": "no",
+    "cancel": "Cancel",
+    "add": "Add",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update",
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "drinking_fountain": "Drinking Fountain",
+    "maps": "Maps",
+    "user": "User",
+  },
+  "app_information": "App Informations",
+  "developed_by": "Developer By",
+  "contact_me": "Contact me",
+  "maps_powered_by": "Maps powered by",
+  "version": "Version",
+  "read_privacy_policy": "Read Privacy Policy"
+}
