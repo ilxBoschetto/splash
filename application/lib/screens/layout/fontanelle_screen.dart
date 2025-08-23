@@ -1,4 +1,5 @@
-import 'package:application/components/loaders.dart';
+import 'package:application/screens/components/fontanella_form.dart';
+import 'package:application/screens/components/loaders.dart';
 import 'package:application/helpers/auth_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -14,7 +15,6 @@ import '../../helpers/location_helper.dart';
 import '../../helpers/user_session.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:application/screens/components/minimal_notification.dart';
-import 'dart:io';
 
 class FontanelleListScreen extends StatefulWidget {
   const FontanelleListScreen({super.key});
@@ -226,10 +226,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     _cittaController.clear();
     _latController.text = position.latitude.toStringAsFixed(6);
     _lonController.text = position.longitude.toStringAsFixed(6);
-    double latitude = position.latitude;
-    double longitude = position.longitude;
-
-    LatLng _mapCenter = LatLng(latitude, longitude);
     _selectedImage = null;
 
     showModalBottomSheet(
@@ -239,225 +235,20 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder:
-          (context) => StatefulBuilder(
-            builder: (context, setModalState) {
-              void updateMapCenterFromText() {
-                final latText = _latController.text;
-                final lonText = _lonController.text;
-
-                if (latText.length >= 6 && lonText.length >= 6) {
-                  final lat = double.tryParse(latText);
-                  final lon = double.tryParse(lonText);
-
-                  if (lat != null && lon != null) {
-                    final newCenter = LatLng(lat, lon);
-                    setModalState(() {
-                      _mapCenter = newCenter;
-                    });
-                    modalMapController.move(
-                      newCenter,
-                      modalMapController.camera.zoom,
-                    );
-                  }
-                }
-              }
-
-              bool listenersAdded = false;
-              if (!listenersAdded) {
-                _latController.addListener(updateMapCenterFromText);
-                _lonController.addListener(updateMapCenterFromText);
-                listenersAdded = true;
-              }
-
-              final mediaQuery = MediaQuery.of(context);
-              final bottomPadding =
-                  mediaQuery.viewInsets.bottom + mediaQuery.padding.bottom;
-
-              return Padding(
-                padding: EdgeInsets.only(
-                  bottom: bottomPadding > 20 ? bottomPadding : 20,
-                  left: 16,
-                  right: 16,
-                  top: 24,
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        style: TextStyle(color: Colors.white),
-                        controller: _nomeController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nome fontanella',
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 6,
-                            child: TextField(
-                              style: const TextStyle(color: Colors.white),
-                              controller: _cittaController,
-                              decoration: const InputDecoration(
-                                labelText: 'Città',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Expanded(
-                            flex: 6,
-                            child: SizedBox(),
-                          ), // col vuoto
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              style: TextStyle(color: Colors.white),
-                              controller: _latController,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
-                                  ),
-                              decoration: const InputDecoration(
-                                labelText: 'Latitudine',
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: TextField(
-                              style: TextStyle(color: Colors.white),
-                              controller: _lonController,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
-                                  ),
-                              decoration: const InputDecoration(
-                                labelText: 'Longitudine',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Pulsante per caricare immagine
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final ImagePicker picker = ImagePicker();
-                          final XFile? image = await picker.pickImage(
-                            source: ImageSource.gallery,
-                          );
-                          if (image != null) {
-                            setModalState(() {
-                              _selectedImage = image;
-                            });
-                          }
-                        },
-                        icon: const Icon(Icons.image),
-                        label: const Text("Carica immagine"),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Anteprima immagine
-                      if (_selectedImage != null)
-                        Image.file(
-                          File(_selectedImage!.path),
-                          height: 150,
-                          fit: BoxFit.cover,
-                        ),
-
-                      const SizedBox(height: 20),
-
-                      SizedBox(
-                        height: 250,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: FlutterMap(
-                            mapController: modalMapController,
-                            options: MapOptions(
-                              initialCenter: _mapCenter,
-                              initialZoom: 17,
-                              onPositionChanged: (
-                                MapPosition pos,
-                                bool hasGesture,
-                              ) {
-                                if (hasGesture && pos.center != null) {
-                                  setModalState(() {
-                                    _mapCenter = pos.center!;
-                                    _latController.text = _mapCenter.latitude
-                                        .toStringAsFixed(6);
-                                    _lonController.text = _mapCenter.longitude
-                                        .toStringAsFixed(6);
-                                  });
-                                }
-                              },
-                            ),
-                            children: [
-                              TileLayer(
-                                urlTemplate:
-                                    'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-                                subdomains: ['a', 'b', 'c'],
-                                userAgentPackageName: 'com.boschetti.splash',
-                              ),
-                              MarkerLayer(
-                                markers: [
-                                  Marker(
-                                    point: _mapCenter,
-                                    width: 40,
-                                    height: 40,
-                                    // TODO: Add offset so the icon is precise
-                                    child: const Icon(
-                                      Icons.person_pin_circle,
-                                      color: Colors.red,
-                                      size: 40,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      ValueListenableBuilder<bool>(
-                        valueListenable: _isSubmitting,
-                        builder: (context, isSubmitting, child) {
-                          return ElevatedButton.icon(
-                            onPressed: isSubmitting ? null : _submitFontanella,
-                            icon: const Icon(Icons.add_location_alt),
-                            label:
-                                isSubmitting
-                                    ? const SizedBox(
-                                      height: 20,
-                                      child: BouncingDotsLoader(),
-                                    )
-                                    : const Text("Aggiungi fontanella"),
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: const Size.fromHeight(50),
-                            ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              );
-            },
+          (context) => FountainForm(
+            nomeController: _nomeController,
+            cittaController: _cittaController,
+            latController: _latController,
+            lonController: _lonController,
+            initialPosition: LatLng(position.latitude, position.longitude),
+            mapController: modalMapController,
+            isSubmitting: _isSubmitting,
+            onSubmit: _submitFontanella,
           ),
     );
   }
 
-  void _submitFontanella() async {
+  Future<void> _submitFontanella() async {
     _isSubmitting.value = true;
 
     try {
