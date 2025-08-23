@@ -340,7 +340,9 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   Future<void> inviaFontanellaImage(String fontanellaId, XFile? image) async {
-    final uri = Uri.parse('${dotenv.env['API_URL']}/fontanelle/$fontanellaId');
+    final uri = Uri.parse(
+      '${dotenv.env['API_URL']}/fontanelle/$fontanellaId/image',
+    );
     final request = http.MultipartRequest('POST', uri)
       ..headers['Authorization'] = 'Bearer ${userSession.token}';
     if (image != null) {
