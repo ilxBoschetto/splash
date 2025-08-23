@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../helpers/auth_helper.dart';
 import 'package:application/screens/components/minimal_notification.dart';
 import 'dart:convert';
-import 'package:application/components/loaders.dart';
+import 'package:application/screens/components/loaders.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
