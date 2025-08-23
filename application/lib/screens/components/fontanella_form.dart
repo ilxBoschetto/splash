@@ -208,20 +208,16 @@ class _FountainFormState extends State<FountainForm> {
                     initialCenter: _mapCenter,
                     initialZoom: 17,
                     onPositionChanged: (pos, hasGesture) {
-                      // Protezione: il callback può arrivare mentre il widget si sta chiudendo
                       if (!mounted || pos.center == null) return;
 
-                      // Evita loop quando l'aggiornamento arriva dai TextField
                       if (_updatingFromText) return;
 
                       final c = pos.center!;
-                      // Se non è cambiato di fatto, non fare nulla
                       if (c == _mapCenter) return;
 
                       _updatingFromMap = true;
                       setState(() {
                         _mapCenter = c;
-                        // Aggiorna i campi (triggererà il listener, ma _updatingFromMap lo blocca)
                         widget.latController.text = c.latitude.toStringAsFixed(
                           6,
                         );
@@ -229,7 +225,6 @@ class _FountainFormState extends State<FountainForm> {
                           6,
                         );
                       });
-                      // Rilascia il flag al prossimo frame (dopo eventuali notify dei controller)
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         _updatingFromMap = false;
                       });
