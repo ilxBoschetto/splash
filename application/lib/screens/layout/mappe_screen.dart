@@ -1,4 +1,4 @@
-import 'package:application/components/loaders.dart';
+import 'package:application/screens/components/loaders.dart';
 import 'package:application/helpers/location_helper.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:flutter/material.dart';
