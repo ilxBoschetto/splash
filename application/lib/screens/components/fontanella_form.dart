@@ -138,6 +138,7 @@ class _FountainFormState extends State<FountainForm> {
                   flex: 6,
                   child: TextField(
                     controller: widget.cittaController,
+                    style: theme.textTheme.bodyMedium,
                     decoration: const InputDecoration(labelText: 'Città'),
                   ),
                 ),
