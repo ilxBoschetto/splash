@@ -168,57 +168,84 @@ export const getFontanelle = async (
 
 //#endregion
 
-//#region POST /fontanelle
-
-export const createFontanella = async (
+//#region saveFontanella
+export const saveFontanella = async (
   {
+    id,
     name,
     lat,
     lon,
     imageUrl,
-  }: { name: string; lat: number; lon: number; imageUrl: string | null },
+  }: { id?: string; name?: string; lat?: number; lon?: number; imageUrl?: string | null },
   user: DecodedToken
 ) => {
-  const trimmedName = name.trim();
-
-  const existingByName = await Fontanella.findOne({
-    name: { $regex: `^${trimmedName}$`, $options: "i" },
-  });
-  if (existingByName) {
-    throw new Error("Esiste già una fontanella con lo stesso nome");
-  }
-
-  const existingNearby = await Fontanella.findOne({
-    location: {
-      $near: {
-        $geometry: {
-          type: "Point",
-          coordinates: [lon, lat],
-        },
-        $maxDistance: 10,
-      },
-    },
-  });
-
-  if (existingNearby) {
-    throw new Error("Esiste già una fontanella vicina (<10m)");
-  }
-
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
 
-  const newFontanella = await Fontanella.create({
-    name: trimmedName,
-    lat,
-    lon,
-    location: {
-      type: "Point",
-      coordinates: [lon, lat],
-    },
-    imageUrl,
-    createdBy: userObjectId,
-  });
+  if (!id) {
+    // Creazione
+    const createData: any = { createdBy: userObjectId };
 
-  return newFontanella;
+    if (name) {
+      const trimmedName = name.trim();
+
+      const existingByName = await Fontanella.findOne({
+        name: { $regex: `^${trimmedName}$`, $options: "i" },
+      });
+      if (existingByName) {
+        throw new Error("Esiste già una fontanella con lo stesso nome");
+      }
+      createData.name = trimmedName;
+    }
+
+    if (lat != null && lon != null) {
+      // Controllo vicinanza solo se vengono passati lat/lon
+      const existingNearby = await Fontanella.findOne({
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [lon, lat],
+            },
+            $maxDistance: 10,
+          },
+        },
+      });
+      if (existingNearby) {
+        throw new Error("Esiste già una fontanella vicina (<10m)");
+      }
+      createData.lat = lat;
+      createData.lon = lon;
+      createData.location = {
+        type: "Point",
+        coordinates: [lon, lat],
+      };
+    }
+
+    if (imageUrl !== undefined) createData.imageUrl = imageUrl;
+
+    const newFontanella = await Fontanella.create(createData);
+    return newFontanella;
+
+  } else {
+    // Aggiornamento
+    const updateData: any = {};
+
+    if (name) updateData.name = name.trim();
+    if (lat != null && lon != null) {
+      updateData.lat = lat;
+      updateData.lon = lon;
+      updateData.location = {
+        type: "Point",
+        coordinates: [lon, lat],
+      };
+    }
+    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+
+    const updated = await Fontanella.findByIdAndUpdate(id, updateData, { new: true });
+    if (!updated) throw new Error("Fontanella non trovata");
+
+    return updated;
+  }
 };
 
 //#endregion

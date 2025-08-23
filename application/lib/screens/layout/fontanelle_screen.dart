@@ -278,7 +278,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         nome: nome,
         lat: lat,
         lon: lon,
-        token: userSession.token,
         image: _selectedImage,
       );
     } finally {
@@ -292,29 +291,21 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     required String nome,
     required double lat,
     required double lon,
-    required String? token,
     XFile? image,
   }) async {
     final uri = Uri.parse('${dotenv.env['API_URL']}/fontanelle');
-    final request =
-        http.MultipartRequest('POST', uri)
-          ..headers['Authorization'] = 'Bearer $token'
-          ..fields['name'] = nome
-          ..fields['lat'] = lat.toString()
-          ..fields['lon'] = lon.toString();
 
-    if (image != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          image.path,
-          contentType: MediaType('image', 'jpeg'),
-        ),
-      );
-    }
+    final response = await http.post(
+      uri,
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon}),
+    );
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
+    print('status: ${response.statusCode}');
+    print('body: ${response.body}');
 
     if (response.statusCode != 200) {
       String message;
@@ -332,6 +323,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         backgroundColor: Colors.red,
       );
     } else {
+      if (image != null) {
+        final fontanellaId = jsonDecode(response.body)['_id'];
+        inviaFontanellaImage(fontanellaId, image);
+      }
       Navigator.of(context).pop();
       await fetchFontanelle();
       showMinimalNotification(
@@ -342,6 +337,26 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         backgroundColor: Colors.green,
       );
     }
+  }
+
+  Future<void> inviaFontanellaImage(String fontanellaId, XFile? image) async {
+    final uri = Uri.parse('${dotenv.env['API_URL']}/fontanelle/$fontanellaId');
+    final request = http.MultipartRequest('POST', uri)
+      ..headers['Authorization'] = 'Bearer ${userSession.token}';
+    if (image != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    print(jsonDecode(response.body));
   }
 
   @override
