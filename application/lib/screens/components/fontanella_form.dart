@@ -35,33 +35,80 @@ class _FountainFormState extends State<FountainForm> {
   XFile? _selectedImage;
   late LatLng _mapCenter;
 
+  // Evita feedback loop tra mappa e campi testo
+  bool _updatingFromMap = false;
+  bool _updatingFromText = false;
+
   @override
   void initState() {
     super.initState();
     _mapCenter = widget.initialPosition;
+
+    // Listener SOLO qui (non in build) + saranno rimossi in dispose
+    widget.latController.addListener(_updateMapCenterFromText);
+    widget.lonController.addListener(_updateMapCenterFromText);
   }
 
-  void _pickImage() async {
+  @override
+  void didUpdateWidget(covariant FountainForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Se i controller vengono sostituiti dal parent, riallaccia i listener
+    if (oldWidget.latController != widget.latController) {
+      oldWidget.latController.removeListener(_updateMapCenterFromText);
+      widget.latController.addListener(_updateMapCenterFromText);
+    }
+    if (oldWidget.lonController != widget.lonController) {
+      oldWidget.lonController.removeListener(_updateMapCenterFromText);
+      widget.lonController.addListener(_updateMapCenterFromText);
+    }
+  }
+
+  @override
+  void dispose() {
+    // Rimuovi i listener (i controller sono del parent → non fare dispose)
+    widget.latController.removeListener(_updateMapCenterFromText);
+    widget.lonController.removeListener(_updateMapCenterFromText);
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final image = await picker.pickImage(source: ImageSource.gallery);
+    if (!mounted) return;
     if (image != null) {
       setState(() => _selectedImage = image);
     }
   }
 
   void _updateMapCenterFromText() {
+    if (_updatingFromMap) return; // stiamo aggiornando dai movimenti mappa
     final lat = double.tryParse(widget.latController.text);
     final lon = double.tryParse(widget.lonController.text);
-    if (lat != null && lon != null) {
-      setState(() => _mapCenter = LatLng(lat, lon));
-      widget.mapController.move(_mapCenter, widget.mapController.camera.zoom);
+    if (lat == null || lon == null) return;
+
+    final newCenter = LatLng(lat, lon);
+    if (newCenter == _mapCenter) return;
+
+    _updatingFromText = true;
+    if (!mounted) {
+      _updatingFromText = false;
+      return;
     }
+    setState(() {
+      _mapCenter = newCenter;
+    });
+
+    // Muovi la mappa al frame successivo (evita chiamate durante smontaggio)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      widget.mapController.move(_mapCenter, widget.mapController.camera.zoom);
+      _updatingFromText = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    widget.latController.addListener(_updateMapCenterFromText);
-    widget.lonController.addListener(_updateMapCenterFromText);
+    final theme = Theme.of(context);
 
     final mediaQuery = MediaQuery.of(context);
     final bottomPadding =
@@ -77,22 +124,39 @@ class _FountainFormState extends State<FountainForm> {
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: widget.nomeController,
+              style: theme.textTheme.bodyMedium,
               decoration: const InputDecoration(labelText: 'Nome fontanella'),
             ),
             const SizedBox(height: 10),
-            TextField(
-              controller: widget.cittaController,
-              decoration: const InputDecoration(labelText: 'Città'),
+            Row(
+              children: [
+                Expanded(
+                  flex: 6,
+                  child: TextField(
+                    controller: widget.cittaController,
+                    decoration: const InputDecoration(labelText: 'Città'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 6,
+                  child: SizedBox(), // campo vuoto per futuri input
+                ),
+              ],
             ),
+
             const SizedBox(height: 24),
+
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: widget.latController,
+                    style: theme.textTheme.bodyMedium,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -103,6 +167,7 @@ class _FountainFormState extends State<FountainForm> {
                 Expanded(
                   child: TextField(
                     controller: widget.lonController,
+                    style: theme.textTheme.bodyMedium,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -111,18 +176,26 @@ class _FountainFormState extends State<FountainForm> {
                 ),
               ],
             ),
+
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.image),
-              label: const Text("Carica immagine"),
-            ),
-            if (_selectedImage != null)
-              Image.file(
-                File(_selectedImage!.path),
-                height: 150,
-                fit: BoxFit.cover,
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: _pickImage,
+                icon: const Icon(Icons.image),
+                label: Text("Carica immagine"),
               ),
+            ),
+
+            if (_selectedImage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Image.file(
+                  File(_selectedImage!.path),
+                  height: 150,
+                  fit: BoxFit.cover,
+                ),
+              ),
+
             const SizedBox(height: 20),
             SizedBox(
               height: 250,
@@ -133,16 +206,32 @@ class _FountainFormState extends State<FountainForm> {
                   options: MapOptions(
                     initialCenter: _mapCenter,
                     initialZoom: 17,
-                    onPositionChanged: (MapPosition pos, bool hasGesture) {
-                      if (hasGesture && pos.center != null) {
-                        setState(() {
-                          _mapCenter = pos.center!;
-                          widget.latController.text = _mapCenter.latitude
-                              .toStringAsFixed(6);
-                          widget.lonController.text = _mapCenter.longitude
-                              .toStringAsFixed(6);
-                        });
-                      }
+                    onPositionChanged: (pos, hasGesture) {
+                      // Protezione: il callback può arrivare mentre il widget si sta chiudendo
+                      if (!mounted || pos.center == null) return;
+
+                      // Evita loop quando l'aggiornamento arriva dai TextField
+                      if (_updatingFromText) return;
+
+                      final c = pos.center!;
+                      // Se non è cambiato di fatto, non fare nulla
+                      if (c == _mapCenter) return;
+
+                      _updatingFromMap = true;
+                      setState(() {
+                        _mapCenter = c;
+                        // Aggiorna i campi (triggererà il listener, ma _updatingFromMap lo blocca)
+                        widget.latController.text = c.latitude.toStringAsFixed(
+                          6,
+                        );
+                        widget.lonController.text = c.longitude.toStringAsFixed(
+                          6,
+                        );
+                      });
+                      // Rilascia il flag al prossimo frame (dopo eventuali notify dei controller)
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _updatingFromMap = false;
+                      });
                     },
                   ),
                   children: [
@@ -170,10 +259,11 @@ class _FountainFormState extends State<FountainForm> {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
             ValueListenableBuilder<bool>(
               valueListenable: widget.isSubmitting,
-              builder: (context, isSubmitting, child) {
+              builder: (context, isSubmitting, _) {
                 return ElevatedButton.icon(
                   onPressed: isSubmitting ? null : widget.onSubmit,
                   icon: const Icon(Icons.add_location_alt),
@@ -183,7 +273,7 @@ class _FountainFormState extends State<FountainForm> {
                             height: 20,
                             child: BouncingDotsLoader(),
                           )
-                          : const Text("Aggiungi fontanella"),
+                          : Text("Aggiungi fontanella"),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
                   ),

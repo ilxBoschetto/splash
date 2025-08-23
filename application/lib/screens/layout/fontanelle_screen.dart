@@ -235,22 +235,24 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder:
-          (context) => FountainForm(
-            nomeController: _nomeController,
-            cittaController: _cittaController,
-            latController: _latController,
-            lonController: _lonController,
-            initialPosition: LatLng(position.latitude, position.longitude),
-            mapController: modalMapController,
-            isSubmitting: _isSubmitting,
-            onSubmit: _submitFontanella,
+          (ctx) => Theme(
+            data: Theme.of(ctx),
+            child: FountainForm(
+              nomeController: _nomeController,
+              cittaController: _cittaController,
+              latController: _latController,
+              lonController: _lonController,
+              isSubmitting: _isSubmitting,
+              initialPosition: LatLng(position.latitude, position.longitude),
+              mapController: modalMapController,
+              onSubmit: _submitFontanella,
+            ),
           ),
     );
   }
 
   Future<void> _submitFontanella() async {
     _isSubmitting.value = true;
-
     try {
       String nome = _nomeController.text.trim();
       final lat = double.tryParse(_latController.text.trim());
