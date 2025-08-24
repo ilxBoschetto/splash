@@ -246,6 +246,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
               initialPosition: LatLng(position.latitude, position.longitude),
               mapController: modalMapController,
               onSubmit: _submitFontanella,
+              onImagePicked: (img) => _selectedImage = img,
             ),
           ),
     );

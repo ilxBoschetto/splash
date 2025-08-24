@@ -14,6 +14,7 @@ class FountainForm extends StatefulWidget {
   final LatLng initialPosition;
   final MapController mapController;
   final Future<void> Function()? onSubmit;
+  final void Function(XFile? image)? onImagePicked;
 
   const FountainForm({
     super.key,
@@ -24,6 +25,7 @@ class FountainForm extends StatefulWidget {
     required this.isSubmitting,
     required this.initialPosition,
     required this.mapController,
+    required this.onImagePicked,
     this.onSubmit,
   });
 
@@ -77,6 +79,7 @@ class _FountainFormState extends State<FountainForm> {
     if (!mounted) return;
     if (image != null) {
       setState(() => _selectedImage = image);
+      widget.onImagePicked?.call(image); // <-- notifica al parent
     }
   }
 

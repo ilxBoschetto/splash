@@ -45,9 +45,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             .json({ error: "Unauthorized: Invalid or missing token" });
         }
 
+        const uploadDir = path.join(process.cwd(), "public/uploads");
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
         const form = formidable({
           multiples: false,
-          uploadDir: "./public/uploads",
+          uploadDir,
           keepExtensions: true,
         });
 
@@ -65,17 +70,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (imageFile) {
               const filepath = imageFile.filepath || "";
               if (typeof filepath === "string" && filepath !== "") {
-                const ext = path.extname(imageFile.originalFilename);
+                const ext = path.extname(imageFile.originalFilename || "");
                 const randomName = crypto.randomBytes(16).toString("hex");
                 finalFilename = `${randomName}${ext}`;
 
-                const finalPath = path.join(
-                  process.cwd(),
-                  "public/uploads",
-                  finalFilename
-                );
-                fs.copyFileSync(imageFile.filepath, finalPath);
-                fs.unlinkSync(imageFile.filepath);
+                const finalPath = path.join(uploadDir, finalFilename);
+                fs.copyFileSync(filepath, finalPath);
+                fs.unlinkSync(filepath);
               }
             }
 
@@ -94,6 +95,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
         break;
       }
+
       //#endregion
 
       //#region Metodo non supportato
