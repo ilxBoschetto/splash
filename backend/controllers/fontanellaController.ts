@@ -231,24 +231,8 @@ export const saveFontanella = async (
 
     const newFontanella = await Fontanella.create(createData);
     return newFontanella;
-
   } else {
     // Aggiornamento
-    const updateData: any = {};
-
-    if (name) updateData.name = name.trim();
-    if (lat != null && lon != null) {
-      updateData.lat = lat;
-      updateData.lon = lon;
-      updateData.location = {
-        type: "Point",
-        coordinates: [lon, lat],
-      };
-    }
-    if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
-
-    console.log(updateData);
-
     const doc = await Fontanella.findById(id);
     if (!doc) throw new Error("Fontanella non trovata");
 

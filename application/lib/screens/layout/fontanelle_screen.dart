@@ -305,9 +305,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon}),
     );
 
-    print('status: ${response.statusCode}');
-    print('body: ${response.body}');
-
     if (response.statusCode != 200) {
       String message;
       try {
