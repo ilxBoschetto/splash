@@ -19,7 +19,7 @@ keytool -genkeypair \
   -alias release \
   -storepass password_keystore \
   -keypass password_chiave \
-  -dname "CN=Matteo Boschetti, OU=Sviluppo, O=La Mia Azienda, L=Milano, ST=MI, C=IT"
+  -dname "CN=Matteo Boschetti, OU=Splash, O=Splash, L=Splash, ST=VI, C=IT"
 ```
 
 ## 2. Crea `key.properties`
