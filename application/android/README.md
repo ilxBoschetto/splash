@@ -9,7 +9,17 @@
 - Lancia questo comando (salvare le credenziali su password manager)
 
 ```bash
-keytool -genkeypair -v -keystore release-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias release
+keytool -genkeypair \
+  -v \
+  -keystore release-keystore.jks \
+  -alias upload \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -alias release \
+  -storepass password_keystore \
+  -keypass password_chiave \
+  -dname "CN=Matteo Boschetti, OU=Sviluppo, O=La Mia Azienda, L=Milano, ST=MI, C=IT"
 ```
 
 ## 2. Crea `key.properties`
