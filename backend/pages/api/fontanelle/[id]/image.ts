@@ -56,43 +56,43 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           keepExtensions: true,
         });
 
-        form.parse(req, async (err, files) => {
-          if (err)
+        form.parse(req, async (err, fields, files) => {
+          if (err) {
             return res.status(500).json({ error: "Errore durante il parsing" });
+          }
 
-          const imageFiles = files.image as formidable.File[];
-          const imageFile = Array.isArray(imageFiles)
-            ? imageFiles[0]
-            : imageFiles;
-
+          const file = Array.isArray(files.image)
+            ? files.image[0]
+            : files.image;
           let finalFilename: string | null = null;
-          try {
-            if (imageFile) {
-              const filepath = imageFile.filepath || "";
-              if (typeof filepath === "string" && filepath !== "") {
-                const ext = path.extname(imageFile.originalFilename || "");
-                const randomName = crypto.randomBytes(16).toString("hex");
-                finalFilename = `${randomName}${ext}`;
 
-                const finalPath = path.join(uploadDir, finalFilename);
-                fs.copyFileSync(filepath, finalPath);
-                fs.unlinkSync(filepath);
-              }
+          try {
+            if (file) {
+              const ext = path.extname(file.originalFilename || "");
+              const randomName = crypto.randomBytes(16).toString("hex");
+              finalFilename = `${randomName}${ext}`;
+
+              const finalPath = path.join(uploadDir, finalFilename);
+
+              await fs.promises.copyFile(file.filepath, finalPath);
+              await fs.promises.unlink(file.filepath);
             }
 
             const fontanella = await saveFontanella(
               {
-                id: id,
-                imageUrl: finalFilename,
+                id,
+                imageUrl: finalFilename ? `${finalFilename}` : undefined,
               },
               user
             );
 
-            res.status(200).json(fontanella);
+            return res.status(200).json(fontanella);
           } catch (e: any) {
-            res.status(400).json({ error: e.message });
+            console.error("Errore salvataggio immagine:", e);
+            return res.status(400).json({ error: e.message });
           }
         });
+
         break;
       }
 

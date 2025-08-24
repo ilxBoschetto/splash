@@ -176,7 +176,13 @@ export const saveFontanella = async (
     lat,
     lon,
     imageUrl,
-  }: { id?: string; name?: string; lat?: number; lon?: number; imageUrl?: string | null },
+  }: {
+    id?: string;
+    name?: string;
+    lat?: number;
+    lon?: number;
+    imageUrl?: string | null;
+  },
   user: DecodedToken
 ) => {
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
@@ -241,9 +247,23 @@ export const saveFontanella = async (
     }
     if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
 
-    const updated = await Fontanella.findByIdAndUpdate(id, updateData, { new: true });
-    if (!updated) throw new Error("Fontanella non trovata");
+    console.log(updateData);
 
+    const doc = await Fontanella.findById(id);
+    if (!doc) throw new Error("Fontanella non trovata");
+
+    if (name) doc.name = name.trim();
+    if (lat != null && lon != null) {
+      doc.lat = lat;
+      doc.lon = lon;
+      doc.location = {
+        type: "Point",
+        coordinates: [lon, lat],
+      };
+    }
+    if (imageUrl !== undefined) doc.imageUrl = imageUrl;
+
+    const updated = await doc.save();
     return updated;
   }
 };
