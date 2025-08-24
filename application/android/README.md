@@ -9,16 +9,14 @@
 - Lancia questo comando (salvare le credenziali su password manager)
 
 ```bash
-keytool -genkeypair \
-  -v \
-  -keystore release-keystore.jks \
-  -alias upload \
-  -keyalg RSA \
-  -keysize 2048 \
-  -validity 10000 \
-  -alias release \
-  -storepass password_keystore \
-  -keypass password_chiave \
+keytool -genkeypair `
+  -keystore release-keystore.jks `
+  -alias release `
+  -keyalg RSA `
+  -keysize 2048 `
+  -validity 10000 `
+  -storepass ye89jqBvqV68 `
+  -keypass ye89jqBvqV68 `
   -dname "CN=Matteo Boschetti, OU=Splash, O=Splash, L=Splash, ST=VI, C=IT"
 ```
 
