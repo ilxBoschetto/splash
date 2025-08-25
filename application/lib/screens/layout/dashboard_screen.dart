@@ -95,7 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'menu.dashboard',
+          'menu.dashboard'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,

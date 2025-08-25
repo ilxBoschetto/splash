@@ -83,6 +83,8 @@
   "insert_email": "Inserisci l'email",
   "login_with_account": "Accedi al tuo account",
   "check_email_to_recover_password": "Controlla l'email per recuperare una nuova password",
+  "theme": "Tema",
+  "language": "Lingua",
   "errors": {
     "unable_to_open_link": "Impossibile aprire il link",
     "something_went_wrong": "Qualcosa è andato storto",

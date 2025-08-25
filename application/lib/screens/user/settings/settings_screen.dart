@@ -25,8 +25,16 @@ class SettingsScreen extends StatelessWidget {
         ),
         iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
       ),
-      body: Column(
+      body: ListView(
         children: [
+          // Sezione Tema
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'theme'.tr(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
           /*
           RadioListTile<ThemeMode>(
             title: Text('light_theme'.tr()),
@@ -47,8 +55,52 @@ class SettingsScreen extends StatelessWidget {
               if (mode != null) themeNotifier.setTheme(ThemeMode.dark);
             },
           ),
+
+          const Divider(),
+
+          // Sezione Lingua
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'language'.tr(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: DropdownButton<Locale>(
+              value: context.locale,
+              items: context.supportedLocales.map((locale) {
+                return DropdownMenuItem(
+                  value: locale,
+                  child: Text(_getLanguageName(locale)),
+                );
+              }).toList(),
+              onChanged: (locale) {
+                if (locale != null) {
+                  context.setLocale(locale);
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  // Helper per mostrare i nomi delle lingue leggibili
+  String _getLanguageName(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return 'English';
+      case 'it':
+        return 'Italiano';
+      case 'es':
+        return 'Español';
+      case 'fr':
+        return 'Français';
+      default:
+        return locale.languageCode;
+    }
   }
 }
