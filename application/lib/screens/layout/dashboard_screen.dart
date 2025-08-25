@@ -134,7 +134,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             value: "$fontanelleUser",
             color: Colors.green,
             onTap:
-                isUserLogged
+                isUserLogged && fontanelleUser > 0
                     ? () {
                       Navigator.pushNamed(
                         context,
@@ -143,7 +143,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       );
                     }
                     : null,
-            showArrow: isUserLogged,
+            showArrow: isUserLogged && fontanelleUser > 0,
           ),
           const SizedBox(height: 80),
         ],
@@ -239,7 +239,8 @@ class _LoginPrompt extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'drinking_fountain.save_drinkin_fountain_by_doing_login'.tr(),
+                    'drinking_fountain.save_drinkin_fountain_by_doing_login'
+                        .tr(),
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
