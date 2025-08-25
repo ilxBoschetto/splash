@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -38,7 +39,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Informazioni Applicazione",
+          'app_information'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -76,7 +77,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Developed by Matteo Boschetti',
+                          '${'developed_by'.tr()} Matteo Boschetti',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -89,7 +90,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Contact me: mboschetti03@gmail.com',
+                          '${'contact_me'.tr()}: mboschetti03@gmail.com',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -102,7 +103,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Maps powered by: Carto',
+                          '${'maps_powered_by'.tr()}: Carto',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -114,7 +115,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       const Icon(Icons.verified_outlined, size: 18),
                       const SizedBox(width: 8),
                       Text(
-                        'Versione: $currentVersion',
+                        '${'version'.tr()}: $currentVersion',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -160,7 +161,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                             } else {
                               showMinimalNotification(
                                 context,
-                                message: 'Impossibile aprire privacy policy',
+                                message: 'errors.unable_to_open_link'.tr(),
                                 duration: 2500,
                                 position: 'bottom',
                                 backgroundColor: Colors.red,
@@ -169,7 +170,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                             }
                           },
                           child: Text(
-                            'Leggi la Privacy Policy',
+                            'read_privacy_policy'.tr(),
                             style: Theme.of(
                               context,
                             ).textTheme.bodyMedium?.copyWith(

@@ -1,4 +1,5 @@
 import 'package:application/app_layout.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
@@ -91,17 +92,17 @@ class _VersionCheckWrapperState extends State<VersionCheckWrapper> {
         return PopScope(
           canPop: !mandatory,
           child: AlertDialog(
-            title: const Text('Aggiornamento disponibile'),
+            title: Text('update_available'.tr()),
             content: Text(
               mandatory
-                  ? 'È disponibile una nuova versione dell\'app. Devi aggiornare per continuare.'
-                  : 'È disponibile una nuova versione dell\'app. Vuoi aggiornare ora?',
+                  ? 'mandatory_update_message'.tr()
+                  : 'available_update_message'.tr(),
             ),
             actions: [
               if (!mandatory)
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Più tardi'),
+                  child: Text('later'.tr()),
                 ),
               TextButton(
                 onPressed: () async {
@@ -116,7 +117,7 @@ class _VersionCheckWrapperState extends State<VersionCheckWrapper> {
                     // oppure mantieni il dialog aperto, scegli tu
                   }
                 },
-                child: const Text('Aggiorna'),
+                child: Text('general.update'.tr()),
               ),
             ],
           ),

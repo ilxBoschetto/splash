@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -33,12 +34,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = passwordController.text;
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      setState(() => error = 'Compila tutti i campi');
+      setState(() => error = 'warnings.fill_in_fields'.tr());
       return;
     }
 
     if (!acceptedTerms) {
-      setState(() => error = 'Accetta termini di servizo e privacy policy');
+      setState(() => error = 'warnings.accept_terms_and_privacy_policy'.tr());
       return;
     }
 
@@ -63,13 +64,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Navigator.pushReplacementNamed(context, '/login');
       } else {
         final data = json.decode(response.body);
-        setState(
-          () => error = data['error'] ?? 'Errore durante la registrazione.',
-        );
+        setState(() => error = data['error'] ?? 'errors.register'.tr());
       }
     } catch (e) {
       debugPrint(e.toString());
-      setState(() => error = 'Errore di rete. Riprova.');
+      setState(() => error = 'errors.network_error'.tr());
     } finally {
       setState(() => loading = false);
     }
@@ -85,7 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Registrazione",
+          'registration'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -110,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Crea un nuovo account',
+                    'create_new_account'.tr(),
                     style: theme.textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
@@ -126,8 +125,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextField(
                     style: TextStyle(color: Colors.white),
                     controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username (*)',
+                    decoration: InputDecoration(
+                      labelText: '${'general.username'.tr()} (*)',
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -135,15 +134,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(color: Colors.white),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Email (*)'),
+                    decoration: InputDecoration(
+                      labelText: '${'general.email'.tr()} (*)',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     style: TextStyle(color: Colors.white),
                     controller: passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password (*)',
+                    decoration: InputDecoration(
+                      labelText: '${'general.password'.tr()} (*)',
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -171,11 +172,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             text: TextSpan(
                               style: Theme.of(context).textTheme.bodyMedium,
                               children: [
-                                const TextSpan(
-                                  text: 'Continuando, accetti i nostri ',
-                                ),
+                                TextSpan(text: 'terms_message_1'.tr()),
                                 TextSpan(
-                                  text: 'Termini di Servizio',
+                                  text: 'terms_message_2'.tr(),
                                   style: const TextStyle(color: Colors.blue),
                                   recognizer:
                                       TapGestureRecognizer()
@@ -187,9 +186,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           );
                                         },
                                 ),
-                                const TextSpan(text: ' e la nostra '),
+                                TextSpan(text: 'terms_message_3'.tr()),
                                 TextSpan(
-                                  text: 'Privacy Policy',
+                                  text: 'terms_message_4'.tr(),
                                   style: const TextStyle(color: Colors.blue),
                                   recognizer:
                                       TapGestureRecognizer()
@@ -223,7 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           loading
                               ? const BouncingDotsLoader()
                               : Text(
-                                'REGISTRATI',
+                                'general.register'.tr().toUpperCase(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w900,
                                   color:

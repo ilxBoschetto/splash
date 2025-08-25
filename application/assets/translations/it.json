@@ -1,5 +1,5 @@
 {
-  "general":{
+  "general": {
     "yes": "Si",
     "no": "No",
     "cancel": "Annulla",
@@ -7,7 +7,14 @@
     "create": "Crea",
     "edit": "Modifica",
     "delete": "Elimina",
-    "update": "Aggiorna"
+    "update": "Aggiorna",
+    "name": "Nome",
+    "email": "Email",
+    "register": "Registrati",
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -15,6 +22,37 @@
     "maps": "Mappe",
     "user": "Utente"
   },
+  "drinking_fountain": {
+    "name": "Nome Fontanella",
+    "city": "Città",
+    "upload_image": "Carica Immagine",
+    "delete": "Elimina fontanella",
+    "deleted_action": "Fontanella eliminata",
+    "add": "Aggiungi Fontanella",
+    "added_action": "Fontanella aggiunta",
+    "find": "Cerca fontanella",
+    "near": "Fontanelle vicine",
+    "saved": "Fontanelle Salvate",
+    "saved_action": "Fontanella salvata tra i preferiti",
+    "unsaved_action": "Fontanella rimossa dai preferiti",
+    "voted_action": "Fontanella votata",
+    "total": "Totale Fontanelle",
+    "added_today": "Aggiunte Oggi",
+    "save_drinkin_fountain_by_doing_login": "Salva le tue fontanelle creando un account o facendo il login",
+    "distance": "Distanza",
+    "latitude": "Latitudine",
+    "longitude": "Longitudine",
+    "created_by": "Creata da",
+    "questions": {
+      "are_you_sure_you_want_to_delete": "Sei sicuro di voler eliminare"
+    }
+  },
+  "settings": "Impostazioni",
+  "user_settings": "Impostazioni Utente",
+  "open_settings": "Apri Impostazioni",
+  "profile": "Profilo",
+  "dark_theme": "Tema Scuro",
+  "light_theme": "Tema Chiaro",
   "app_information": "Informazioni Applicazione",
   "developed_by": "Sviluppato da",
   "contact_me": "Contattami",
@@ -24,7 +62,44 @@
   "join_discord": "Unisciti al server Discord",
   "buy_me_coffee": "Comprami un caffè!",
   "community": "Community",
-  "errors":{
-    "unable_to_open_link": "Impossibile aprire il link"
+  "registered_at": "Registrato il",
+  "confirm_logout": "Conferma Logout",
+  "are_you_sure_you_want_to_logout": "Sei sicuro di voler effettuare il logout",
+  "update_available": "Aggiornamento disponibile",
+  "mandatory_update_message": "È disponibile una nuova versione dell'app. Devi aggiornare per continuare",
+  "available_update_message": "È disponibile una nuova versione dell'app. Vuoi aggiornare ora?",
+  "later": "Più tardi",
+  "position_disabled": "Posizione disattivata",
+  "position_disabled_message": "Per visualizzare le fontanelle vicine,\nattiva la posizione del dispositivo",
+  "registration": "Registrazione",
+  "create_new_account": "Crea un nuovo account",
+  "terms_message_1": "Continuando, accetti i nostri ",
+  "terms_message_2": "Termini di Servizio",
+  "terms_message_3": " e la nostra ",
+  "terms_message_4": "Privacy Policy",
+  "recover_password": "Recupera Password",
+  "forgot_password": "Password dimenticata",
+  "do_not_have_an_account": "Non hai ancora un account",
+  "insert_email": "Inserisci l'email",
+  "login_with_account": "Accedi al tuo account",
+  "check_email_to_recover_password": "Controlla l'email per recuperare una nuova password",
+  "errors": {
+    "unable_to_open_link": "Impossibile aprire il link",
+    "something_went_wrong": "Qualcosa è andato storto",
+    "no_data_available": "Nessun dato disponibile",
+    "general_error": "Errore generale",
+    "server_error": "Errore del server",
+    "network_error": "Errore di rete",
+    "server_timeout": "Timeout: il server non ha risposto in tempo",
+    "delete": "Errore durante l'eliminazione",
+    "save": "Errore durante il salvataggio",
+    "unsave": "Errore durante la rimozione",
+    "opening_google_maps": "Errore nell'apertura di Google Maps",
+    "register": "Errore durante la registrazione"
+  },
+  "warnings":{
+    "insert_name": "Inserisci il nome",
+    "fill_in_fields": "Compila tutti i campi",
+    "accept_terms_and_privacy_policy": "Accetta termini di servizo e privacy policy"
   }
 }

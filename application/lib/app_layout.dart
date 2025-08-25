@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'screens/layout/dashboard_screen.dart';
 import 'screens/layout/fontanelle_screen.dart';
@@ -58,11 +59,11 @@ class _AppLayoutState extends State<AppLayout> {
               _selectedIndex = index;
             });
           },
-          items: const [
-            TabItem(icon: Icons.dashboard_outlined, title: 'Dashboard'),
-            TabItem(icon: Icons.water_drop_outlined, title: 'Fontanelle'),
-            TabItem(icon: Icons.map_outlined, title: 'Mappe'),
-            TabItem(icon: Icons.account_circle_outlined, title: 'Utente'),
+          items: [
+            TabItem(icon: Icons.dashboard_outlined, title: 'menu.dashboard'.tr()),
+            TabItem(icon: Icons.water_drop_outlined, title: 'menu.drinking_fountain'.tr()),
+            TabItem(icon: Icons.map_outlined, title: 'menu.maps'.tr()),
+            TabItem(icon: Icons.account_circle_outlined, title: 'menu.user'.tr()),
           ],
         ),
       ),

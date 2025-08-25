@@ -1,7 +1,9 @@
 import 'package:application/screens/components/fontanella_form.dart';
 import 'package:application/screens/components/loaders.dart';
 import 'package:application/helpers/auth_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -154,7 +156,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       }
     } on TimeoutException {
       setState(() => isLoading = false);
-      print('Timeout: il server non ha risposto in tempo.');
+      print('errors.server_timeout'.tr());
     } catch (e) {
       print('Errore nel caricamento: $e');
     }
@@ -200,7 +202,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     if (response.statusCode == 200) {
       showMinimalNotification(
         context,
-        message: 'Fontanella eliminata!',
+        message: 'drinking_fountain.deleted_action'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.green,
@@ -210,7 +212,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     } else {
       showMinimalNotification(
         context,
-        message: 'Errore durante l\'eliminazione',
+        message: 'errors.delete'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -262,7 +264,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       if (nome.isEmpty || lat == null || lon == null) {
         showMinimalNotification(
           context,
-          message: 'Inserisci il nome!',
+          message: 'warnings.insert_name'.tr(),
           duration: 2500,
           position: 'top',
           backgroundColor: Colors.orange,
@@ -309,7 +311,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       String message;
       try {
         final Map<String, dynamic> bodyJson = jsonDecode(response.body);
-        message = bodyJson['error']?.toString() ?? 'Errore sconosciuto';
+        message = bodyJson['error']?.toString() ?? 'errors.general_error'.tr();
       } catch (e) {
         message = 'Errore: ${response.body}';
       }
@@ -329,7 +331,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       await fetchFontanelle();
       showMinimalNotification(
         context,
-        message: 'Fontanella aggiunta!',
+        message: 'drinking_fountain.added_action'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.green,
@@ -372,7 +374,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   controller: _searchController,
                   autofocus: true,
                   decoration: InputDecoration(
-                    hintText: 'Cerca fontanella...',
+                    hintText: '${'drinking_fountain'.tr()}...',
                     hintStyle: TextStyle(color: Theme.of(context).hintColor),
                     border: InputBorder.none,
                   ),
@@ -380,8 +382,8 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 )
                 : Text(
                   activeFilter == 'saved_fontanelle'
-                      ? 'Fontanelle Preferite'
-                      : 'Fontanelle Vicine',
+                      ? 'drinking_fountain.saved'.tr()
+                      : 'drinking_fountain.near'.tr(),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -415,19 +417,19 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                   children: [
                     Icon(Icons.location_off, size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Posizione disattivata',
+                    Text(
+                      'position_disabled'.tr(),
                       style: TextStyle(fontSize: 20),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Per visualizzare le fontanelle vicine,\nattiva la posizione del dispositivo.',
+                    Text(
+                      'position_disabled_message'.tr(),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.settings),
-                      label: const Text('Apri impostazioni'),
+                      label: Text('open_settings'.tr()),
                       onPressed: () {
                         LocationHelper.openLocationSettings();
                       },
@@ -452,22 +454,24 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
-                                  title: const Text('Elimina fontanella?'),
+                                  title: Text(
+                                    '${'drinking_fountain.delete'.tr()}?',
+                                  ),
                                   content: Text(
-                                    'Sei sicuro di voler eliminare "${f.nome}"?',
+                                    '${'drinking_fountain.questions.are_you_sure_you_want_to_delete'.tr()} "${f.nome}"?',
                                   ),
                                   actions: [
                                     TextButton(
                                       onPressed:
                                           () => Navigator.of(context).pop(),
-                                      child: const Text('Annulla'),
+                                      child: Text('general.cancel'.tr()),
                                     ),
                                     ElevatedButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                         deleteFontanella(f);
                                       },
-                                      child: const Text('Elimina'),
+                                      child: Text('general.delete'),
                                     ),
                                   ],
                                 );

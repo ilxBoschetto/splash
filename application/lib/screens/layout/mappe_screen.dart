@@ -136,9 +136,9 @@ class _MappeScreenState extends State<MappeScreen> {
                           height: 40,
                           child: Transform.translate(
                             offset: const Offset(
-                                0,
-                                -15,
-                              ), // move the icon so the bottom is aligned
+                              0,
+                              -15,
+                            ), // move the icon so the bottom is aligned
                             child: const Icon(
                               Icons.person_pin_circle,
                               color: Colors.red,

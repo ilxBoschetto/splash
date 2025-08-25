@@ -1,5 +1,6 @@
 import 'package:application/helpers/auth_helper.dart';
 import 'package:application/helpers/user_session.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:http/http.dart' as http;
@@ -130,7 +131,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         setState(() => isSaved = true);
         showMinimalNotification(
           context,
-          message: 'Fontanella salvata tra i preferiti!',
+          message: 'drinking_fountain.saved_action'.tr(),
           duration: 2500,
           position: 'bottom',
           backgroundColor: Colors.green,
@@ -140,7 +141,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         debugPrint('Errore nel salvataggio: ${response.statusCode}');
         showMinimalNotification(
           context,
-          message: 'Errore durante il salvataggio',
+          message: 'errors.save'.tr(),
           duration: 2500,
           position: 'bottom',
           backgroundColor: Colors.red,
@@ -151,7 +152,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       debugPrint('Errore nel salvataggio: $e');
       showMinimalNotification(
         context,
-        message: 'Errore di connessione',
+        message: 'errors.server_error'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -180,7 +181,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       debugPrint('Errore nel salvataggio: ${response.statusCode}');
       showMinimalNotification(
         context,
-        message: 'Errore',
+        message: 'errors.general_error'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -203,7 +204,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       _getFontanellaVotes();
       showMinimalNotification(
         context,
-        message: 'Fontanella votata!',
+        message: 'drinking_fountain.voted_action'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.green,
@@ -213,7 +214,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       debugPrint('Errore nel salvataggio: ${response.statusCode}');
       showMinimalNotification(
         context,
-        message: 'Errore durante il salvataggio',
+        message: 'errors.save'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -242,7 +243,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         setState(() => isSaved = false);
         showMinimalNotification(
           context,
-          message: 'Fontanella rimossa dai preferiti',
+          message: 'drinking_fountain.unsaved_action'.tr(),
           duration: 2500,
           position: 'bottom',
           backgroundColor: Colors.green,
@@ -252,7 +253,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         debugPrint('Errore nella rimozione: ${response.statusCode}');
         showMinimalNotification(
           context,
-          message: 'Errore durante la rimozione',
+          message: 'errors.unsave'.tr(),
           duration: 2500,
           position: 'bottom',
           backgroundColor: Colors.red,
@@ -282,7 +283,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     } else {
       showMinimalNotification(
         context,
-        message: 'Errore nell\'apertura di Google Maps',
+        message: 'errors.opening_google_maps'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -478,7 +479,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                     const Divider(),
                     const SizedBox(height: 8),
                     Text(
-                      'Distanza',
+                      'drinking_fountain.distance'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
@@ -490,7 +491,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Latitudine',
+                      'drinking_fountain.latitude'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
@@ -499,7 +500,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                     Text('${fontanella.lat}', style: TextStyle(fontSize: 20)),
                     const SizedBox(height: 12),
                     Text(
-                      'Longitudine',
+                      'drinking_fountain.longitude'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
@@ -508,7 +509,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                     Text('${fontanella.lon}', style: TextStyle(fontSize: 20)),
                     const SizedBox(height: 12),
                     Text(
-                      'Creato da',
+                      'drinking_fountain.created_by'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,

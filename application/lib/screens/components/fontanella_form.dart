@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:image_picker/image_picker.dart';
@@ -132,7 +133,7 @@ class _FountainFormState extends State<FountainForm> {
             TextField(
               controller: widget.nomeController,
               style: theme.textTheme.bodyMedium,
-              decoration: const InputDecoration(labelText: 'Nome fontanella'),
+              decoration: InputDecoration(labelText: 'drinking_fountain.name'.tr()),
             ),
             const SizedBox(height: 10),
             Row(
@@ -142,7 +143,7 @@ class _FountainFormState extends State<FountainForm> {
                   child: TextField(
                     controller: widget.cittaController,
                     style: theme.textTheme.bodyMedium,
-                    decoration: const InputDecoration(labelText: 'Città'),
+                    decoration: InputDecoration(labelText: 'drinking_fountain.city'.tr()),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -164,7 +165,7 @@ class _FountainFormState extends State<FountainForm> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: const InputDecoration(labelText: 'Latitudine'),
+                    decoration: InputDecoration(labelText: 'drinking_fountain.latitude'.tr()),
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -175,7 +176,7 @@ class _FountainFormState extends State<FountainForm> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: const InputDecoration(labelText: 'Longitudine'),
+                    decoration: InputDecoration(labelText: 'drinking_fountain.longitude'.tr()),
                   ),
                 ),
               ],
@@ -186,7 +187,7 @@ class _FountainFormState extends State<FountainForm> {
               child: ElevatedButton.icon(
                 onPressed: _pickImage,
                 icon: const Icon(Icons.image),
-                label: Text("Carica immagine"),
+                label: Text('drinking_fountain.upload_image'.tr()),
               ),
             ),
 
@@ -272,7 +273,7 @@ class _FountainFormState extends State<FountainForm> {
                             height: 20,
                             child: BouncingDotsLoader(),
                           )
-                          : Text("Aggiungi fontanella"),
+                          : Text('drinking_fountain.add'.tr()),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(50),
                   ),

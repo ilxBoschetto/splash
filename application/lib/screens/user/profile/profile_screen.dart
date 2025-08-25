@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -54,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Profilo",
+          'profile'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -72,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Errore: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('Nessun dato disponibile'));
+            return Center(child: Text('no_data_available'.tr()));
           }
 
           final user = snapshot.data!;
@@ -95,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                'Nome',
+                                'general.name'.tr(),
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
@@ -116,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                'Email',
+                                'general.email'.tr(),
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
@@ -141,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  'Registrato il',
+                                  'registered_at'.tr(),
                                   style:
                                       Theme.of(context).textTheme.titleMedium,
                                 ),

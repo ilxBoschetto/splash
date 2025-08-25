@@ -1,4 +1,5 @@
 import 'package:application/helpers/auth_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +34,7 @@ class _UserScreenState extends State<UserScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Impostazioni Utente",
+          'user_settings'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -57,7 +58,7 @@ class _UserScreenState extends State<UserScreen> {
                 children: [
                   _buildMenuItem(
                     context,
-                    label: 'Profilo',
+                    label: 'profile'.tr(),
                     icon: Icons.person,
                     onTap: () {
                       Navigator.pushNamed(
@@ -69,21 +70,21 @@ class _UserScreenState extends State<UserScreen> {
                   _buildDivider(),
                   _buildMenuItem(
                     context,
-                    label: 'Impostazioni',
+                    label: 'settings'.tr(),
                     icon: Icons.settings,
                     onTap: () => Navigator.pushNamed(context, '/settings'),
                   ),
                   _buildDivider(),
                   _buildMenuItem(
                     context,
-                    label: 'Community',
+                    label: 'community'.tr(),
                     icon: Icons.people,
                     onTap: () => Navigator.pushNamed(context, '/community'),
                   ),
                   _buildDivider(),
                   _buildMenuItem(
                     context,
-                    label: 'Informazioni Applicazione',
+                    label: 'app_information'.tr(),
                     icon: Icons.info_outline,
                     onTap:
                         () => Navigator.pushNamed(context, '/app_information'),
@@ -92,7 +93,7 @@ class _UserScreenState extends State<UserScreen> {
                     _buildDivider(),
                     _buildMenuItem(
                       context,
-                      label: 'Logout',
+                      label: 'general.logout'.tr(),
                       icon: Icons.logout,
                       textColor: Colors.red,
                       onTap: () async {
@@ -103,21 +104,21 @@ class _UserScreenState extends State<UserScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                title: const Text('Conferma Logout'),
-                                content: const Text(
-                                  'Sei sicuro di voler effettuare il logout?',
+                                title: Text('confirm_logout'.tr()),
+                                content: Text(
+                                  '${'are_you_sure_you_want_to_logout'.tr()}?',
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed:
                                         () => Navigator.of(context).pop(false),
-                                    child: const Text('Annulla'),
+                                    child: Text('general.cancel'.tr()),
                                   ),
                                   TextButton(
                                     onPressed:
                                         () => Navigator.of(context).pop(true),
-                                    child: const Text(
-                                      'Logout',
+                                    child: Text(
+                                      'general.logout'.tr(),
                                       style: TextStyle(color: Colors.red),
                                     ),
                                   ),

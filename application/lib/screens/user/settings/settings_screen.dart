@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:application/notifiers/theme_notifier.dart';
 
@@ -14,7 +15,7 @@ class SettingsScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Impostazioni",
+          'settings'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -28,7 +29,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           /*
           RadioListTile<ThemeMode>(
-            title: const Text("Tema Chiaro"),
+            title: Text('light_theme'.tr()),
             secondary: const Icon(Icons.light_mode),
             value: ThemeMode.light,
             groupValue: themeNotifier.value,
@@ -38,7 +39,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           */
           RadioListTile<ThemeMode>(
-            title: const Text("Tema Scuro"),
+            title: Text('dark_theme'.tr()),
             secondary: const Icon(Icons.dark_mode),
             value: ThemeMode.dark,
             groupValue: themeNotifier.value,
@@ -46,7 +47,6 @@ class SettingsScreen extends StatelessWidget {
               if (mode != null) themeNotifier.setTheme(ThemeMode.dark);
             },
           ),
-          
         ],
       ),
     );

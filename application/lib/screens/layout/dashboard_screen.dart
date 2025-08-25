@@ -1,4 +1,5 @@
 import 'package:application/helpers/auth_helper.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -94,7 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Dashboard",
+          'menu.dashboard',
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -117,19 +118,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 16),
           ],
           _DashboardCard(
-            title: "Totale fontanelle",
+            title: 'drinking_fountain.total'.tr(),
             value: "$totalFontanelle",
             color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: 12),
           _DashboardCard(
-            title: "Aggiunte oggi",
+            title: 'drinking_fountain.added_today'.tr(),
             value: "$fontanelleOggi",
             color: Colors.orange,
           ),
           const SizedBox(height: 12),
           _DashboardCard(
-            title: "Le mie fontanelle",
+            title: 'drinking_fountain.saved'.tr(),
             value: "$fontanelleUser",
             color: Colors.green,
             onTap:
@@ -236,9 +237,9 @@ class _LoginPrompt extends StatelessWidget {
               children: [
                 const Icon(Icons.info_outline, color: Colors.blue),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Salva le tue fontanelle creando un account o facendo il login.',
+                    'drinking_fountain.save_drinkin_fountain_by_doing_login'.tr(),
                     style: TextStyle(fontSize: 14),
                   ),
                 ),
@@ -261,7 +262,7 @@ class _LoginPrompt extends StatelessWidget {
                             Navigator.pushNamed(context, '/register');
                           },
                           child: Text(
-                            'REGISTRATI',
+                            'general.register'.tr().toUpperCase(),
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
                               color: Theme.of(context).scaffoldBackgroundColor,
@@ -281,7 +282,7 @@ class _LoginPrompt extends StatelessWidget {
                             Navigator.pushNamed(context, '/login');
                           },
                           child: Text(
-                            'LOGIN',
+                            'general.login'.tr().toUpperCase(),
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
                               color: Theme.of(context).scaffoldBackgroundColor,

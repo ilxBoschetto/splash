@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = passwordController.text;
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() => error = 'Compila tutti i campi');
+      setState(() => error = 'warnings.fill_in_fields'.tr());
       return;
     }
 
@@ -72,13 +73,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextField(
                           style: TextStyle(color: Colors.white),
                           controller: emailController,
-                          decoration: const InputDecoration(labelText: 'Email'),
+                          decoration: InputDecoration(
+                            labelText: 'general.email'.tr(),
+                          ),
                         ),
                         const SizedBox(height: 20),
 
                         ElevatedButton.icon(
                           icon: const Icon(Icons.password),
-                          label: const Text("Recupera password"),
+                          label: Text('recover_password'.tr()),
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
@@ -104,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (email.isEmpty) {
       showMinimalNotification(
         context,
-        message: 'Inserisci l\'email!',
+        message: 'insert_email'.tr(),
         duration: 2500,
         position: 'top',
         backgroundColor: Colors.orange,
@@ -123,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pop();
       showMinimalNotification(
         context,
-        message: 'Controlla l\'email per recuperare una nuova password!',
+        message: 'check_email_to_recover_password'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.green,
@@ -132,10 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.of(context).pop();
       showMinimalNotification(
         context,
-        message: 'Qualcosa è andato storto',
+        message: 'errors.something_went_wrong'.tr(),
         duration: 2500,
         position: 'bottom',
-         backgroundColor: Colors.orange,
+        backgroundColor: Colors.orange,
       );
       throw Exception('Errore ${response.statusCode}');
     }
@@ -151,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "Login",
+          'general.login'.tr(),
           style: TextStyle(
             fontSize: 20,
             letterSpacing: 1,
@@ -176,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Accedi al tuo account',
+                    'login_with_account'.tr(),
                     style: theme.textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
@@ -193,14 +196,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(color: Colors.white),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Email'),
+                    decoration: InputDecoration(
+                      labelText: 'general.email'.tr(),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     style: TextStyle(color: Colors.white),
                     controller: passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
+                    decoration: InputDecoration(
+                      labelText: 'general.password'.tr(),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Column(
@@ -208,7 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       InkWell(
                         child: Text(
-                          "Password dimenticata?",
+                          '${'forgot_password'.tr()}?',
                           style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () => _showSendRecoverPasswordSheet(),
@@ -216,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(height: 10),
                       InkWell(
                         child: Text(
-                          "Non hai ancora un account?",
+                          '${'do_not_have_an_account'.tr()}?',
                           style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
@@ -240,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           loading
                               ? const BouncingDotsLoader()
                               : Text(
-                                'LOGIN',
+                                'general.login'.tr().toUpperCase(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w900,
                                   color:
