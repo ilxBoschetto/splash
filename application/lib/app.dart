@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:application/notifiers/theme_notifier.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'routes.dart';
 
 class MyApp extends StatelessWidget {
@@ -17,6 +18,9 @@ class MyApp extends StatelessWidget {
           title: 'Splash',
           debugShowCheckedModeBanner: false,
           themeMode: currentThemeMode,
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
           initialRoute: '/',
@@ -35,7 +39,7 @@ class MyApp extends StatelessWidget {
       colorScheme: base.colorScheme.copyWith(
         primary: Colors.blue,
         secondary: Colors.blueAccent,
-        surface: const Color.fromARGB(255, 231, 230, 230)
+        surface: const Color.fromARGB(255, 231, 230, 230),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.blue,

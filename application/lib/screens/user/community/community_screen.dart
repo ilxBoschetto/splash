@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:application/screens/components/minimal_notification.dart';
@@ -10,7 +11,7 @@ class CommunityScreen extends StatelessWidget {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       showMinimalNotification(
         context,
-        message: 'Impossibile aprire il link discord',
+        message: 'errors.unable_to_open_link'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -24,7 +25,7 @@ class CommunityScreen extends StatelessWidget {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       showMinimalNotification(
         context,
-        message: 'Impossibile aprire il link buy me a coffee',
+        message: 'errors.unable_to_open_link'.tr(),
         duration: 2500,
         position: 'bottom',
         backgroundColor: Colors.red,
@@ -37,7 +38,7 @@ class CommunityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Community'),
+        title: Text('community'.tr()),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -55,8 +56,8 @@ class CommunityScreen extends StatelessWidget {
             child: ListTile(
               onTap: () => _openDiscordInvite(context),
               leading: const Icon(Icons.discord, color: Colors.indigo),
-              title: const Text(
-                'Unisciti al server Discord',
+              title: Text(
+                'join_discord'.tr(),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               trailing: const Icon(Icons.open_in_new),
@@ -71,8 +72,8 @@ class CommunityScreen extends StatelessWidget {
             child: ListTile(
               onTap: () => _openBuyMeACoffee(context),
               leading: const Icon(Icons.coffee, color: Colors.orangeAccent),
-              title: const Text(
-                'Comprami un caffè!',
+              title: Text(
+                'buy_me_coffee'.tr(),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               trailing: const Icon(Icons.open_in_new),

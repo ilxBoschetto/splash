@@ -7,18 +7,24 @@
     "create": "Crea",
     "edit": "Modifica",
     "delete": "Elimina",
-    "update": "Aggiorna",
+    "update": "Aggiorna"
   },
   "menu": {
     "dashboard": "Dashboard",
     "drinking_fountain": "Fontanelle",
     "maps": "Mappe",
-    "user": "Utente",
+    "user": "Utente"
   },
   "app_information": "Informazioni Applicazione",
   "developed_by": "Sviluppato da",
   "contact_me": "Contattami",
   "maps_powered_by": "Mappe motorizzate da",
   "version": "Versione",
-  "read_privacy_policy": "Leggi le Privacy Policy"
+  "read_privacy_policy": "Leggi le Privacy Policy",
+  "join_discord": "Unisciti al server Discord",
+  "buy_me_coffee": "Comprami un caffè!",
+  "community": "Community",
+  "errors":{
+    "unable_to_open_link": "Impossibile aprire il link"
+  }
 }

@@ -7,18 +7,24 @@
     "create": "Create",
     "edit": "Edit",
     "delete": "Delete",
-    "update": "Update",
+    "update": "Update"
   },
   "menu": {
     "dashboard": "Dashboard",
     "drinking_fountain": "Drinking Fountain",
     "maps": "Maps",
-    "user": "User",
+    "user": "User"
   },
   "app_information": "App Informations",
   "developed_by": "Developer By",
   "contact_me": "Contact me",
   "maps_powered_by": "Maps powered by",
   "version": "Version",
-  "read_privacy_policy": "Read Privacy Policy"
+  "read_privacy_policy": "Read Privacy Policy",
+  "join_discord": "Join the discord server",
+  "buy_me_coffee": "Buy me a coffee!",
+  "community": "Community",
+  "errors":{
+    "unable_to_open_link": "Unable to open the link"
+  }
 }
