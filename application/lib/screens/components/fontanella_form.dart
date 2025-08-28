@@ -133,7 +133,9 @@ class _FountainFormState extends State<FountainForm> {
             TextField(
               controller: widget.nomeController,
               style: theme.textTheme.bodyMedium,
-              decoration: InputDecoration(labelText: 'drinking_fountain.name'.tr()),
+              decoration: InputDecoration(
+                labelText: 'drinking_fountain.name'.tr(),
+              ),
             ),
             const SizedBox(height: 10),
             Row(
@@ -143,7 +145,9 @@ class _FountainFormState extends State<FountainForm> {
                   child: TextField(
                     controller: widget.cittaController,
                     style: theme.textTheme.bodyMedium,
-                    decoration: InputDecoration(labelText: 'drinking_fountain.city'.tr()),
+                    decoration: InputDecoration(
+                      labelText: 'drinking_fountain.city'.tr(),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -165,7 +169,9 @@ class _FountainFormState extends State<FountainForm> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: InputDecoration(labelText: 'drinking_fountain.latitude'.tr()),
+                    decoration: InputDecoration(
+                      labelText: 'drinking_fountain.latitude'.tr(),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -176,7 +182,9 @@ class _FountainFormState extends State<FountainForm> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    decoration: InputDecoration(labelText: 'drinking_fountain.longitude'.tr()),
+                    decoration: InputDecoration(
+                      labelText: 'drinking_fountain.longitude'.tr(),
+                    ),
                   ),
                 ),
               ],
@@ -247,10 +255,16 @@ class _FountainFormState extends State<FountainForm> {
                           point: _mapCenter,
                           width: 40,
                           height: 40,
-                          child: const Icon(
-                            Icons.person_pin_circle,
-                            color: Colors.red,
-                            size: 40,
+                          child: Transform.translate(
+                            offset: const Offset(
+                              0,
+                              -15,
+                            ), // sposta l’icona verso l’alto
+                            child: const Icon(
+                              Icons.person_pin_circle,
+                              color: Colors.red,
+                              size: 30,
+                            ),
                           ),
                         ),
                       ],
