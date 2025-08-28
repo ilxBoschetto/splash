@@ -448,7 +448,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     child: GestureDetector(
                       onTap: () => goToDetail(f),
                       onLongPressStart: (details) {
-                        if (userSession.email == "matbos2003@gmail.com") {
+                        if (userSession.isAdmin == true) {
                           _longPressTimer = Timer(const Duration(seconds: 5), () {
                             showDialog(
                               context: context,
@@ -471,7 +471,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                                         Navigator.of(context).pop();
                                         deleteFontanella(f);
                                       },
-                                      child: Text('general.delete'),
+                                      child: Text('general.delete').tr(),
                                     ),
                                   ],
                                 );
