@@ -85,6 +85,8 @@
   "check_email_to_recover_password": "Check your email to recover a new password",
   "theme": "Theme",
   "language": "Language",
+  "grant_permissions": "Grant Permissions",
+  "position_permission_required": "To view nearby fountains,\nplease grant permissions to the application",
   "errors": {
     "unable_to_open_link": "Unable to open link",
     "something_went_wrong": "Something went wrong",

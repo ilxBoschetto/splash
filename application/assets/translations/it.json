@@ -85,6 +85,8 @@
   "check_email_to_recover_password": "Controlla l'email per recuperare una nuova password",
   "theme": "Tema",
   "language": "Lingua",
+  "grant_permissions": "Concedi Permessi",
+  "position_permission_required": "Per visualizzare le fontanelle vicine,\nconcedi il permesso all'app di accedere alla posizione",
   "errors": {
     "unable_to_open_link": "Impossibile aprire il link",
     "something_went_wrong": "Qualcosa è andato storto",

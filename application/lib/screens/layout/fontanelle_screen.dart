@@ -13,6 +13,7 @@ import 'dart:async';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../helpers/location_helper.dart';
 import '../../helpers/user_session.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,17 +44,19 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   // user session
   bool isUserLogged = false;
-  ValueNotifier<bool> _isSubmitting = ValueNotifier(false);
+  final ValueNotifier<bool> _isSubmitting = ValueNotifier(false);
   final userSession = UserSession();
 
   bool isLoading = true;
   bool isLocationEnabled = true;
+  bool hasLocationPermission = false;
   bool _isSearching = false;
   bool _isAdding = false;
 
   @override
   void initState() {
     super.initState();
+    _initPermissions();
     _checkLocationAndLoad();
     _checkUserStatus();
     _searchController.addListener(() => filterFontanelle());
@@ -81,6 +84,18 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 .toList();
       }
     });
+  }
+
+  Future<void> _initPermissions() async {
+    final granted = await checkLocationPermission();
+    setState(() {
+      hasLocationPermission = granted;
+    });
+  }
+
+  Future<bool> checkLocationPermission() async {
+    final status = await Permission.location.status;
+    return status.isGranted;
   }
 
   Future<void> _checkLocationAndLoad() async {
@@ -419,19 +434,30 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     const SizedBox(height: 16),
                     Text(
                       'position_disabled'.tr(),
-                      style: TextStyle(fontSize: 20),
+                      style: const TextStyle(fontSize: 20),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'position_disabled_message'.tr(),
+                      hasLocationPermission
+                          ? 'position_disabled_message'.tr()
+                          : 'position_permission_required'
+                              .tr(), // nuovo messaggio
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.settings),
-                      label: Text('open_settings'.tr()),
+                      label: Text(
+                        hasLocationPermission
+                            ? 'open_settings'.tr()
+                            : 'grant_permissions'.tr(), // testo bottone diverso
+                      ),
                       onPressed: () {
-                        LocationHelper.openLocationSettings();
+                        if (hasLocationPermission) {
+                          LocationHelper.openLocationSettings();
+                        } else {
+                          openAppSettings();
+                        }
                       },
                     ),
                   ],
