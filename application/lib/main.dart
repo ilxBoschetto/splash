@@ -16,7 +16,7 @@ void main() async {
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('it')],
-      path: 'translations',
+      path: 'assets/translations',
       fallbackLocale: const Locale('en'),
       child: MyApp(themeNotifier: themeNotifier),
     ),

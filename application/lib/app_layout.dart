@@ -23,6 +23,12 @@ class _AppLayoutState extends State<AppLayout> {
     UserScreen(),
   ];
 
+  String shorten(String text, [int maxLength = 10]) {
+    return (text.length <= maxLength)
+        ? text
+        : text.substring(0, maxLength) + '…';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,12 +53,12 @@ class _AppLayoutState extends State<AppLayout> {
         color: Theme.of(context).scaffoldBackgroundColor,
         elevation: 20,
         child: ConvexAppBar(
-          style: TabStyle.react,
+          style: TabStyle.react, // mantiene icona e testo vicini
           backgroundColor: Theme.of(context).colorScheme.surface,
           color: Colors.grey.shade500,
           activeColor: Theme.of(context).colorScheme.primary,
           curveSize: 90,
-          height: 60,
+          height: 60, // aumentata per dare più spazio verticale
           initialActiveIndex: _selectedIndex,
           onTap: (int index) {
             setState(() {
@@ -60,10 +66,22 @@ class _AppLayoutState extends State<AppLayout> {
             });
           },
           items: [
-            TabItem(icon: Icons.dashboard_outlined, title: 'menu.dashboard'.tr()),
-            TabItem(icon: Icons.water_drop_outlined, title: 'menu.drinking_fountain'.tr()),
-            TabItem(icon: Icons.map_outlined, title: 'menu.maps'.tr()),
-            TabItem(icon: Icons.account_circle_outlined, title: 'menu.user'.tr()),
+            TabItem(
+              icon: Icons.dashboard_outlined,
+              title: shorten('menu.dashboard'.tr(), 12),
+            ),
+            TabItem(
+              icon: Icons.water_drop_outlined,
+              title: shorten('menu.drinking_fountain'.tr(), 10),
+            ),
+            TabItem(
+              icon: Icons.map_outlined,
+              title: shorten('menu.maps'.tr(), 10),
+            ),
+            TabItem(
+              icon: Icons.account_circle_outlined,
+              title: shorten('menu.user'.tr(), 12),
+            ),
           ],
         ),
       ),
