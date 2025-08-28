@@ -101,7 +101,7 @@ class _MappeScreenState extends State<MappeScreen> {
   @override
   Widget build(BuildContext context) {
     final initialCenter =
-        userPosition ?? const LatLng(45.72064772402749, 11.309933083088417);
+        userPosition ?? const LatLng(45.07880889299794, 10.613908277357126);
     return Scaffold(
       body:
           isLoading
@@ -118,7 +118,7 @@ class _MappeScreenState extends State<MappeScreen> {
                 mapController: _mapController,
                 options: MapOptions(
                   initialCenter: initialCenter,
-                  initialZoom: 14.0,
+                  initialZoom: userPosition != null ? 14.0 : 7.0,
                 ),
                 children: [
                   TileLayer(
