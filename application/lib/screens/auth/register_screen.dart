@@ -67,7 +67,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() => error = data['error'] ?? 'errors.register'.tr());
       }
     } catch (e) {
-      debugPrint(e.toString());
       setState(() => error = 'errors.network_error'.tr());
     } finally {
       setState(() => loading = false);
