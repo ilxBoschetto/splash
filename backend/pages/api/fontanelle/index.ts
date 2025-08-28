@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@lib/mongodb";
-import { verifyToken } from "@lib/auth";
+import { getUserFromRequest, verifyToken } from "@lib/auth";
 import {
   getFontanelle,
   saveFontanella,
@@ -32,10 +32,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       //#region POST /api/fontanelle
       case "POST": {
         const user = verifyToken(req);
+        
         if (!user || !user.userId) {
           return res
             .status(401)
             .json({ error: "Unauthorized: Invalid or missing token" });
+        }
+
+        const userEntity = await getUserFromRequest(req);
+
+        // check if user is old enough
+        const createdAt = new Date(userEntity.createdAt);
+        const now = new Date();
+        const diffMs = now.getTime() - createdAt.getTime();
+        const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+        if (diffDays < 1) {
+          return res
+            .status(403)
+            .json({ error: "Forbidden: l'account deve essere registrato da almeno 1 giorno" });
         }
 
         const { name, lat, lon } = req.body;
