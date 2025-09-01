@@ -84,7 +84,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     try {
       final response = await http.get(
         Uri.parse(
-          '${dotenv.env['API_URL']}/user/$uid/saved_fontanella/check/${fontanella.id}',
+          '${dotenv.env['API_URL']}/users/$uid/saved_fontanella/check/${fontanella.id}',
         ),
         headers: {
           'Authorization': 'Bearer ${userSession.token}',
@@ -119,7 +119,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('${dotenv.env['API_URL']}/user/$uid/saved_fontanella'),
+        Uri.parse('${dotenv.env['API_URL']}/users/$uid/saved_fontanella'),
         headers: {
           'Authorization': 'Bearer ${userSession.token}',
           'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       final fontanellaId = fontanella.id;
       final response = await http.delete(
         Uri.parse(
-          '${dotenv.env['API_URL']}/user/$uid/saved_fontanella/$fontanellaId',
+          '${dotenv.env['API_URL']}/users/$uid/saved_fontanella/$fontanellaId',
         ),
         headers: {
           'Authorization': 'Bearer ${userSession.token}',
