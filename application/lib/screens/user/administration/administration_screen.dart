@@ -81,14 +81,18 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final user = users[index];
+              final canDelete = user.email != userSession.email;
               return ListTile(
                 leading: const Icon(Icons.person),
                 title: Text(user.name),
                 subtitle: Text(user.email),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _confirmDelete(user),
-                ),
+                trailing:
+                    canDelete
+                        ? IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _confirmDelete(user),
+                        )
+                        : null,
               );
             },
           );

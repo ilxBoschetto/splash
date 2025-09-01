@@ -49,6 +49,10 @@ class UserController {
         return res.status(404).json({ error: "User not found" });
       }
 
+      if(user._id == admin._id){
+        return res.status(409).json({ error: "Conflict: Cannot delete yourself"});
+      }
+
       await User.findByIdAndDelete(id);
 
       return res.status(200).json({ message: "User deleted successfully" });
