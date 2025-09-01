@@ -73,16 +73,24 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   void filterFontanelle() {
+    _searchController.text = _searchController.text.toString();
     final query = _searchController.text.toLowerCase();
+
+    List<Fontanella> tempList = fontanelle;
+
+    // Applica filtro 'saved_fontanelle' se attivo
+    if (activeFilter == 'saved_fontanelle') {
+      tempList = tempList.where((f) => f.isSaved).toList();
+    }
+
+    // Applica ricerca testuale
+    if (query.isNotEmpty) {
+      tempList =
+          tempList.where((f) => f.nome.toLowerCase().contains(query)).toList();
+    }
+
     setState(() {
-      if (query.isEmpty) {
-        filteredFontanelle = fontanelle;
-      } else {
-        filteredFontanelle =
-            fontanelle
-                .where((f) => f.nome.toLowerCase().contains(query))
-                .toList();
-      }
+      filteredFontanelle = tempList;
     });
   }
 
@@ -159,11 +167,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
         setState(() {
           fontanelle = loaded;
-          filteredFontanelle = loaded;
-          if (activeFilter == 'saved_fontanelle') {
-            filteredFontanelle = fontanelle.where((f) => f.isSaved).toList();
-            fontanelle = fontanelle.where((f) => f.isSaved).toList();
-          }
+          filterFontanelle();
           isLoading = false;
         });
       } else {
@@ -191,6 +195,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args.containsKey('filter')) {
       activeFilter = args['filter'];
+      filterFontanelle();
     }
   }
 
@@ -406,6 +411,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     color: Theme.of(context).iconTheme.color,
                   ),
                 ),
+                /*
         actions: [
           IconButton(
             color: Theme.of(context).iconTheme.color,
@@ -415,12 +421,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 _isSearching = !_isSearching;
                 if (!_isSearching) {
                   _searchController.clear();
-                  filteredFontanelle = fontanelle;
+                  filterFontanelle();
                 }
               });
             },
           ),
         ],
+        */
       ),
       body:
           isLoading
