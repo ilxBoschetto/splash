@@ -15,7 +15,7 @@ export default function ConfirmEmailPage() {
 
     const confirm = async () => {
       try {
-        const res = await fetch("/api/user/confirm-email", {
+        const res = await fetch("/api/users/confirm-email", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

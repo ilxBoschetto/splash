@@ -1,3 +1,5 @@
+import 'package:application/helpers/user_session.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +15,8 @@ class AdministrationScreen extends StatefulWidget {
 class _AdministrationScreenState extends State<AdministrationScreen> {
   late Future<List<User>> _usersFuture;
 
+  final userSession = UserSession();
+
   @override
   void initState() {
     super.initState();
@@ -22,6 +26,10 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   Future<List<User>> fetchUsers() async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/users'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
     ); // cambia URL
 
     if (response.statusCode == 200) {
@@ -35,11 +43,15 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   Future<void> deleteUser(String id) async {
     final response = await http.delete(
       Uri.parse('${dotenv.env['API_URL']}/users/$id'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
     ); // cambia URL
 
     if (response.statusCode == 200) {
       setState(() {
-        _usersFuture = fetchUsers(); // ricarica lista
+        _usersFuture = fetchUsers();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,7 +63,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Administration')),
+      appBar: AppBar(title: Text('administration'.tr())),
       body: FutureBuilder<List<User>>(
         future: _usersFuture,
         builder: (context, snapshot) {
@@ -69,14 +81,18 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final user = users[index];
+              final canDelete = user.email != userSession.email;
               return ListTile(
                 leading: const Icon(Icons.person),
                 title: Text(user.name),
                 subtitle: Text(user.email),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _confirmDelete(user),
-                ),
+                trailing:
+                    canDelete
+                        ? IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _confirmDelete(user),
+                        )
+                        : null,
               );
             },
           );
@@ -90,16 +106,16 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Conferma eliminazione'),
+            title: Text('confirm_delete'.tr()),
             content: Text('Vuoi davvero eliminare ${user.name}?'),
             actions: [
               TextButton(
-                child: const Text('Annulla'),
+                child: Text('general.cancel'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: const Text('Elimina'),
+                child: Text('general.delete'.tr()),
                 onPressed: () {
                   Navigator.pop(context);
                   deleteUser(user.id);

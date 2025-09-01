@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('${dotenv.env['API_URL']}/user/recover-password'),
+      Uri.parse('${dotenv.env['API_URL']}/users/recover-password'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email}),
     );

@@ -92,15 +92,16 @@ class _UserScreenState extends State<UserScreen> {
                     onTap:
                         () => Navigator.pushNamed(context, '/app_information'),
                   ),
-                  if (userSession.isLogged && userSession.isAdmin == true)
+                  if (userSession.isLogged && userSession.isAdmin == true) ...[
                     _buildDivider(),
-                  _buildMenuItem(
-                    context,
-                    label: 'administration'.tr(),
-                    icon: Icons.admin_panel_settings_outlined,
-                    onTap:
-                        () => Navigator.pushNamed(context, '/administration'),
-                  ),
+                    _buildMenuItem(
+                      context,
+                      label: 'administration'.tr(),
+                      icon: Icons.admin_panel_settings_outlined,
+                      onTap:
+                          () => Navigator.pushNamed(context, '/administration'),
+                    ),
+                  ],
                   if (isUserLogged) ...[
                     _buildDivider(),
                     _buildMenuItem(

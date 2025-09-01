@@ -57,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (isUserLogged) {
         final res3 = await http.get(
           Uri.parse(
-            '${dotenv.env['API_URL']}/user/${userSession.userId}/saved_fontanella_count',
+            '${dotenv.env['API_URL']}/users/${userSession.userId}/saved_fontanella_count',
           ),
         );
 

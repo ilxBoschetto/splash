@@ -1,4 +1,4 @@
-// /pages/api/user/[id]/saved_fontanella_count.ts
+// /pages/api/users/[id]/saved_fontanella_count.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@lib/mongodb';
 import SavedFontanella from '@models/SavedFontanella';
