@@ -1,4 +1,5 @@
 import 'package:application/helpers/auth_helper.dart';
+import 'package:application/helpers/user_session.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,8 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   bool isUserLogged = false;
+
+  final userSession = UserSession();
 
   @override
   void initState() {
@@ -88,6 +91,15 @@ class _UserScreenState extends State<UserScreen> {
                     icon: Icons.info_outline,
                     onTap:
                         () => Navigator.pushNamed(context, '/app_information'),
+                  ),
+                  if (userSession.isLogged && userSession.isAdmin == true)
+                    _buildDivider(),
+                  _buildMenuItem(
+                    context,
+                    label: 'administration'.tr(),
+                    icon: Icons.admin_panel_settings_outlined,
+                    onTap:
+                        () => Navigator.pushNamed(context, '/administration'),
                   ),
                   if (isUserLogged) ...[
                     _buildDivider(),
