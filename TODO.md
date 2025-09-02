@@ -3,7 +3,6 @@
 - [ ] Aggiungere modifica ed elimina per admin
 - [ ] Aggiungere modifica ed elimina per creatore della fontanella
 - [ ] Aggiungere backup in cloud o salvarli da qualche parte
-- [ ] Implementare multilingua
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Aggiungere segnalazioni fontanella (con frasi già preimpostate)
 - [ ] Aggiungere log per ogni azione compiuta
@@ -22,6 +21,7 @@
 
 ## DONE
 
+- [x] Implementare multilingua
 - [x] Visualizzazione fontanelle + filtro
 - [x] Visualizzazione mappa con fontanelle
 - [x] Gestione login / register
