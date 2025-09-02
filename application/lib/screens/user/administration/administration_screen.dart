@@ -247,6 +247,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
             return ListTile(
               leading: const Icon(Icons.local_drink),
               title: Text(fountain.nome),
+              subtitle: Text(fountain.createdBy!.name),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () => _confirmDeleteFountain(fountain),
