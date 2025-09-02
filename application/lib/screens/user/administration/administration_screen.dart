@@ -20,6 +20,9 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   late Future<List<User>> _usersFuture;
   Future<List<Fontanella>>? _fountainsFuture;
 
+  int? _fontanelleCount;
+  int? _usersCount;
+
   final PageController _pageController = PageController();
   int _selectedIndex = 0;
 
@@ -27,6 +30,8 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   void initState() {
     super.initState();
     _usersFuture = fetchUsers();
+    fetchUsersCount();
+    fetchFontanelleCount();
   }
 
   Future<List<User>> fetchUsers() async {
@@ -64,6 +69,40 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
     }
   }
 
+  void fetchFontanelleCount() async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        _fontanelleCount = jsonDecode(response.body)['count'] as int;
+      });
+    } else {
+      throw Exception('Errore nel caricamento fontanelle');
+    }
+  }
+
+  void fetchUsersCount() async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/users/count'),
+      headers: {
+        'Authorization': 'Bearer ${userSession.token}',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        _usersCount = jsonDecode(response.body)['count'] as int;
+      });
+    } else {
+      throw Exception('Errore nel caricamento fontanelle');
+    }
+  }
+
   Future<List<Fontanella>> fetchFountains() async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
@@ -91,6 +130,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
     if (response.statusCode == 200) {
       setState(() {
         _fountainsFuture = fetchFountains();
+        fetchFontanelleCount();
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -106,6 +146,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
       _selectedIndex = index;
       if (index == 1 && _fountainsFuture == null) {
         _fountainsFuture = fetchFountains();
+        fetchFontanelleCount();
       }
     });
     _pageController.animateToPage(
@@ -118,8 +159,12 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   @override
   Widget build(BuildContext context) {
     final menuItems = [
-      {'label': 'Utenti', 'icon': Icons.people},
-      {'label': 'Fontanelle', 'icon': Icons.local_drink},
+      {'label': 'Utenti', 'icon': Icons.people, 'count': _usersCount},
+      {
+        'label': 'Fontanelle',
+        'icon': Icons.local_drink,
+        'count': _fontanelleCount,
+      },
     ];
 
     return Scaffold(
@@ -127,44 +172,84 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
       body: Column(
         children: [
           // Sottomenu
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: List.generate(menuItems.length, (index) {
-              final item = menuItems[index];
-              final selected = _selectedIndex == index;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => _onMenuTap(index),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: selected ? Colors.blue : Colors.grey,
-                          width: 3,
-                        ),
+          SizedBox(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List.generate(menuItems.length, (index) {
+                final item = menuItems[index];
+                final selected = _selectedIndex == index;
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () => _onMenuTap(index),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 12,
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        Icon(
-                          item['icon'] as IconData,
-                          color: selected ? Colors.blue : Colors.grey,
-                        ),
-                        Text(
-                          item['label'] as String,
-                          style: TextStyle(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
                             color: selected ? Colors.blue : Colors.grey,
-                            fontWeight:
-                                selected ? FontWeight.bold : FontWeight.normal,
+                            width: 2,
                           ),
                         ),
-                      ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            item['icon'] as IconData,
+                            size: 18,
+                            color: selected ? Colors.blue : Colors.grey,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            item['label'] as String,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: selected ? Colors.blue : Colors.grey,
+                              fontWeight:
+                                  selected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                            ),
+                          ),
+                          if (item['count'] != null) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color:
+                                    selected
+                                        ? Colors.blue.shade100
+                                        : Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${item['count']}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      selected
+                                          ? Colors.blue
+                                          : Colors.grey.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
 
           // Contenuto con slide

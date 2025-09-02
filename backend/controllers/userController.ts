@@ -49,8 +49,10 @@ class UserController {
         return res.status(404).json({ error: "User not found" });
       }
 
-      if(user._id == admin._id){
-        return res.status(409).json({ error: "Conflict: Cannot delete yourself"});
+      if (user._id == admin._id) {
+        return res
+          .status(409)
+          .json({ error: "Conflict: Cannot delete yourself" });
       }
 
       await User.findByIdAndDelete(id);
@@ -60,6 +62,16 @@ class UserController {
       console.error("Errore deleteUser:", err);
       return res.status(500).json({ error: "Internal server error" });
     }
+  }
+
+  static async countUsers(req: NextApiRequest, res: NextApiResponse) {
+    const admin = await getUserFromRequest(req);
+
+    if (!admin || !admin.isAdmin) {
+      return res.status(401).json({ error: "Unauthorized: access denied" });
+    }
+
+    return User.countDocuments();
   }
 }
 
