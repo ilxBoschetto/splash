@@ -117,11 +117,20 @@ export const voteFontanella = async (
  * - Dati del creatore (se presente)
  * - Stato "isSaved" se l'utente ha salvato la fontanella
  */
+
 export const getFontanelle = async (
   req: NextApiRequest,
   user: DecodedToken | null
 ) => {
-  const fontanelle = await Fontanella.find().lean();
+  const sortOrder =
+    typeof req.query.sort === "string" && req.query.sort.toLowerCase() === "asc"
+      ? 1
+      : -1;
+
+  // Ordinamento di default: createdAt discendente
+  const fontanelle = await Fontanella.find()
+    .sort({ createdAt: sortOrder })
+    .lean();
 
   // Salvataggi dell’utente (se autenticato)
   let savedFontanellaIds = new Set<string>();
@@ -136,16 +145,20 @@ export const getFontanelle = async (
   const createdByIds = fontanelle.map((f) => f.createdBy!).map((id) => id);
 
   // Mappa utenti (per assegnare nome e id)
-  let usersMap: Record<string, { id: string; name: string }> = {};
+  let usersMap: Record<string, { id: string; name: string; email: string }> =
+    {};
   if (createdByIds.length > 0) {
-    const users = await User.find({ _id: { $in: createdByIds } }).lean();
+    const users = await User.find({ _id: { $in: createdByIds } })
+      .select("_id name email")
+      .lean();
     usersMap = users.reduce((acc, user) => {
       acc[user._id.toString()] = {
         id: user._id.toString(),
         name: user.name ?? "-",
+        email: user.email ?? "-",
       };
       return acc;
-    }, {} as Record<string, { id: string; name: string }>);
+    }, {} as Record<string, { id: string; name: string; email: string }>);
   }
 
   // Ritorna fontanelle con info arricchite
@@ -154,8 +167,9 @@ export const getFontanelle = async (
       ? usersMap[f.createdBy.toString()] ?? {
           id: f.createdBy.toString(),
           name: "-",
+          email: "-",
         }
-      : { id: "-", name: "-" };
+      : { id: "-", name: "-", email: "-" };
 
     return {
       ...f,

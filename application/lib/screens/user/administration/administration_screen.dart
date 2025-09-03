@@ -36,7 +36,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
 
   Future<List<User>> fetchUsers() async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/users'),
+      Uri.parse('${dotenv.env['API_URL']}/users?sort=desc'),
       headers: {
         'Authorization': 'Bearer ${userSession.token}',
         'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
 
   Future<List<Fontanella>> fetchFountains() async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
+      Uri.parse('${dotenv.env['API_URL']}/fontanelle?sort=desc'),
       headers: {
         'Authorization': 'Bearer ${userSession.token}',
         'Content-Type': 'application/json',
@@ -332,7 +332,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
             return ListTile(
               leading: const Icon(Icons.local_drink),
               title: Text(fountain.nome),
-              subtitle: Text(fountain.createdBy!.name),
+              subtitle: Text(fountain.createdBy!.email),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () => _confirmDeleteFountain(fountain),

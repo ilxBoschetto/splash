@@ -9,6 +9,11 @@ class UserController {
    */
   static async getAllUsers(req: NextApiRequest, res: NextApiResponse) {
     try {
+      const sortOrder =
+        typeof req.query.sort === "string" &&
+        req.query.sort.toLowerCase() === "asc"
+          ? 1
+          : -1;
       // Recupera utente loggato dal token
       const admin = await getUserFromRequest(req);
 
@@ -17,7 +22,9 @@ class UserController {
       }
 
       // Recupera tutti gli utenti dal DB
-      const users = await User.find().select("_id name email isAdmin");
+      const users = await User.find()
+        .select("_id name email isAdmin")
+        .sort({ createdAt: sortOrder });
 
       return res.status(200).json(users);
     } catch (err) {
