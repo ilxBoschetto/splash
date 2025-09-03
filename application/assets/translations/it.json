@@ -14,7 +14,11 @@
     "login": "Login",
     "logout": "Logout",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "delete_confirm_msg": "Sei sicuro di voler eliminare {item}?",
+    "confirm_delete": "Conferma cancellazione",
+    "drinking_fountains": "Fontanelle",
+    "users": "Utenti"
   },
   "menu": {
     "dashboard": "Dashboard",

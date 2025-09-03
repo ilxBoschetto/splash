@@ -159,9 +159,13 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   @override
   Widget build(BuildContext context) {
     final menuItems = [
-      {'label': 'Utenti', 'icon': Icons.people, 'count': _usersCount},
       {
-        'label': 'Fontanelle',
+        'label': 'general.users'.tr(),
+        'icon': Icons.people,
+        'count': _usersCount,
+      },
+      {
+        'label': 'general.drinking_fountains'.tr(),
         'icon': Icons.local_drink,
         'count': _fontanelleCount,
       },
@@ -349,8 +353,10 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('confirm_delete'.tr()),
-            content: Text('Vuoi davvero eliminare ${user.name}?'),
+            title: Text('general.confirm_delete'.tr()),
+            content: Text(
+              'general.delete_confirm_msg'.tr(namedArgs: {'item': user.name}),
+            ),
             actions: [
               TextButton(
                 child: Text('general.cancel'.tr()),
@@ -369,13 +375,17 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
     );
   }
 
-  void _confirmDeleteFountain(Fontanella fountain) {
+  void _confirmDeleteFountain(Fontanella fontanella) {
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('confirm_delete'.tr()),
-            content: Text('Vuoi davvero eliminare ${fountain.nome}?'),
+            title: Text('general.confirm_delete'.tr()),
+            content: Text(
+              'general.delete_confirm_msg'.tr(
+                namedArgs: {'item': fontanella.nome},
+              ),
+            ),
             actions: [
               TextButton(
                 child: Text('general.cancel'.tr()),
@@ -386,7 +396,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
                 child: Text('general.delete'.tr()),
                 onPressed: () {
                   Navigator.pop(context);
-                  deleteFountain(fountain.id);
+                  deleteFountain(fontanella.id);
                 },
               ),
             ],

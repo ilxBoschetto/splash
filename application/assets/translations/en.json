@@ -14,7 +14,11 @@
     "login": "Login",
     "logout": "Logout",
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "delete_confirm_msg": "Are you sure you want to delete {item}?",
+    "confirm_delete": "Confirm delete",
+    "drinking_fountains": "Drinking Fountains",
+    "users": "Users"
   },
   "menu": {
     "dashboard": "Dashboard",
