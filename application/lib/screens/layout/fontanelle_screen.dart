@@ -211,36 +211,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     }
   }
 
-  Future<void> deleteFontanella(Fontanella fontanella) async {
-    final response = await http.delete(
-      Uri.parse('${dotenv.env['API_URL']}/fontanelle/${fontanella.id}'),
-      headers: {
-        'Authorization': 'Bearer ${userSession.token}',
-        'Content-Type': 'application/json',
-      },
-    );
-    if (response.statusCode == 200) {
-      showMinimalNotification(
-        context,
-        message: 'drinking_fountain.deleted_action'.tr(),
-        duration: 2500,
-        position: 'bottom',
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-      );
-      fetchFontanelle();
-    } else {
-      showMinimalNotification(
-        context,
-        message: 'errors.delete'.tr(),
-        duration: 2500,
-        position: 'bottom',
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
-  }
-
   XFile? _selectedImage;
 
   void _showAddFontanellaSheet(Position position) {
@@ -411,7 +381,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     color: Theme.of(context).iconTheme.color,
                   ),
                 ),
-                /*
+        /*
         actions: [
           IconButton(
             color: Theme.of(context).iconTheme.color,
@@ -474,48 +444,11 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 itemCount: filteredFontanelle.length,
                 itemBuilder: (context, index) {
                   final f = filteredFontanelle[index];
-                  Timer? _longPressTimer;
 
                   return Material(
                     color: Colors.transparent,
                     child: GestureDetector(
                       onTap: () => goToDetail(f),
-                      onLongPressStart: (details) {
-                        if (userSession.isAdmin == true) {
-                          _longPressTimer = Timer(const Duration(seconds: 5), () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                    '${'drinking_fountain.delete'.tr()}?',
-                                  ),
-                                  content: Text(
-                                    '${'drinking_fountain.questions.are_you_sure_you_want_to_delete'.tr()} "${f.nome}"?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed:
-                                          () => Navigator.of(context).pop(),
-                                      child: Text('general.cancel'.tr()),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        deleteFontanella(f);
-                                      },
-                                      child: Text('general.delete').tr(),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          });
-                        }
-                      },
-                      onLongPressEnd: (details) {
-                        _longPressTimer?.cancel();
-                      },
                       child: InkWell(
                         onTap: () => goToDetail(f), // per il ripple
                         child: ListTile(
