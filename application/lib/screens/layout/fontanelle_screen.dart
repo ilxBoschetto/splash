@@ -1,3 +1,4 @@
+import 'package:application/enum/potability_enum.dart';
 import 'package:application/screens/components/fontanella_form.dart';
 import 'package:application/screens/components/loaders.dart';
 import 'package:application/helpers/auth_helper.dart';
@@ -38,6 +39,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   final TextEditingController _latController = TextEditingController();
   final TextEditingController _lonController = TextEditingController();
   final modalMapController = MapController();
+  final Potability _potability = Potability.unknown;
 
   // arguments
   String? activeFilter;
@@ -239,6 +241,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
               mapController: modalMapController,
               onSubmit: _submitFontanella,
               onImagePicked: (img) => _selectedImage = img,
+              potability: _potability,
             ),
           ),
     );
@@ -272,6 +275,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         lat: lat,
         lon: lon,
         image: _selectedImage,
+        potability: _potability,
       );
     } finally {
       if (mounted) {
@@ -285,6 +289,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     required double lat,
     required double lon,
     XFile? image,
+    required Potability potability,
   }) async {
     final uri = Uri.parse('${dotenv.env['API_URL']}/fontanelle');
 
@@ -294,7 +299,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         'Authorization': 'Bearer ${userSession.token}',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon}),
+      body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon, potability: _potability}),
     );
 
     if (response.statusCode != 200) {

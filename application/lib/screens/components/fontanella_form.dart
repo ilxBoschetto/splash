@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:application/enum/potability_enum.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -16,6 +17,7 @@ class FountainForm extends StatefulWidget {
   final MapController mapController;
   final Future<void> Function()? onSubmit;
   final void Function(XFile? image)? onImagePicked;
+  final Potability potability;
 
   const FountainForm({
     super.key,
@@ -27,6 +29,7 @@ class FountainForm extends StatefulWidget {
     required this.initialPosition,
     required this.mapController,
     required this.onImagePicked,
+    required this.potability,
     this.onSubmit,
   });
 
@@ -41,6 +44,7 @@ class _FountainFormState extends State<FountainForm> {
   // Evita feedback loop tra mappa e campi testo
   bool _updatingFromMap = false;
   bool _updatingFromText = false;
+  Potability potability = Potability.unknown;
 
   @override
   void initState() {
@@ -188,6 +192,72 @@ class _FountainFormState extends State<FountainForm> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              spacing: 15,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children:
+                  Potability.values.map((p) {
+                    Color color;
+                    IconData icon;
+                    String label;
+
+                    switch (p) {
+                      case Potability.potable:
+                        color = Colors.lightBlue;
+                        icon = Icons.invert_colors;
+                        label = "Potabile";
+                        break;
+                      case Potability.notPotable:
+                        color = Colors.orange;
+                        icon = Icons.invert_colors_off;
+                        label = "Non potabile";
+                        break;
+                      case Potability.unknown:
+                        color = Colors.grey;
+                        icon = Icons.invert_colors;
+                        label = "Sconosciuto";
+                        break;
+                    }
+
+                    final bool selected = potability == p;
+
+                    return Expanded(
+                      child: InkWell(
+                        onTap: () => setState(() => potability = p),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          decoration: BoxDecoration(
+                            color:
+                                selected
+                                    ? color.withOpacity(0.2)
+                                    : theme.inputDecorationTheme.fillColor ??
+                                        Colors.white,
+                            border: Border.all(
+                              color:
+                                  theme
+                                      .inputDecorationTheme
+                                      .enabledBorder
+                                      ?.borderSide
+                                      .color ??
+                                  Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(icon, color: color),
+                              const SizedBox(width: 4),
+                              Text(label),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
             ),
 
             const SizedBox(height: 20),
