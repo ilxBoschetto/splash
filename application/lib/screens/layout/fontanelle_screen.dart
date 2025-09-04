@@ -361,6 +361,33 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     print(jsonDecode(response.body));
   }
 
+  Widget _buildStatusIndicator(Fontanella f) {
+    Color color;
+    IconData icon;
+
+    switch (f.potability) {
+      case Potability.potable:
+        color = Colors.lightBlue;
+        icon = Icons.invert_colors;
+        break;
+      case Potability.notPotable:
+        color = Colors.orange;
+        icon = Icons.invert_colors_off;
+        break;
+      case Potability.unknown:
+      default:
+        color = Colors.grey;
+        icon = Icons.invert_colors;
+        break;
+    }
+
+    return CircleAvatar(
+      radius: 12,
+      backgroundColor: color.withOpacity(0.2),
+      child: Icon(icon, size: 16, color: color),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -462,6 +489,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                       child: InkWell(
                         onTap: () => goToDetail(f), // per il ripple
                         child: ListTile(
+                          leading: _buildStatusIndicator(f),
                           title: Text(f.nome),
                           subtitle: Text(
                             LocationHelper.formatDistanza(f.distanza),

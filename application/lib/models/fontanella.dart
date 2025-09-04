@@ -1,3 +1,5 @@
+import 'package:application/enum/potability_enum.dart';
+
 import './user.dart';
 
 class Fontanella {
@@ -9,6 +11,7 @@ class Fontanella {
   final User? createdBy;
   final bool isSaved;
   final String? imageUrl;
+  final Potability? potability;
 
   Fontanella({
     required this.id,
@@ -18,6 +21,7 @@ class Fontanella {
     required this.distanza,
     this.createdBy,
     this.isSaved = false,
+    this.potability = Potability.unknown,
     this.imageUrl,
   });
 
@@ -33,6 +37,8 @@ class Fontanella {
       }
     }
 
+    int potabilityValue = json['status'] ?? Potability.unknown.value;
+
     return Fontanella(
       id: json['_id'].toString(),
       nome: json['name'] ?? '-',
@@ -41,6 +47,10 @@ class Fontanella {
       distanza: distanza,
       createdBy: createdByUser,
       isSaved: json['isSaved'] ?? false,
+      potability: Potability.values.firstWhere(
+        (p) => p.value == potabilityValue,
+        orElse: () => Potability.unknown,
+      ),
       imageUrl: json['imageUrl'],
     );
   }
@@ -58,6 +68,7 @@ class Fontanella {
               : null,
       'isSaved': isSaved,
       'imageUrl': imageUrl,
+      'potability': potability,
     };
   }
 }
