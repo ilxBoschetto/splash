@@ -17,7 +17,6 @@ class FountainForm extends StatefulWidget {
   final MapController mapController;
   final Future<void> Function()? onSubmit;
   final void Function(XFile? image)? onImagePicked;
-  final Potability potability;
   final void Function(Potability)? onPotabilityChanged;
 
   const FountainForm({
@@ -30,7 +29,6 @@ class FountainForm extends StatefulWidget {
     required this.initialPosition,
     required this.mapController,
     required this.onImagePicked,
-    required this.potability,
     this.onSubmit,
     this.onPotabilityChanged,
   });

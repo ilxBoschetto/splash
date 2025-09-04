@@ -241,7 +241,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
               mapController: modalMapController,
               onSubmit: _submitFontanella,
               onImagePicked: (img) => _selectedImage = img,
-              potability: _potability,
               onPotabilityChanged: (p) => setState(() => _potability = p),
             ),
           ),
