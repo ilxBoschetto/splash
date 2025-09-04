@@ -190,12 +190,14 @@ export const saveFontanella = async (
     lat,
     lon,
     imageUrl,
+    potability,
   }: {
     id?: string;
     name?: string;
     lat?: number;
     lon?: number;
     imageUrl?: string | null;
+    potability?: Potability;
   },
   user: DecodedToken
 ) => {
@@ -235,6 +237,7 @@ export const saveFontanella = async (
       }
       createData.lat = lat;
       createData.lon = lon;
+      createData.status = potability;
       createData.location = {
         type: "Point",
         coordinates: [lon, lat],

@@ -39,7 +39,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   final TextEditingController _latController = TextEditingController();
   final TextEditingController _lonController = TextEditingController();
   final modalMapController = MapController();
-  final Potability _potability = Potability.unknown;
+  Potability _potability = Potability.unknown;
 
   // arguments
   String? activeFilter;
@@ -242,6 +242,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
               onSubmit: _submitFontanella,
               onImagePicked: (img) => _selectedImage = img,
               potability: _potability,
+              onPotabilityChanged: (p) => setState(() => _potability = p),
             ),
           ),
     );
@@ -299,7 +300,12 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         'Authorization': 'Bearer ${userSession.token}',
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({'name': nome, 'lat': lat, 'lon': lon, potability: _potability}),
+      body: jsonEncode({
+        'name': nome,
+        'lat': lat,
+        'lon': lon,
+        'potability': _potability.value,
+      }),
     );
 
     if (response.statusCode != 200) {

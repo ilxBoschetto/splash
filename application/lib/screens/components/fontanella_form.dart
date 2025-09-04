@@ -18,6 +18,7 @@ class FountainForm extends StatefulWidget {
   final Future<void> Function()? onSubmit;
   final void Function(XFile? image)? onImagePicked;
   final Potability potability;
+  final void Function(Potability)? onPotabilityChanged;
 
   const FountainForm({
     super.key,
@@ -31,6 +32,7 @@ class FountainForm extends StatefulWidget {
     required this.onImagePicked,
     required this.potability,
     this.onSubmit,
+    this.onPotabilityChanged,
   });
 
   @override
@@ -225,7 +227,12 @@ class _FountainFormState extends State<FountainForm> {
 
                     return Expanded(
                       child: InkWell(
-                        onTap: () => setState(() => potability = p),
+                        onTap: () {
+                          setState(() => potability = p);
+                          if (widget.onPotabilityChanged != null) {
+                            widget.onPotabilityChanged!(p);
+                          }
+                        },
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 6),

@@ -32,7 +32,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       //#region POST /api/fontanelle
       case "POST": {
         const user = verifyToken(req);
-        
+
         if (!user || !user.userId) {
           return res
             .status(401)
@@ -48,12 +48,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
 
         if (diffDays < 1) {
-          return res
-            .status(403)
-            .json({ error: "Forbidden: l'account deve essere registrato da almeno 1 giorno" });
+          return res.status(403).json({
+            error:
+              "Forbidden: l'account deve essere registrato da almeno 1 giorno",
+          });
         }
 
-        const { name, lat, lon } = req.body;
+        const { name, lat, lon, potability } = req.body;
 
         if (name == null || lat == null || lon == null) {
           return res
@@ -67,6 +68,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
               name: name,
               lat: lat,
               lon: lon,
+              potability: potability,
             },
             user
           );

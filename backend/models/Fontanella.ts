@@ -12,7 +12,7 @@ export interface IFontanella extends Document {
     positive: number;
     negative: number;
   };
-  stato: 'potabile' | 'non potabile' | 'in manutenzione';
+  status: Number;
   imageUrl?: String;
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
@@ -45,11 +45,9 @@ const FontanellaSchema: Schema<IFontanella> = new Schema(
         type: Number
       }
     },
-
-    stato: {
-      type: String,
-      enum: ['potabile', 'non potabile', 'in manutenzione'],
-      default: 'potabile',
+    status: {
+      type: Number,
+      default: 2,
     },
     imageUrl: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
