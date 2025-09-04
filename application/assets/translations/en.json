@@ -47,6 +47,9 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "created_by": "Created by",
+    "potable": "Potable",
+    "not_potable": "Not Potable",
+    "unknown": "Unknown",
     "questions": {
       "are_you_sure_you_want_to_delete": "Are you sure you want to delete"
     }

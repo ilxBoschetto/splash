@@ -207,17 +207,17 @@ class _FountainFormState extends State<FountainForm> {
                       case Potability.potable:
                         color = Colors.lightBlue;
                         icon = Icons.invert_colors;
-                        label = "Potabile";
+                        label = 'drinking_fountain.potable'.tr();
                         break;
                       case Potability.notPotable:
                         color = Colors.orange;
                         icon = Icons.invert_colors_off;
-                        label = "Non potabile";
+                        label = 'drinking_fountain.not_potable'.tr();
                         break;
                       case Potability.unknown:
                         color = Colors.grey;
                         icon = Icons.invert_colors;
-                        label = "Sconosciuto";
+                        label = 'drinking_fountain.unknown'.tr();
                         break;
                     }
 
