@@ -1,3 +1,4 @@
+import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/auth_helper.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -518,6 +519,59 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                     Text(
                       fontanella.createdBy?.name ?? '-',
                       style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'drinking_fountain.potable'.tr(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          () {
+                            switch (fontanella.potability) {
+                              case Potability.potable:
+                                return Icons.invert_colors;
+                              case Potability.notPotable:
+                                return Icons.invert_colors_off;
+                              case Potability.unknown:
+                              default:
+                                return Icons.invert_colors;
+                            }
+                          }(),
+                          color: () {
+                            switch (fontanella.potability) {
+                              case Potability.potable:
+                                return Colors.lightBlue;
+                              case Potability.notPotable:
+                                return Colors.orange;
+                              case Potability.unknown:
+                              default:
+                                return Colors.grey;
+                            }
+                          }(),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          fontanella.potability != null
+                              ? () {
+                                switch (fontanella.potability) {
+                                  case Potability.potable:
+                                    return 'drinking_fountain.potable'.tr();
+                                  case Potability.notPotable:
+                                    return 'drinking_fountain.not_potable'.tr();
+                                  case Potability.unknown:
+                                  default:
+                                    return 'drinking_fountain.unknown'.tr();
+                                }
+                              }()
+                              : '-',
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ],
                     ),
                   ],
                 ),
