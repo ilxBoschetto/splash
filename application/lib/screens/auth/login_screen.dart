@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await AuthHelper.login(email, password);
 
     if (result.success) {
-      Navigator.pushReplacementNamed(context, '/');
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     } else {
       setState(() {
         error = result.message;
@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, '/register');
+                          Navigator.pushNamed(context, '/register');
                         },
                       ),
                     ],
