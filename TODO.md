@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] Aggiungere informazioni copyright openstreetmap nella sezione informazioni applicazione
 - [ ] Aggiungere modifica ed elimina per admin
 - [ ] Aggiungere modifica ed elimina per creatore della fontanella
 - [ ] Aggiungere backup in cloud o salvarli da qualche parte
