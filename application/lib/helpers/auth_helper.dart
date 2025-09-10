@@ -25,7 +25,11 @@ class AuthHelper {
       isUserLogged = false;
     } else {
       final user = json.decode(userJson);
-      UserSession().saveSession(token: token, userData: user, isAdmin: user['isAdmin']);
+      UserSession().saveSession(
+        token: token,
+        userData: user,
+        isAdmin: user['isAdmin'],
+      );
       isUserLogged = true;
     }
   }
@@ -47,7 +51,12 @@ class AuthHelper {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', token);
         await prefs.setString('user_data', json.encode(user));
-        UserSession().saveSession(token: token, userData: user, isAdmin: user['isAdmin']);
+        final isAdmin = (user['isAdmin'] == true);
+        UserSession().saveSession(
+          token: token,
+          userData: user,
+          isAdmin: isAdmin,
+        );
 
         isUserLogged = true;
         return LoginResult(success: true);
