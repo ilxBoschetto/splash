@@ -251,12 +251,19 @@ class _FountainFormState extends State<FountainForm> {
                             ),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Row(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Icon(icon, color: color),
-                              const SizedBox(width: 4),
-                              Text(label),
+                              const SizedBox(height: 4),
+                              Text(
+                                label,
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
+                                textAlign: TextAlign.center,
+                                style: theme.textTheme.bodyMedium,
+                              ),
                             ],
                           ),
                         ),
