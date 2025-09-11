@@ -284,10 +284,12 @@ class _FountainFormState extends State<FountainForm> {
             if (_selectedImage != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Image.file(
-                  File(_selectedImage!.path),
-                  height: 150,
-                  fit: BoxFit.cover,
+                child: Center(
+                  child: Image.file(
+                    File(_selectedImage!.path),
+                    height: 150,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
 
