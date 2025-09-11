@@ -1,11 +1,11 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IFontanella extends Document {
   name: string;
   lat: number;
   lon: number;
   location: {
-    type: 'Point';
+    type: "Point";
     coordinates: [number, number];
   };
   votes: {
@@ -28,9 +28,9 @@ const FontanellaSchema: Schema<IFontanella> = new Schema(
     location: {
       type: {
         type: String,
-        enum: ['Point'],
+        enum: ["Point"],
         required: true,
-        default: 'Point',
+        default: "Point",
       },
       coordinates: {
         type: [Number],
@@ -39,25 +39,26 @@ const FontanellaSchema: Schema<IFontanella> = new Schema(
     },
     votes: {
       positive: {
-        type: Number
+        type: Number,
       },
       negative: {
-        type: Number
-      }
+        type: Number,
+      },
     },
     status: {
       type: Number,
       default: 2,
     },
     imageUrl: { type: String },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );
 
-FontanellaSchema.index({ location: '2dsphere' });
+FontanellaSchema.index({ location: "2dsphere" });
 
 const Fontanella: Model<IFontanella> =
-  mongoose.models.Fontanella || mongoose.model<IFontanella>('Fontanella', FontanellaSchema);
+  mongoose.models.Fontanella ||
+  mongoose.model<IFontanella>("Fontanella", FontanellaSchema);
 
 export default Fontanella;

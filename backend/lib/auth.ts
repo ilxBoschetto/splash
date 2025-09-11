@@ -29,3 +29,5 @@ export async function getUserFromRequest(req: NextApiRequest): Promise<IUser | n
 
   return userModel;
 }
+
+export { IUser }
