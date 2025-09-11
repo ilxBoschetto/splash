@@ -333,279 +333,298 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: SizedBox(
-                          width: 150,
-                          height: 150,
-                          child:
-                              fontanella.imageUrl != null
-                                  ? CachedNetworkImage(
-                                    imageUrl:
-                                        '${dotenv.env['API_URI']}/api/uploads/${fontanella.imageUrl}',
-                                    fit: BoxFit.cover,
-                                    placeholder:
-                                        (context, url) => Shimmer.fromColors(
-                                          baseColor: Colors.grey[800]!,
-                                          highlightColor: Colors.grey[700]!,
-                                          child: Container(
-                                            width: double.infinity,
-                                            height: 200, // puoi adattare
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey[800],
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: true,
+                                  builder: (context) {
+                                    return Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      insetPadding: EdgeInsets.all(10),
+                                      child: InteractiveViewer(
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              '${dotenv.env['API_URL']}/uploads/${fontanella.imageUrl}',
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    '${dotenv.env['API_URI']}/api/uploads/${fontanella.imageUrl}',
+                                fit: BoxFit.cover,
+                                placeholder:
+                                    (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[800]!,
+                                      highlightColor: Colors.grey[700]!,
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[800],
+                                          borderRadius: BorderRadius.circular(
+                                            8,
                                           ),
                                         ),
-                                    errorWidget:
-                                        (context, url, error) => Image.asset(
-                                          'assets/icons/favicon.png',
-                                          fit: BoxFit.cover,
-                                        ),
-                                  )
-                                  : Image.asset(
-                                    'assets/icons/favicon.png',
-                                    fit: BoxFit.cover,
-                                  ),
+                                      ),
+                                    ),
+                                errorWidget:
+                                    (context, url, error) => Image.asset(
+                                      'assets/icons/favicon.png',
+                                      fit: BoxFit.cover,
+                                    ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Material(
-                          color: Colors.transparent,
-                          shape: CircleBorder(),
-                          child: InkWell(
-                            customBorder: CircleBorder(),
-                            onTap: () {
-                              if (isUserLogged) {
-                                _voteFontanella('up');
-                              } else {
-                                Navigator.pushNamed(context, '/login');
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Material(
+                            color: Colors.transparent,
+                            shape: CircleBorder(),
+                            child: InkWell(
+                              customBorder: CircleBorder(),
+                              onTap: () {
+                                if (isUserLogged) {
+                                  _voteFontanella('up');
+                                } else {
+                                  Navigator.pushNamed(context, '/login');
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color:
+                                        userVote == 'up'
+                                            ? Colors.green
+                                            : Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.thumb_up_alt,
                                   color:
                                       userVote == 'up'
                                           ? Colors.green
                                           : Theme.of(
                                             context,
                                           ).colorScheme.onSurface,
-                                  width: 1,
+                                  size: 25,
                                 ),
-                              ),
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.thumb_up_alt,
-                                color:
-                                    userVote == 'up'
-                                        ? Colors.green
-                                        : Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                size: 25,
                               ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(width: 16),
-                        Text(
-                          fontanellaVotes.toString(),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(width: 16),
+                          Text(
+                            fontanellaVotes.toString(),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Material(
-                          color: Colors.transparent,
-                          shape: CircleBorder(),
-                          child: InkWell(
-                            customBorder: CircleBorder(),
-                            onTap: () {
-                              if (isUserLogged) {
-                                _voteFontanella('down');
-                              } else {
-                                Navigator.pushNamed(context, '/login');
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
+                          const SizedBox(width: 16),
+                          Material(
+                            color: Colors.transparent,
+                            shape: CircleBorder(),
+                            child: InkWell(
+                              customBorder: CircleBorder(),
+                              onTap: () {
+                                if (isUserLogged) {
+                                  _voteFontanella('down');
+                                } else {
+                                  Navigator.pushNamed(context, '/login');
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color:
+                                        userVote == 'down'
+                                            ? Colors.red
+                                            : Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.thumb_down_alt,
                                   color:
                                       userVote == 'down'
                                           ? Colors.red
                                           : Theme.of(
                                             context,
                                           ).colorScheme.onSurface,
-                                  width: 1,
+                                  size: 25,
                                 ),
-                              ),
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.thumb_down_alt,
-                                color:
-                                    userVote == 'down'
-                                        ? Colors.red
-                                        : Theme.of(
-                                          context,
-                                        ).colorScheme.onSurface,
-                                size: 25,
                               ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(width: 8),
-                      ],
-                    ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
 
-                    const SizedBox(height: 24),
-                    const Divider(),
-                    const SizedBox(height: 8),
-                    Text(
-                      'drinking_fountain.distance'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Text(
-                      LocationHelper.formatDistanza(fontanella.distanza),
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'drinking_fountain.latitude'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Text('${fontanella.lat}', style: TextStyle(fontSize: 20)),
-                    const SizedBox(height: 12),
-                    Text(
-                      'drinking_fountain.longitude'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Text('${fontanella.lon}', style: TextStyle(fontSize: 20)),
-                    const SizedBox(height: 12),
-                    Text(
-                      'drinking_fountain.created_by'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Text(
-                      fontanella.createdBy?.name ?? '-',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'drinking_fountain.potable'.tr(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          () {
-                            switch (fontanella.potability) {
-                              case Potability.potable:
-                                return Icons.invert_colors;
-                              case Potability.notPotable:
-                                return Icons.invert_colors_off;
-                              case Potability.unknown:
-                              default:
-                                return Icons.invert_colors;
-                            }
-                          }(),
-                          color: () {
-                            switch (fontanella.potability) {
-                              case Potability.potable:
-                                return Colors.lightBlue;
-                              case Potability.notPotable:
-                                return Colors.orange;
-                              case Potability.unknown:
-                              default:
-                                return Colors.grey;
-                            }
-                          }(),
+                      const SizedBox(height: 24),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      Text(
+                        'drinking_fountain.distance'.tr(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          fontanella.potability != null
-                              ? () {
-                                switch (fontanella.potability) {
-                                  case Potability.potable:
-                                    return 'drinking_fountain.potable'.tr();
-                                  case Potability.notPotable:
-                                    return 'drinking_fountain.not_potable'.tr();
-                                  case Potability.unknown:
-                                  default:
-                                    return 'drinking_fountain.unknown'.tr();
-                                }
-                              }()
-                              : '-',
-                          style: const TextStyle(fontSize: 20),
+                      ),
+                      Text(
+                        LocationHelper.formatDistanza(fontanella.distanza),
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'drinking_fountain.latitude'.tr(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    try {
-                      await _openInMaps(fontanella.lat, fontanella.lon);
-                    } catch (e) {
-                      showMinimalNotification(
-                        context,
-                        message: e.toString(),
-                        duration: 2500,
-                        position: 'bottom',
-                        backgroundColor: Colors.red,
-                        textColor: Colors.white,
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.lightBlue,
-                    minimumSize: const Size.fromHeight(48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+                      ),
+                      Text('${fontanella.lat}', style: TextStyle(fontSize: 20)),
+                      const SizedBox(height: 12),
+                      Text(
+                        'drinking_fountain.longitude'.tr(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                      Text('${fontanella.lon}', style: TextStyle(fontSize: 20)),
+                      const SizedBox(height: 12),
+                      Text(
+                        'drinking_fountain.created_by'.tr(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                      Text(
+                        fontanella.createdBy?.name ?? '-',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'drinking_fountain.potable'.tr(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            () {
+                              switch (fontanella.potability) {
+                                case Potability.potable:
+                                  return Icons.invert_colors;
+                                case Potability.notPotable:
+                                  return Icons.invert_colors_off;
+                                case Potability.unknown:
+                                default:
+                                  return Icons.invert_colors;
+                              }
+                            }(),
+                            color: () {
+                              switch (fontanella.potability) {
+                                case Potability.potable:
+                                  return Colors.lightBlue;
+                                case Potability.notPotable:
+                                  return Colors.orange;
+                                case Potability.unknown:
+                                default:
+                                  return Colors.grey;
+                              }
+                            }(),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            fontanella.potability != null
+                                ? () {
+                                  switch (fontanella.potability) {
+                                    case Potability.potable:
+                                      return 'drinking_fountain.potable'.tr();
+                                    case Potability.notPotable:
+                                      return 'drinking_fountain.not_potable'
+                                          .tr();
+                                    case Potability.unknown:
+                                    default:
+                                      return 'drinking_fountain.unknown'.tr();
+                                  }
+                                }()
+                                : '-',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.map, color: Colors.white, size: 28),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        await _openInMaps(fontanella.lat, fontanella.lon);
+                      } catch (e) {
+                        showMinimalNotification(
+                          context,
+                          message: e.toString(),
+                          duration: 2500,
+                          position: 'bottom',
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.lightBlue,
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    child: const Icon(Icons.map, color: Colors.white, size: 28),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
