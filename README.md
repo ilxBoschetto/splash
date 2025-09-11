@@ -6,7 +6,7 @@ A mobile application to see the close fountains
 
 ### Anonymous (no account needed)
 
-- Look at fountains around him
+- Look at fountains around user
 - See paths to fountains with maps
 
 ### Autenticated (account needed)
@@ -26,3 +26,4 @@ The web part is for ADMIN only
 Languages supported:
 
 - it
+- en
