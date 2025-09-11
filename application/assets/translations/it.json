@@ -50,6 +50,7 @@
     "potable": "Potabile",
     "not_potable": "Non Potabile",
     "unknown": "Sconosciuto",
+    "created_by_you": "Create da te",
     "questions": {
       "are_you_sure_you_want_to_delete": "Sei sicuro di voler eliminare"
     }

@@ -22,6 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int totalFontanelle = 0;
   int fontanelleOggi = 0;
   int fontanelleUser = 0;
+  int fontanelleCreatedByUser = 0;
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         totalFontanelle = prefs.getInt('totalFontanelle') ?? 0;
         fontanelleOggi = prefs.getInt('fontanelleOggi') ?? 0;
         fontanelleUser = prefs.getInt('fontanelleUser') ?? 0;
+        fontanelleCreatedByUser = prefs.getInt('fontanelleCreatedByUser') ?? 0;
       });
       final userSession = UserSession();
       final res1 = await http.get(
@@ -60,10 +62,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
             '${dotenv.env['API_URL']}/users/${userSession.userId}/saved_fontanella_count',
           ),
         );
+        final res4 = await http.get(
+          Uri.parse(
+            '${dotenv.env['API_URL']}/users/${userSession.userId}/created_fontanella_count',
+          ),
+        );
 
         if (res3.statusCode == 200) {
           fontanelleUser = json.decode(res3.body)['count'];
           prefs.setInt('fontanelleUser', fontanelleUser);
+        }
+        if (res4.statusCode == 200) {
+          fontanelleCreatedByUser = json.decode(res4.body)['count'];
+          prefs.setInt('fontanelleCreatedByUser', fontanelleCreatedByUser);
         }
       }
 
@@ -129,6 +140,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: Colors.orange,
           ),
           const SizedBox(height: 12),
+          if (isUserLogged) ...[
+            _DashboardCard(
+              title: 'drinking_fountain.created_by_you'.tr(),
+              value: "$fontanelleCreatedByUser",
+              color: Colors.deepPurple,
+            ),
+            const SizedBox(height: 12),
+          ],
           _DashboardCard(
             title: 'drinking_fountain.saved'.tr(),
             value: "$fontanelleUser",
@@ -145,6 +164,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     : null,
             showArrow: isUserLogged && fontanelleUser > 0,
           ),
+
           const SizedBox(height: 80),
         ],
       ),
