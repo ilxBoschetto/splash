@@ -349,27 +349,31 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                             height: 200,
                             child: GestureDetector(
                               onTap: () {
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) {
-                                    return Dialog(
-                                      backgroundColor: Colors.transparent,
-                                      insetPadding: EdgeInsets.all(10),
-                                      child: InteractiveViewer(
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              '${dotenv.env['API_URL']}/uploads/${fontanella.imageUrl}',
-                                          fit: BoxFit.contain,
+                                if (fontanella.imageUrl != null &&
+                                    fontanella.imageUrl!.isNotEmpty) {
+                                  print(fontanella.imageUrl);
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (context) {
+                                      return Dialog(
+                                        backgroundColor: Colors.transparent,
+                                        insetPadding: EdgeInsets.all(10),
+                                        child: InteractiveViewer(
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                '${dotenv.env['API_URL']}/uploads/${fontanella.imageUrl}',
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                );
+                                      );
+                                    },
+                                  );
+                                }
                               },
                               child: CachedNetworkImage(
                                 imageUrl:
-                                    '${dotenv.env['API_URI']}/api/uploads/${fontanella.imageUrl}',
+                                    '${dotenv.env['API_URL']}/uploads/${fontanella.imageUrl}',
                                 fit: BoxFit.cover,
                                 placeholder:
                                     (context, url) => Shimmer.fromColors(
