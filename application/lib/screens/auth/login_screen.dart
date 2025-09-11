@@ -67,34 +67,36 @@ class _LoginScreenState extends State<LoginScreen> {
                     top: 24,
                   ),
                   child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextField(
-                          style: TextStyle(color: Colors.white),
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            labelText: 'general.email'.tr(),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.password),
-                          label: Text('recover_password'.tr()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                    child: SafeArea(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextField(
+                            style: TextStyle(color: Colors.white),
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              labelText: 'general.email'.tr(),
                             ),
                           ),
-                          onPressed: _submitRecoverEmail,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                          const SizedBox(height: 20),
+
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.password),
+                            label: Text('recover_password'.tr()),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size.fromHeight(50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed: _submitRecoverEmail,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),
