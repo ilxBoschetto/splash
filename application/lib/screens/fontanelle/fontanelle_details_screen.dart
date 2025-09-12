@@ -1,6 +1,7 @@
 import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/auth_helper.dart';
 import 'package:application/helpers/user_session.dart';
+import 'package:application/screens/components/report/fontanella_report_type_form.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:application/models/fontanella.dart';
@@ -321,6 +322,20 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                   ? [
                     IconButton(
                       icon: Icon(
+                        Icons.outlined_flag,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (_) => const ReportFormBottomSheet(),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
                         isSaved ? Icons.bookmark : Icons.bookmark_border,
                         color: Theme.of(context).iconTheme.color,
                       ),
@@ -600,32 +615,41 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                 ),
 
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        await _openInMaps(fontanella.lat, fontanella.lon);
-                      } catch (e) {
-                        showMinimalNotification(
-                          context,
-                          message: e.toString(),
-                          duration: 2500,
-                          position: 'bottom',
-                          backgroundColor: Colors.red,
-                          textColor: Colors.white,
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue,
-                      minimumSize: const Size.fromHeight(48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 12,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          try {
+                            await _openInMaps(fontanella.lat, fontanella.lon);
+                          } catch (e) {
+                            showMinimalNotification(
+                              context,
+                              message: e.toString(),
+                              duration: 2500,
+                              position: 'bottom',
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightBlue,
+                          minimumSize: const Size.fromHeight(48),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.map,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                       ),
                     ),
-                    child: const Icon(Icons.map, color: Colors.white, size: 28),
-                  ),
+                  ],
                 ),
               ],
             ),
