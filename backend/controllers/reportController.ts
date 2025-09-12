@@ -55,3 +55,71 @@ export const getReports = async (currentUser: IUser): Promise<ReportDto[]> => {
 
   return dtos;
 };
+
+export const handleWrongInformation = async (report: IReport) => {
+  if (!report.value)
+    throw new Error("Il report non contiene un valore proposto");
+  const fontanella = await Fontanella.findById(report.fontanellaId).exec();
+  if (!fontanella) throw new Error("Fontanella non trovata");
+
+  fontanella.name = report.value;
+  await fontanella.save();
+
+  report.status = 1;
+  await report.save();
+};
+
+export const handleWrongImage = async (report: IReport) => {
+  if (!report.imageUrl)
+    throw new Error("Il report non contiene un'immagine proposta");
+  const fontanella = await Fontanella.findById(report.fontanellaId).exec();
+  if (!fontanella) throw new Error("Fontanella non trovata");
+
+  fontanella.imageUrl = report.imageUrl;
+  await fontanella.save();
+
+  report.status = 1;
+  await report.save();
+};
+
+export const handleNonExistent = async (report: IReport) => {
+  const fontanella = await Fontanella.findById(report.fontanellaId).exec();
+  if (!fontanella) throw new Error("Fontanella non trovata");
+
+  await fontanella.deleteOne();
+
+  report.status = 1;
+  await report.save();
+};
+
+export const handleWrongPotability = async (report: IReport) => {
+  if (!report.value)
+    throw new Error("Il report non contiene il valore di potabilità");
+  const fontanella = await Fontanella.findById(report.fontanellaId).exec();
+  if (!fontanella) throw new Error("Fontanella non trovata");
+
+  fontanella.status = parseInt(report.value);
+  await fontanella.save();
+
+  report.status = 1;
+  await report.save();
+};
+
+export const processReport = async (reportId: string) => {
+  const report = await Report.findById(reportId).exec();
+  if (!report) throw new Error("Report non trovato");
+  if (report.status !== 0) throw new Error("Report già processato");
+
+  switch (report.type) {
+    case ReportType.wrongInformation:
+      return handleWrongInformation(report);
+    case ReportType.wrongImage:
+      return handleWrongImage(report);
+    case ReportType.wrongPotability:
+      return handleWrongPotability(report);
+    case ReportType.nonExistentFontanella:
+      return handleNonExistent(report);
+    default:
+      throw new Error("Tipo di report non supportato");
+  }
+};

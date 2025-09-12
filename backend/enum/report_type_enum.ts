@@ -3,5 +3,4 @@ enum ReportType {
   wrongImage = 1,
   wrongPotability = 2,
   nonExistentFontanella = 3,
-  other = 4,
 }
