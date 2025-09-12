@@ -105,7 +105,7 @@ export const handleWrongPotability = async (report: IReport) => {
   await report.save();
 };
 
-export const processReport = async (reportId: string) => {
+export const acceptReport = async (reportId: string) => {
   const report = await Report.findById(reportId).exec();
   if (!report) throw new Error("Report non trovato");
   if (report.status !== 0) throw new Error("Report già processato");
@@ -122,4 +122,12 @@ export const processReport = async (reportId: string) => {
     default:
       throw new Error("Tipo di report non supportato");
   }
+};
+
+export const rejectReport = async (reportId: string) => {
+  const report = await Report.findById(reportId).exec();
+  if (!report) throw new Error("Report non trovato");
+  if (report.status !== 0) throw new Error("Report già processato");
+  report.status = 2;
+  await report.save();
 };
