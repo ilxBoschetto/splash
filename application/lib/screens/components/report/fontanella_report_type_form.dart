@@ -30,7 +30,15 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(type.name, style: Theme.of(context).textTheme.bodyLarge),
+        title: Text(
+          type.name,
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+            color: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.color?.withOpacity(0.9),
+          ),
+        ),
         trailing: Icon(
           Icons.arrow_forward_ios,
           color: Theme.of(context).iconTheme.color,
