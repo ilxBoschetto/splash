@@ -2,18 +2,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@lib/mongodb";
 import withCors from "@lib/withCors";
-import { getReports } from "@controllers/reportController";
-import { getUserFromRequest } from "@lib/auth"; // funzione che estrae l'utente loggato dalla request
+import { getReports, createReport } from "@controllers/reportController";
+import { getUserFromRequest } from "@lib/auth";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
-
-  //#region GET /api/reports
-  if (req.method !== "GET") {
-    res.setHeader("Allow", ["GET"]);
-    return res.status(405).end("Method Not Allowed");
-  }
-  //#endregion
 
   try {
     const currentUser = await getUserFromRequest(req);
@@ -21,12 +14,45 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const reports = await getReports(currentUser);
+    switch (req.method) {
+      //#region GET /api/reports
+      case "GET": {
+        const reports = await getReports(currentUser);
+        return res.status(200).json({ reports });
+      }
+      //#endregion
 
-    return res.status(200).json({ reports });
+      //#region POST /api/reports
+      case "POST": {
+        const { fontanellaId, type, value, imageUrl, description } = req.body;
+
+        if (!fontanellaId || !type) {
+          return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        await createReport(
+          fontanellaId,
+          currentUser,
+          type,
+          value,
+          imageUrl,
+          description
+        );
+
+        return res.status(201).json({ message: "Report created successfully" });
+      }
+      //#endregion
+
+      default: {
+        res.setHeader("Allow", ["GET", "POST"]);
+        return res.status(405).end("Method Not Allowed");
+      }
+    }
   } catch (err) {
-    console.error("GET /reports error:", err);
-    return res.status(500).json({ error: "Failed to fetch reports" });
+    console.error(`/${req.method} /reports error:`, err);
+    return res.status(500).json({
+      error: `Failed to ${req.method === "GET" ? "fetch" : "create"} reports`,
+    });
   }
 }
 

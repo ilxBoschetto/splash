@@ -6,7 +6,7 @@ import User, { IUser } from "@/models/User";
 
 export const createReport = async (
   fontanellaId: IFontanella,
-  user: DecodedToken,
+  user: IUser,
   type: number,
   value?: string,
   imageUrl?: string,
@@ -21,7 +21,7 @@ export const createReport = async (
 
   const createData: any = {};
   createData.fontanellaId = fontanellaId;
-  createData.createdBy = user.userId;
+  createData.createdBy = user.id;
   createData.type = type;
   createData.status = 0;
   if (value) createData.value = value;
