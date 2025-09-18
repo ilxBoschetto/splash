@@ -13,6 +13,7 @@
 
 ## IMPROVEMENTS
 
+- [ ] Creazione canale Telegram + riferimento nell'app
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
