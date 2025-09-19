@@ -121,7 +121,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
           child: Form(
             key: _formKey,
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 400),
+              duration: const Duration(milliseconds: 250),
               transitionBuilder: (child, animation) {
                 final offsetAnimation = Tween<Offset>(
                   begin: const Offset(1.0, 0.0),
