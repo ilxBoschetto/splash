@@ -25,41 +25,37 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
     super.dispose();
   }
 
+  /// STEP 1 → lista bottoni tipi
   Widget _buildTypeButton(BuildContext context, ReportType type) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        title: Text(
-          type.name,
-          style: TextStyle(
-            fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-            color: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.color?.withOpacity(0.9),
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          color: Theme.of(context).iconTheme.color,
-        ),
-        onTap: () {
-          setState(() {
-            selectedType = type;
-          });
-        },
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      onPressed: () {
+        setState(() {
+          selectedType = type;
+        });
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(type.name, style: const TextStyle(fontSize: 16)),
+          const Icon(Icons.arrow_forward_ios, size: 18),
+        ],
       ),
     );
   }
 
+  /// STEP 2 → form specifico in base al tipo scelto
   Widget _buildSubForm(BuildContext context) {
     switch (selectedType!) {
       case ReportType.wrongInformation:
         return TextFormField(
           controller: _infoController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: "Nuovo nome/fontanella",
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(),
           ),
           validator:
               (value) =>
@@ -69,9 +65,9 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
       case ReportType.wrongImage:
         return TextFormField(
           controller: _imageUrlController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: "URL nuova immagine",
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(),
           ),
           validator:
               (value) =>
@@ -135,15 +131,32 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
               },
               child:
                   selectedType == null
+                      // STEP 1 → lista bottoni
                       ? ListView(
                         key: const ValueKey("typeList"),
                         controller: scrollController,
                         children: [
-                          ...ReportType.values.map(
-                            (type) => _buildTypeButton(context, type),
+                          const Text(
+                            "Seleziona il tipo di report",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          const SizedBox(height: 12),
+                          ...ReportType.values
+                              .map(
+                                (type) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
+                                  child: _buildTypeButton(context, type),
+                                ),
+                              )
+                              .toList(),
                         ],
                       )
+                      // STEP 2 → form dettagliato
                       : ListView(
                         key: const ValueKey("subForm"),
                         controller: scrollController,
@@ -160,8 +173,8 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
                               ),
                               Text(
                                 selectedType!.name,
-                                style:
-                                    Theme.of(context).textTheme.headlineSmall,
+                                style: Theme.of(context).textTheme.headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
