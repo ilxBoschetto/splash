@@ -29,7 +29,5 @@ const ReportSchema: Schema<IReport> = new Schema(
   { timestamps: true }
 );
 
-export const Report: Model<IReport> = mongoose.model<IReport>(
-  "Report",
-  ReportSchema
-);
+export const Report: Model<IReport> =
+  mongoose.models.Report || mongoose.model<IReport>("Report", ReportSchema);

@@ -1,8 +1,14 @@
+import 'package:application/helpers/user_session.dart';
 import 'package:flutter/material.dart';
 import 'package:application/enum/report_type_enum.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ReportFormBottomSheet extends StatefulWidget {
-  const ReportFormBottomSheet({Key? key}) : super(key: key);
+  final String fontanellaId;
+  const ReportFormBottomSheet({Key? key, required this.fontanellaId})
+    : super(key: key);
 
   @override
   State<ReportFormBottomSheet> createState() => _ReportFormBottomSheetState();
@@ -16,6 +22,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
   // Controllers
   final TextEditingController _infoController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
+  final userSession = UserSession();
   bool _isPotable = false;
 
   @override
@@ -25,29 +32,57 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
     super.dispose();
   }
 
-  /// STEP 1 → lista bottoni tipi
   Widget _buildTypeButton(BuildContext context, ReportType type) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
+    IconData icon;
+    switch (type) {
+      case ReportType.wrongInformation:
+        icon = Icons.edit_note;
+        break;
+      case ReportType.wrongImage:
+        icon = Icons.image_outlined;
+        break;
+      case ReportType.wrongPotability:
+        icon = Icons.water_drop_outlined;
+        break;
+      case ReportType.nonExistentFontanella:
+        icon = Icons.delete_forever_outlined;
+        break;
+    }
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => setState(() => selectedType = type),
+      child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-      onPressed: () {
-        setState(() {
-          selectedType = type;
-        });
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(type.name, style: const TextStyle(fontSize: 16)),
-          const Icon(Icons.arrow_forward_ios, size: 18),
-        ],
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: Theme.of(context).primaryColor, size: 28),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                type.name,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 18),
+          ],
+        ),
       ),
     );
   }
 
-  /// STEP 2 → form specifico in base al tipo scelto
   Widget _buildSubForm(BuildContext context) {
     switch (selectedType!) {
       case ReportType.wrongInformation:
@@ -94,13 +129,73 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
     }
   }
 
-  void _submit() {
-    if (_formKey.currentState?.validate() ?? false) {
-      debugPrint("Tipo: $selectedType");
-      debugPrint("Info: ${_infoController.text}");
-      debugPrint("Image: ${_imageUrlController.text}");
-      debugPrint("Potabile: $_isPotable");
-      Navigator.pop(context);
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    final url = Uri.parse('${dotenv.env['API_URL']}/reports');
+
+    String? description;
+    String? imageUrl;
+    String? value;
+
+    switch (selectedType!) {
+      case ReportType.wrongInformation:
+        value = _infoController.text;
+        break;
+
+      case ReportType.wrongImage:
+        imageUrl = _imageUrlController.text;
+        break;
+
+      case ReportType.wrongPotability:
+        value = _isPotable.toString();
+        break;
+
+      case ReportType.nonExistentFontanella:
+        value = "Fontanella inesistente";
+        break;
+    }
+
+    final body = {
+      "fontanellaId": widget.fontanellaId,
+      "type": selectedType!.index,
+      "value": value,
+      "imageUrl": imageUrl,
+      "description": description,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer ${userSession.token}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      print(url);
+
+      print(response.body);
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Report inviato con successo!")),
+        );
+        Navigator.pop(context);
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Errore: ${response.statusCode}")),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Errore di rete: $e")));
     }
   }
 
@@ -131,7 +226,6 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
               },
               child:
                   selectedType == null
-                      // STEP 1 → lista bottoni
                       ? ListView(
                         key: const ValueKey("typeList"),
                         controller: scrollController,
@@ -156,7 +250,6 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
                               .toList(),
                         ],
                       )
-                      // STEP 2 → form dettagliato
                       : ListView(
                         key: const ValueKey("subForm"),
                         controller: scrollController,

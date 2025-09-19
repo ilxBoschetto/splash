@@ -26,7 +26,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       case "POST": {
         const { fontanellaId, type, value, imageUrl, description } = req.body;
 
-        if (!fontanellaId || !type) {
+        if (!fontanellaId || type === undefined) {
           return res.status(400).json({ error: "Missing required fields" });
         }
 

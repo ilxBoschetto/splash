@@ -330,7 +330,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (_) => const ReportFormBottomSheet(),
+                          builder:
+                              (_) => ReportFormBottomSheet(
+                                fontanellaId: fontanella.id,
+                              ),
                         );
                       },
                     ),
