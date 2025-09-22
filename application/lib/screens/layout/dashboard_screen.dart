@@ -23,6 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int fontanelleOggi = 0;
   int fontanelleUser = 0;
   int fontanelleCreatedByUser = 0;
+  List<Map<String, dynamic>> topUsers = [];
 
   @override
   void initState() {
@@ -56,6 +57,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final res2 = await http.get(
         Uri.parse('${dotenv.env['API_URL']}/fontanelle/today'),
       );
+      final res5 = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/users/top'),
+      );
       if (isUserLogged) {
         final res3 = await http.get(
           Uri.parse(
@@ -88,7 +92,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
         prefs.setInt('fontanelleOggi', fontanelleOggi);
       }
 
-      setState(() {});
+      if (res5.statusCode == 200) {
+        final rawData = json.decode(res5.body) as List<dynamic>? ?? [];
+
+        final List<Map<String, dynamic>> users =
+            rawData
+                .where((item) => item["user"] != null)
+                .map(
+                  (item) => {
+                    "username": item["user"]?["name"] ?? "Sconosciuto",
+                    "score": item["count"] ?? 0,
+                  },
+                )
+                .toList();
+
+        setState(() {
+          topUsers = users;
+        });
+        prefs.setString('topUsers', json.encode(topUsers));
+      }
     } catch (e) {
       print('Errore durante il caricamento delle statistiche: $e');
     }
@@ -140,6 +162,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: Colors.orange,
           ),
           const SizedBox(height: 12),
+          _TopUsersCard(users: topUsers),
+          const SizedBox(height: 12),
           if (isUserLogged) ...[
             _DashboardCard(
               title: 'drinking_fountain.created_by_you'.tr(),
@@ -164,9 +188,107 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     : null,
             showArrow: isUserLogged && fontanelleUser > 0,
           ),
-
           const SizedBox(height: 80),
         ],
+      ),
+    );
+  }
+}
+
+class _TopUsersCard extends StatelessWidget {
+  final List<Map<String, dynamic>> users;
+
+  const _TopUsersCard({required this.users});
+
+  IconData _getIcon(int position) {
+    switch (position) {
+      case 0:
+        return Icons.emoji_events;
+      case 1:
+        return Icons.military_tech;
+      case 2:
+        return Icons.star;
+      default:
+        return Icons.person;
+    }
+  }
+
+  Color _getColor(BuildContext context, int position) {
+    switch (position) {
+      case 0:
+        return Colors.amber;
+      case 1:
+        return Colors.grey;
+      case 2:
+        return Colors.brown;
+      default:
+        return Theme.of(context).colorScheme.primary;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 3,
+      color: Theme.of(context).colorScheme.surface,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "top_users".tr(),
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).hintColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            ...users.asMap().entries.map((entry) {
+              final index = entry.key;
+              final user = entry.value;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: _getColor(
+                        context,
+                        index,
+                      ).withOpacity(0.15),
+                      child: Icon(
+                        _getIcon(index),
+                        color: _getColor(context, index),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        user["username"] ?? 'unknown'.tr(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      "${user["score"]} ${'general.drinking_fountains'.tr()}",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
       ),
     );
   }
