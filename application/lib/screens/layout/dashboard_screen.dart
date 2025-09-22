@@ -49,6 +49,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         fontanelleOggi = prefs.getInt('fontanelleOggi') ?? 0;
         fontanelleUser = prefs.getInt('fontanelleUser') ?? 0;
         fontanelleCreatedByUser = prefs.getInt('fontanelleCreatedByUser') ?? 0;
+        topUsers =
+            (json.decode(prefs.getString('topUsers') ?? '[]') as List<dynamic>)
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
       });
       final userSession = UserSession();
       final res1 = await http.get(
@@ -226,8 +230,70 @@ class _TopUsersCard extends StatelessWidget {
     }
   }
 
+  Widget _buildSkeletonRow(BuildContext context) {
+    final darkBackground = Theme.of(context).colorScheme.surfaceVariant;
+    final highlight = Colors.grey.shade700;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          // Icon skeleton
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [darkBackground, highlight, darkBackground],
+                stops: [0.1, 0.5, 0.9],
+                begin: Alignment(-1, -1),
+                end: Alignment(1, 1),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // Name skeleton
+          Expanded(
+            child: Container(
+              height: 16,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [darkBackground, highlight, darkBackground],
+                  stops: [0.1, 0.5, 0.9],
+                  begin: Alignment(-1, -1),
+                  end: Alignment(1, 1),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // Score skeleton
+          Container(
+            width: 40,
+            height: 16,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                colors: [darkBackground, highlight, darkBackground],
+                stops: [0.1, 0.5, 0.9],
+                begin: Alignment(-1, -1),
+                end: Alignment(1, 1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLoading = users.isEmpty;
+
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 3,
@@ -247,46 +313,50 @@ class _TopUsersCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            ...users.asMap().entries.map((entry) {
-              final index = entry.key;
-              final user = entry.value;
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: _getColor(
-                        context,
-                        index,
-                      ).withOpacity(0.15),
-                      child: Icon(
-                        _getIcon(index),
-                        color: _getColor(context, index),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        user["username"] ?? 'unknown'.tr(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
+            ...List.generate(3, (index) {
+              if (isLoading) {
+                return _buildSkeletonRow(context);
+              } else if (index < users.length) {
+                final user = users[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: _getColor(
+                          context,
+                          index,
+                        ).withOpacity(0.15),
+                        child: Icon(
+                          _getIcon(index),
+                          color: _getColor(context, index),
                         ),
                       ),
-                    ),
-                    Text(
-                      "${user["score"]} ${'general.drinking_fountains'.tr()}",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).hintColor,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          user["username"] ?? 'unknown'.tr(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                      Text(
+                        "${user["score"]} ${'general.drinking_fountains'.tr()}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return SizedBox.shrink();
+              }
+            }),
           ],
         ),
       ),
