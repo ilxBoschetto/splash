@@ -31,3 +31,4 @@ export async function getUserFromRequest(
 
   return userModel;
 }
+export type { IUser };
