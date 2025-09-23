@@ -34,6 +34,20 @@ class CommunityScreen extends StatelessWidget {
     }
   }
 
+  void _openTelegram(BuildContext context) async {
+    final url = Uri.parse("https://t.me/+qf8WQ5omZNtiNTM0");
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      showMinimalNotification(
+        context,
+        message: 'errors.unable_to_open_link'.tr(),
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,6 +88,22 @@ class CommunityScreen extends StatelessWidget {
               leading: const Icon(Icons.coffee, color: Colors.orangeAccent),
               title: Text(
                 'buy_me_coffee'.tr(),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              trailing: const Icon(Icons.open_in_new),
+            ),
+          ),
+          Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            color: Theme.of(context).colorScheme.surface,
+            child: ListTile(
+              onTap: () => _openTelegram(context),
+              leading: const Icon(Icons.telegram, color: Colors.blue),
+              title: Text(
+                'join_telegram'.tr(),
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
               trailing: const Icon(Icons.open_in_new),

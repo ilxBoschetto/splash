@@ -68,6 +68,7 @@
   "version": "Versione",
   "read_privacy_policy": "Leggi le Privacy Policy",
   "join_discord": "Unisciti al server Discord",
+  "join_telegram": "Unisciti al gruppo Telegram",
   "buy_me_coffee": "Comprami un caffè!",
   "community": "Community",
   "registered_at": "Registrato il",
@@ -96,6 +97,7 @@
   "grant_permissions": "Concedi Permessi",
   "position_permission_required": "Per visualizzare le fontanelle vicine,\nconcedi il permesso all'app di accedere alla posizione",
   "administration": "Amministrazione",
+  "top_users": "Top Utenti",
   "errors": {
     "unable_to_open_link": "Impossibile aprire il link",
     "something_went_wrong": "Qualcosa è andato storto",

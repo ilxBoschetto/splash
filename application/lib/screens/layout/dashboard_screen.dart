@@ -23,6 +23,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int fontanelleOggi = 0;
   int fontanelleUser = 0;
   int fontanelleCreatedByUser = 0;
+  List<Map<String, dynamic>> topUsers = [];
 
   @override
   void initState() {
@@ -48,6 +49,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         fontanelleOggi = prefs.getInt('fontanelleOggi') ?? 0;
         fontanelleUser = prefs.getInt('fontanelleUser') ?? 0;
         fontanelleCreatedByUser = prefs.getInt('fontanelleCreatedByUser') ?? 0;
+        topUsers =
+            (json.decode(prefs.getString('topUsers') ?? '[]') as List<dynamic>)
+                .map((e) => e as Map<String, dynamic>)
+                .toList();
       });
       final userSession = UserSession();
       final res1 = await http.get(
@@ -55,6 +60,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
       final res2 = await http.get(
         Uri.parse('${dotenv.env['API_URL']}/fontanelle/today'),
+      );
+      final res5 = await http.get(
+        Uri.parse('${dotenv.env['API_URL']}/users/top'),
       );
       if (isUserLogged) {
         final res3 = await http.get(
@@ -88,7 +96,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
         prefs.setInt('fontanelleOggi', fontanelleOggi);
       }
 
-      setState(() {});
+      if (res5.statusCode == 200) {
+        final rawData = json.decode(res5.body) as List<dynamic>? ?? [];
+
+        final List<Map<String, dynamic>> users =
+            rawData
+                .where((item) => item["user"] != null)
+                .map(
+                  (item) => {
+                    "username": item["user"]?["name"] ?? "Sconosciuto",
+                    "score": item["count"] ?? 0,
+                  },
+                )
+                .toList();
+
+        setState(() {
+          topUsers = users;
+        });
+        prefs.setString('topUsers', json.encode(topUsers));
+      }
     } catch (e) {
       print('Errore durante il caricamento delle statistiche: $e');
     }
@@ -140,6 +166,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: Colors.orange,
           ),
           const SizedBox(height: 12),
+          _TopUsersCard(users: topUsers),
+          const SizedBox(height: 12),
           if (isUserLogged) ...[
             _DashboardCard(
               title: 'drinking_fountain.created_by_you'.tr(),
@@ -164,9 +192,173 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     : null,
             showArrow: isUserLogged && fontanelleUser > 0,
           ),
-
           const SizedBox(height: 80),
         ],
+      ),
+    );
+  }
+}
+
+class _TopUsersCard extends StatelessWidget {
+  final List<Map<String, dynamic>> users;
+
+  const _TopUsersCard({required this.users});
+
+  IconData _getIcon(int position) {
+    switch (position) {
+      case 0:
+        return Icons.emoji_events;
+      case 1:
+        return Icons.military_tech;
+      case 2:
+        return Icons.star;
+      default:
+        return Icons.person;
+    }
+  }
+
+  Color _getColor(BuildContext context, int position) {
+    switch (position) {
+      case 0:
+        return Colors.amber;
+      case 1:
+        return Colors.grey;
+      case 2:
+        return Colors.brown;
+      default:
+        return Theme.of(context).colorScheme.primary;
+    }
+  }
+
+  Widget _buildSkeletonRow(BuildContext context) {
+    final darkBackground = Theme.of(context).colorScheme.surfaceVariant;
+    final highlight = Colors.grey.shade700;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          // Icon skeleton
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: LinearGradient(
+                colors: [darkBackground, highlight, darkBackground],
+                stops: [0.1, 0.5, 0.9],
+                begin: Alignment(-1, -1),
+                end: Alignment(1, 1),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // Name skeleton
+          Expanded(
+            child: Container(
+              height: 16,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [darkBackground, highlight, darkBackground],
+                  stops: [0.1, 0.5, 0.9],
+                  begin: Alignment(-1, -1),
+                  end: Alignment(1, 1),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // Score skeleton
+          Container(
+            width: 40,
+            height: 16,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                colors: [darkBackground, highlight, darkBackground],
+                stops: [0.1, 0.5, 0.9],
+                begin: Alignment(-1, -1),
+                end: Alignment(1, 1),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = users.isEmpty;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 3,
+      color: Theme.of(context).colorScheme.surface,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "top_users".tr(),
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).hintColor,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            ...List.generate(3, (index) {
+              if (isLoading) {
+                return _buildSkeletonRow(context);
+              } else if (index < users.length) {
+                final user = users[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: _getColor(
+                          context,
+                          index,
+                        ).withOpacity(0.15),
+                        child: Icon(
+                          _getIcon(index),
+                          color: _getColor(context, index),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          user["username"] ?? 'unknown'.tr(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "${user["score"]} ${'general.drinking_fountains'.tr()}",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context).hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return SizedBox.shrink();
+              }
+            }),
+          ],
+        ),
       ),
     );
   }

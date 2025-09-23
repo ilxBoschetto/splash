@@ -1,7 +1,11 @@
 // controllers/UserController.ts
 import { NextApiRequest, NextApiResponse } from "next";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
 import { getUserFromRequest } from "@/lib/auth";
+import { mapToDto, TopUserDto } from "@/dtos/topUserDto";
+import dbConnect from "@/lib/mongodb";
+import mongoose from "mongoose";
+import Fontanella from "@/models/Fontanella";
 
 class UserController {
   /**
@@ -79,6 +83,30 @@ class UserController {
     }
 
     return User.countDocuments();
+  }
+
+  static async getTopUsers(): Promise<TopUserDto[]> {
+    await dbConnect();
+
+    const topUsers = await Fontanella.aggregate([
+      { $group: { _id: "$createdBy", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      {
+        $lookup: {
+          from: User.collection.name,
+          localField: "_id",
+          foreignField: "_id",
+          as: "userInfo",
+        },
+      },
+      { $unwind: "$userInfo" },
+      { $match: { userInfo: { $exists: true } } },
+      { $limit: 3 },
+    ]);
+
+    return topUsers.map((row: any) =>
+      mapToDto(row._id, row.count, row.userInfo as IUser)
+    );
   }
 }
 

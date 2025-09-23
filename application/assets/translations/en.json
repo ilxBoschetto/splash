@@ -68,6 +68,7 @@
   "version": "Version",
   "read_privacy_policy": "Read the Privacy Policy",
   "join_discord": "Join the Discord server",
+  "join_telegram": "Join the Telegram group",
   "buy_me_coffee": "Buy me a coffee!",
   "community": "Community",
   "registered_at": "Registered on",
@@ -96,6 +97,7 @@
   "grant_permissions": "Grant Permissions",
   "position_permission_required": "To view nearby fountains,\nplease grant permissions to the application",
   "administration": "Administration",
+  "top_users": "Top Users",
   "errors": {
     "unable_to_open_link": "Unable to open link",
     "something_went_wrong": "Something went wrong",
