@@ -55,6 +55,14 @@
       "are_you_sure_you_want_to_delete": "Are you sure you want to delete"
     }
   },
+  "report": {
+    "title": "Report Fountain",
+    "select_reason": "Select the reason for reporting",
+    "wrong_information": "Wrong Information",
+    "wrong_image": "Wrong Image",
+    "wrong_potability": "Wrong Potability",
+    "non_existent_fontanella": "Non-Existent Fountain"
+  },
   "settings": "Settings",
   "user_settings": "User Settings",
   "open_settings": "Open Settings",

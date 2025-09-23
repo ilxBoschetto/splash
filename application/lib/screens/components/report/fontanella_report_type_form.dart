@@ -1,4 +1,5 @@
 import 'package:application/helpers/user_session.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:application/enum/report_type_enum.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -72,7 +73,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                type.name,
+                type.translationKey.tr(),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -265,7 +266,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
                                 },
                               ),
                               Text(
-                                selectedType!.name,
+                                selectedType!.translationKey.tr(),
                                 style: Theme.of(context).textTheme.headlineSmall
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),

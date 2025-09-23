@@ -55,6 +55,14 @@
       "are_you_sure_you_want_to_delete": "Sei sicuro di voler eliminare"
     }
   },
+  "report": {
+    "title": "Segnala Fontanella",
+    "select_reason": "Seleziona il motivo della segnalazione",
+    "wrong_information": "Informazioni Errate",
+    "wrong_image": "Immagine Errata",
+    "wrong_potability": "Potabilità Errata",
+    "non_existent_fontanella": "Fontanella Non Esistente"
+  },
   "settings": "Impostazioni",
   "user_settings": "Impostazioni Utente",
   "open_settings": "Apri Impostazioni",
