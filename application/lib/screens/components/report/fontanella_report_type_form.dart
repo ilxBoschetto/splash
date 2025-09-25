@@ -258,6 +258,15 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
                                 ),
                               )
                               .toList(),
+                          const SizedBox(height: 8),
+                          Text(
+                            'report.info_message'.tr(),
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey,
+                            ),
+                          ),
                         ],
                       )
                       : ListView(

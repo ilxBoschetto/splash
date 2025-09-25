@@ -62,7 +62,8 @@
     "wrong_image": "Immagine Errata",
     "wrong_potability": "Potabilità Errata",
     "non_existent_fontanella": "Fontanella Non Esistente",
-    "correct_submit": "Report inviato con successo!"
+    "correct_submit": "Report inviato con successo!",
+    "info_message": "La segnalazione verrà esaminata dagli amministratori, ci vogliono alcuni giorni per essere elaborata."
   },
   "settings": "Impostazioni",
   "user_settings": "Impostazioni Utente",

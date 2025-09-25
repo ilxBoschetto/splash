@@ -62,7 +62,8 @@
     "wrong_image": "Wrong Image",
     "wrong_potability": "Wrong Potability",
     "non_existent_fontanella": "Non-Existent Fountain",
-    "correct_submit": "Report submitted successfully!"
+    "correct_submit": "Report submitted successfully!",
+    "info_message": "The report will be reviewed by the administrators, it takes a few days to be processed."
   },
   "settings": "Settings",
   "user_settings": "User Settings",
