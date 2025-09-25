@@ -26,7 +26,6 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
   final TextEditingController _infoController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
   final userSession = UserSession();
-  bool _isPotable = false;
   Potability potability = Potability.unknown;
 
   @override
