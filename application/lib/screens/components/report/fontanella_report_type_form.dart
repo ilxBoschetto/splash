@@ -1,3 +1,4 @@
+import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:application/screens/components/minimal_notification.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -26,6 +27,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
   final TextEditingController _imageUrlController = TextEditingController();
   final userSession = UserSession();
   bool _isPotable = false;
+  Potability potability = Potability.unknown;
 
   @override
   void dispose() {
@@ -115,10 +117,80 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         );
 
       case ReportType.wrongPotability:
-        return SwitchListTile(
-          title: const Text("È potabile?"),
-          value: _isPotable,
-          onChanged: (val) => setState(() => _isPotable = val),
+        final theme = Theme.of(context);
+        return Row(
+          spacing: 15,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children:
+              Potability.values.map((p) {
+                Color color;
+                IconData icon;
+                String label;
+
+                switch (p) {
+                  case Potability.potable:
+                    color = Colors.lightBlue;
+                    icon = Icons.invert_colors;
+                    label = 'drinking_fountain.potable'.tr();
+                    break;
+                  case Potability.notPotable:
+                    color = Colors.orange;
+                    icon = Icons.invert_colors_off;
+                    label = 'drinking_fountain.not_potable'.tr();
+                    break;
+                  case Potability.unknown:
+                    color = Colors.grey;
+                    icon = Icons.invert_colors;
+                    label = 'drinking_fountain.unknown'.tr();
+                    break;
+                }
+
+                final bool selected = potability == p;
+
+                return Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      setState(() => potability = p);
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      decoration: BoxDecoration(
+                        color:
+                            selected
+                                ? color.withOpacity(0.2)
+                                : theme.inputDecorationTheme.fillColor ??
+                                    Colors.white,
+                        border: Border.all(
+                          color:
+                              theme
+                                  .inputDecorationTheme
+                                  .enabledBorder
+                                  ?.borderSide
+                                  .color ??
+                              Colors.grey,
+                        ),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(icon, color: color),
+                          const SizedBox(height: 4),
+                          Text(
+                            label,
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
         );
 
       case ReportType.nonExistentFontanella:
@@ -151,7 +223,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         break;
 
       case ReportType.wrongPotability:
-        value = _isPotable.toString();
+        value = potability.index.toString();
         break;
 
       case ReportType.nonExistentFontanella:
