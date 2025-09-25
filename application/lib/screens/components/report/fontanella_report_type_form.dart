@@ -91,13 +91,15 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         return TextFormField(
           controller: _infoController,
           style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-          decoration: const InputDecoration(
-            labelText: "Nuovo nome/fontanella",
+          decoration: InputDecoration(
+            labelText: 'report.new_name'.tr(),
             border: OutlineInputBorder(),
           ),
           validator:
               (value) =>
-                  value == null || value.isEmpty ? "Inserisci un valore" : null,
+                  value == null || value.isEmpty
+                      ? 'warnings.insert_name'.tr()
+                      : null,
         );
 
       case ReportType.wrongImage:
@@ -110,7 +112,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
           validator:
               (value) =>
                   value == null || value.isEmpty
-                      ? "Inserisci un URL valido"
+                      ? 'warnings.insert_image'.tr()
                       : null,
         );
 
@@ -192,10 +194,10 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         );
 
       case ReportType.nonExistentFontanella:
-        return const Padding(
+        return Padding(
           padding: EdgeInsets.all(8.0),
           child: Text(
-            "Segnalerai che questa fontanella non esiste più.",
+            'report.non_existent_fontanella'.tr(),
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
         );
@@ -310,8 +312,8 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
                         key: const ValueKey("typeList"),
                         controller: scrollController,
                         children: [
-                          const Text(
-                            "Seleziona il tipo di report",
+                          Text(
+                            "report.select_reason".tr(),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -372,7 +374,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
                                   vertical: 16,
                                 ),
                               ),
-                              child: const Text("Invia Report"),
+                              child: Text('report.send'.tr()),
                             ),
                           ),
                         ],

@@ -63,6 +63,9 @@
     "wrong_potability": "Wrong Potability",
     "non_existent_fontanella": "Non-Existent Fountain",
     "correct_submit": "Report submitted successfully!",
+    "send": "Send Report",
+    "new_name": "New Name",
+    "new_potability": "New Potability",
     "info_message": "The report will be reviewed by the administrators, it takes a few days to be processed."
   },
   "settings": "Settings",
@@ -124,6 +127,7 @@
   },
   "warnings": {
     "insert_name": "Enter the name",
+    "insert_image": "Enter an image",
     "fill_in_fields": "Fill in all fields",
     "accept_terms_and_privacy_policy": "Accept terms of service and privacy policy"
   }
