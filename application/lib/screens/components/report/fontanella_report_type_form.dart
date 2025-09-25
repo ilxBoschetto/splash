@@ -225,7 +225,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         break;
 
       case ReportType.nonExistentFontanella:
-        value = "Fontanella inesistente";
+        // do nothing
         break;
     }
 
