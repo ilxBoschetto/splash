@@ -147,7 +147,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           Image.asset(
             'assets/icons/logo.png',
-            height: 150, // imposta una height massima
+            height: 120, // imposta una height massima
           ),
 
           if (!isUserLogged) ...[
@@ -160,13 +160,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: 12),
+          _TopUsersCard(users: topUsers),
+          const SizedBox(height: 12),
           _DashboardCard(
             title: 'drinking_fountain.added_today'.tr(),
             value: "$fontanelleOggi",
             color: Colors.orange,
           ),
-          const SizedBox(height: 12),
-          _TopUsersCard(users: topUsers),
+
           const SizedBox(height: 12),
           if (isUserLogged) ...[
             _DashboardCard(
