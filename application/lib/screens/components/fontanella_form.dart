@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:application/enum/potability_enum.dart';
+import 'package:application/screens/components/image_uploader.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -76,16 +77,6 @@ class _FountainFormState extends State<FountainForm> {
     widget.latController.removeListener(_updateMapCenterFromText);
     widget.lonController.removeListener(_updateMapCenterFromText);
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
-    if (!mounted) return;
-    if (image != null) {
-      setState(() => _selectedImage = image);
-      widget.onImagePicked?.call(image); // <-- notifica al parent
-    }
   }
 
   void _updateMapCenterFromText() {
@@ -274,10 +265,12 @@ class _FountainFormState extends State<FountainForm> {
 
             const SizedBox(height: 20),
             Center(
-              child: ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.image),
-                label: Text('drinking_fountain.upload_image'.tr()),
+              child: ImageUploader(
+                selectedImage: _selectedImage,
+                onImagePicked: (img) {
+                  setState(() => _selectedImage = img);
+                  widget.onImagePicked?.call(img);
+                },
               ),
             ),
 
