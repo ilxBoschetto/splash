@@ -10,8 +10,7 @@ import 'dart:convert';
 
 class ReportFormBottomSheet extends StatefulWidget {
   final String fontanellaId;
-  const ReportFormBottomSheet({Key? key, required this.fontanellaId})
-    : super(key: key);
+  const ReportFormBottomSheet({super.key, required this.fontanellaId});
 
   @override
   State<ReportFormBottomSheet> createState() => _ReportFormBottomSheetState();
