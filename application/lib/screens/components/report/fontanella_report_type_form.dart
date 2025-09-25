@@ -1,4 +1,5 @@
 import 'package:application/helpers/user_session.dart';
+import 'package:application/screens/components/minimal_notification.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:application/enum/report_type_enum.dart';
@@ -176,28 +177,35 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         body: jsonEncode(body),
       );
 
-      print(url);
-
-      print(response.body);
-      print(response.statusCode);
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Report inviato con successo!")),
+        showMinimalNotification(
+          context,
+          message: 'report.correct_submit'.tr(),
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.green,
         );
         Navigator.pop(context);
       } else {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Errore: ${response.statusCode}")),
+        showMinimalNotification(
+          context,
+          message: 'errors.save'.tr(),
+          duration: 2500,
+          position: 'bottom',
+          backgroundColor: Colors.green,
         );
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
+      showMinimalNotification(
         context,
-      ).showSnackBar(SnackBar(content: Text("Errore di rete: $e")));
+        message: 'errors.network_error'.tr(),
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.green,
+      );
     }
   }
 

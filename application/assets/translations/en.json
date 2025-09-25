@@ -61,7 +61,8 @@
     "wrong_information": "Wrong Information",
     "wrong_image": "Wrong Image",
     "wrong_potability": "Wrong Potability",
-    "non_existent_fontanella": "Non-Existent Fountain"
+    "non_existent_fontanella": "Non-Existent Fountain",
+    "correct_submit": "Report submitted successfully!"
   },
   "settings": "Settings",
   "user_settings": "User Settings",

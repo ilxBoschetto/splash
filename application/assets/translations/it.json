@@ -61,7 +61,8 @@
     "wrong_information": "Informazioni Errate",
     "wrong_image": "Immagine Errata",
     "wrong_potability": "Potabilità Errata",
-    "non_existent_fontanella": "Fontanella Non Esistente"
+    "non_existent_fontanella": "Fontanella Non Esistente",
+    "correct_submit": "Report inviato con successo!"
   },
   "settings": "Impostazioni",
   "user_settings": "Impostazioni Utente",
