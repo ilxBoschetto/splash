@@ -89,6 +89,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
       case ReportType.wrongInformation:
         return TextFormField(
           controller: _infoController,
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           decoration: const InputDecoration(
             labelText: "Nuovo nome/fontanella",
             border: OutlineInputBorder(),
