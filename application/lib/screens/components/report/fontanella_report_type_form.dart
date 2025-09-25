@@ -282,7 +282,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-      initialChildSize: 0.7,
+      initialChildSize: 0.5,
       minChildSize: 0.4,
       maxChildSize: 0.95,
       expand: false,
