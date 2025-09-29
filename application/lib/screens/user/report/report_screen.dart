@@ -86,11 +86,11 @@ class _ReportScreenState extends State<ReportScreen> {
   Color _statusColor(ReportStatus status) {
     switch (status) {
       case ReportStatus.pending:
-        return const Color.fromARGB(255, 98, 98, 98).withOpacity(0.25);
+        return const Color.fromARGB(255, 52, 51, 51).withOpacity(0.25);
       case ReportStatus.rejected:
-        return Colors.red.withOpacity(0.25);
+        return const Color.fromARGB(255, 167, 107, 102).withOpacity(0.25);
       case ReportStatus.accepted:
-        return Colors.green.withOpacity(0.25);
+        return const Color.fromARGB(255, 147, 203, 149).withOpacity(0.25);
     }
   }
 
