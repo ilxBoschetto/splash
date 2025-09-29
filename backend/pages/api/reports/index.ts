@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@lib/mongodb";
 import withCors from "@lib/withCors";
 import { getReports, createReport } from "@controllers/reportController";
-import { getUserFromRequest } from "@lib/auth";
+import { getUserFromRequest, verifyToken } from "@lib/auth";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -17,6 +17,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
       //#region GET /api/reports
       case "GET": {
+        let user = verifyToken(req);
+        if (!user || !user.userId) {
+          return res
+            .status(401)
+            .json({ error: "Unauthorized: Invalid or missing token" });
+        }
         const reports = await getReports(currentUser);
         return res.status(200).json({ reports });
       }

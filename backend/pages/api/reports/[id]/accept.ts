@@ -21,14 +21,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
       //#region POST /api/reports/[id]/accept
       case "POST": {
-
-        if(currentUser.isAdmin === false) {
+        if (currentUser.isAdmin === false) {
           return res.status(403).json({ error: "Forbidden" });
         }
 
         await acceptReport(id as string);
 
-        return res.status(201).json({ message: "Report accepted successfully" });
+        return res
+          .status(201)
+          .json({ message: "Report accepted successfully" });
       }
       //#endregion
 
