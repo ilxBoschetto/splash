@@ -96,7 +96,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Widget _buildReportCard(Report report) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
@@ -104,7 +104,7 @@ class _ReportScreenState extends State<ReportScreen> {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: _statusColor(report.status),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Colors.white.withOpacity(0.2),
               width: 1.5,
