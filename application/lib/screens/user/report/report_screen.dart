@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:ui'; // per BackdropFilter
+import 'package:application/enum/potability_enum.dart';
 import 'package:application/enum/report_status_enum.dart';
 import 'package:application/enum/report_type_enum.dart';
+import 'package:application/helpers/potability_helper.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:application/models/report.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -95,7 +97,7 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  Widget buildReportDetails(Report report) {
+  Widget _buildReportDetails(Report report) {
     switch (report.type) {
       case ReportType.wrongInformation:
         return Text("Dettagli: ${report.value}");
@@ -107,9 +109,18 @@ class _ReportScreenState extends State<ReportScreen> {
           style: TextStyle(fontStyle: FontStyle.italic),
         );
       case ReportType.wrongPotability:
-        return Row(children: [
-          
-        ],);
+        final int potabilityIndex =
+            int.tryParse(report.value) ?? Potability.unknown.index;
+        final info = PotabilityHelper.getInfo(
+          Potability.values[potabilityIndex],
+        );
+        return Row(
+          children: [
+            Icon(info.icon, color: info.color),
+            const SizedBox(width: 8),
+            Text(info.label, style: const TextStyle(fontSize: 16)),
+          ],
+        );
     }
   }
 
@@ -145,10 +156,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      report.value,
-                      style: const TextStyle(fontSize: 14, color: Colors.white),
-                    ),
+                    _buildReportDetails(report),
                   ],
                 ),
               ),
