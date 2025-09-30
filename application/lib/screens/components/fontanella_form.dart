@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:application/enum/potability_enum.dart';
+import 'package:application/helpers/potability_helper.dart';
 import 'package:application/screens/components/image_uploader.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -190,37 +191,13 @@ class _FountainFormState extends State<FountainForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:
                   Potability.values.map((p) {
-                    Color color;
-                    IconData icon;
-                    String label;
-
-                    switch (p) {
-                      case Potability.potable:
-                        color = Colors.lightBlue;
-                        icon = Icons.invert_colors;
-                        label = 'drinking_fountain.potable'.tr();
-                        break;
-                      case Potability.notPotable:
-                        color = Colors.orange;
-                        icon = Icons.invert_colors_off;
-                        label = 'drinking_fountain.not_potable'.tr();
-                        break;
-                      case Potability.unknown:
-                        color = Colors.grey;
-                        icon = Icons.invert_colors;
-                        label = 'drinking_fountain.unknown'.tr();
-                        break;
-                    }
-
+                    final info = PotabilityHelper.getInfo(p);
                     final bool selected = potability == p;
 
                     return Expanded(
                       child: InkWell(
                         onTap: () {
                           setState(() => potability = p);
-                          if (widget.onPotabilityChanged != null) {
-                            widget.onPotabilityChanged!(p);
-                          }
                         },
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
@@ -228,7 +205,7 @@ class _FountainFormState extends State<FountainForm> {
                           decoration: BoxDecoration(
                             color:
                                 selected
-                                    ? color.withOpacity(0.2)
+                                    ? info.color.withOpacity(0.2)
                                     : theme.inputDecorationTheme.fillColor ??
                                         Colors.white,
                             border: Border.all(
@@ -246,10 +223,10 @@ class _FountainFormState extends State<FountainForm> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(icon, color: color),
+                              Icon(info.icon, color: info.color),
                               const SizedBox(height: 4),
                               Text(
-                                label,
+                                info.label,
                                 softWrap: true,
                                 overflow: TextOverflow.visible,
                                 textAlign: TextAlign.center,

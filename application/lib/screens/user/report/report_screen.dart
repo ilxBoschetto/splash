@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui'; // per BackdropFilter
 import 'package:application/enum/report_status_enum.dart';
+import 'package:application/enum/report_type_enum.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:application/models/report.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -90,7 +91,25 @@ class _ReportScreenState extends State<ReportScreen> {
       case ReportStatus.rejected:
         return const Color.fromARGB(255, 167, 107, 102).withOpacity(0.25);
       case ReportStatus.accepted:
-        return const Color.fromARGB(255, 147, 203, 149).withOpacity(0.25);
+        return const Color.fromARGB(255, 159, 199, 161).withOpacity(0.25);
+    }
+  }
+
+  Widget buildReportDetails(Report report) {
+    switch (report.type) {
+      case ReportType.wrongInformation:
+        return Text("Dettagli: ${report.value}");
+      case ReportType.wrongImage:
+        return Image.network(report.value);
+      case ReportType.nonExistentFontanella:
+        return const Text(
+          "La fontanella segnalata non esiste.",
+          style: TextStyle(fontStyle: FontStyle.italic),
+        );
+      case ReportType.wrongPotability:
+        return Row(children: [
+          
+        ],);
     }
   }
 
@@ -134,7 +153,6 @@ class _ReportScreenState extends State<ReportScreen> {
                 ),
               ),
 
-              // azioni admin
               if (userSession.isAdmin == true &&
                   report.status == ReportStatus.pending)
                 Row(

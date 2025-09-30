@@ -1,5 +1,6 @@
 import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/auth_helper.dart';
+import 'package:application/helpers/potability_helper.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:application/screens/components/report/fontanella_report_type_form.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -295,6 +296,9 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final info = PotabilityHelper.getInfo(
+      fontanella.potability ?? Potability.unknown,
+    );
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -569,46 +573,10 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
                       ),
                       Row(
                         children: [
-                          Icon(
-                            () {
-                              switch (fontanella.potability) {
-                                case Potability.potable:
-                                  return Icons.invert_colors;
-                                case Potability.notPotable:
-                                  return Icons.invert_colors_off;
-                                case Potability.unknown:
-                                default:
-                                  return Icons.invert_colors;
-                              }
-                            }(),
-                            color: () {
-                              switch (fontanella.potability) {
-                                case Potability.potable:
-                                  return Colors.lightBlue;
-                                case Potability.notPotable:
-                                  return Colors.orange;
-                                case Potability.unknown:
-                                default:
-                                  return Colors.grey;
-                              }
-                            }(),
-                          ),
+                          Icon(info.icon, color: info.color),
                           const SizedBox(width: 8),
                           Text(
-                            fontanella.potability != null
-                                ? () {
-                                  switch (fontanella.potability) {
-                                    case Potability.potable:
-                                      return 'drinking_fountain.potable'.tr();
-                                    case Potability.notPotable:
-                                      return 'drinking_fountain.not_potable'
-                                          .tr();
-                                    case Potability.unknown:
-                                    default:
-                                      return 'drinking_fountain.unknown'.tr();
-                                  }
-                                }()
-                                : '-',
+                            info.label,
                             style: const TextStyle(fontSize: 20),
                           ),
                         ],
