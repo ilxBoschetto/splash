@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         await acceptReport(id as string);
 
         return res
-          .status(201)
+          .status(200)
           .json({ message: "Report accepted successfully" });
       }
       //#endregion

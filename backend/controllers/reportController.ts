@@ -1,8 +1,9 @@
 import { mapToDto, ReportDto } from "@/dtos/reportDto";
-import { DecodedToken } from "@/lib/auth";
 import Fontanella, { IFontanella } from "@/models/Fontanella";
 import { IReport, Report } from "@/models/Report";
 import User, { IUser } from "@/models/User";
+import { ReportType } from "@/enum/report_type_enum";
+import { ReportStatus } from "@/enum/report_status_enum";
 
 export const createReport = async (
   fontanellaId: IFontanella,
@@ -65,7 +66,7 @@ export const handleWrongInformation = async (report: IReport) => {
   fontanella.name = report.value;
   await fontanella.save();
 
-  report.status = 1;
+  report.status = ReportStatus.accepted;
   await report.save();
 };
 
@@ -78,7 +79,7 @@ export const handleWrongImage = async (report: IReport) => {
   fontanella.imageUrl = report.imageUrl;
   await fontanella.save();
 
-  report.status = 1;
+  report.status = ReportStatus.accepted;
   await report.save();
 };
 
@@ -88,7 +89,7 @@ export const handleNonExistent = async (report: IReport) => {
 
   await fontanella.deleteOne();
 
-  report.status = 1;
+  report.status = ReportStatus.accepted;
   await report.save();
 };
 
@@ -101,7 +102,7 @@ export const handleWrongPotability = async (report: IReport) => {
   fontanella.status = parseInt(report.value);
   await fontanella.save();
 
-  report.status = 1;
+  report.status = ReportStatus.accepted;
   await report.save();
 };
 

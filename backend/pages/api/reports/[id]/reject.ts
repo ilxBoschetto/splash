@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         await rejectReport(id as string);
 
         return res
-          .status(201)
+          .status(200)
           .json({ message: "Report rejected successfully" });
       }
       //#endregion

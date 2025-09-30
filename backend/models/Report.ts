@@ -1,3 +1,5 @@
+import { ReportStatus } from "@/enum/report_status_enum";
+import { ReportType } from "@/enum/report_type_enum";
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IReport extends Document {

@@ -1,4 +1,4 @@
-enum ReportType {
+export enum ReportType {
   wrongInformation = 0,
   wrongImage = 1,
   wrongPotability = 2,

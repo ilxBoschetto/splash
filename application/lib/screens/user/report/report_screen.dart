@@ -70,7 +70,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _updateReportStatus(String id, ReportStatus newStatus) async {
     final url =
-        '${dotenv.env['API_URL']}/report/$id/${newStatus == ReportStatus.accepted ? "accept" : "reject"}';
+        '${dotenv.env['API_URL']}/reports/$id/${newStatus == ReportStatus.accepted ? "accept" : "reject"}';
     final res = await http.post(
       Uri.parse(url),
       headers: {
