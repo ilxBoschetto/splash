@@ -91,9 +91,9 @@ class _ReportScreenState extends State<ReportScreen> {
       case ReportStatus.pending:
         return const Color.fromARGB(255, 52, 51, 51).withOpacity(0.25);
       case ReportStatus.rejected:
-        return const Color.fromARGB(255, 167, 107, 102).withOpacity(0.25);
+        return const Color.fromARGB(255, 167, 107, 102).withOpacity(0.10);
       case ReportStatus.accepted:
-        return const Color.fromARGB(255, 159, 199, 161).withOpacity(0.25);
+        return const Color.fromARGB(255, 159, 199, 161).withOpacity(0.10);
     }
   }
 
@@ -135,10 +135,7 @@ class _ReportScreenState extends State<ReportScreen> {
           decoration: BoxDecoration(
             color: _statusColor(report.status),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-              width: 1.5,
-            ),
+            border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
           ),
           child: Row(
             children: [
@@ -148,15 +145,33 @@ class _ReportScreenState extends State<ReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      report.type.translationKey.tr(),
-                      style: const TextStyle(
+                      "${"${DateFormat('dd/MM').format(report.createdAt)} - ${report.type.translationKey.tr()}"} - ${report.fountain != null ? report.fountain!.name : "Fontanella rimossa"}",
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Colors.white70,
+                        decoration:
+                            report.status != ReportStatus.pending
+                                ? TextDecoration.lineThrough
+                                : null,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      DateFormat('dd/MM/yyyy HH:mm').format(report.updatedAt),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w100,
+                        fontSize: 9,
+                        color: Colors.white70,
+                        decoration:
+                            report.status != ReportStatus.pending
+                                ? TextDecoration.lineThrough
+                                : null,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildReportDetails(report),
+                    if (report.status == ReportStatus.pending)
+                      _buildReportDetails(report),
                   ],
                 ),
               ),
@@ -194,7 +209,7 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("I miei report")),
+      appBar: AppBar(title: Text('reports.my_reports'.tr())),
       body:
           loading
               ? const Center(child: CircularProgressIndicator())
