@@ -13,7 +13,6 @@
 
 ## IMPROVEMENTS
 
-- [ ] Creazione canale Telegram + riferimento nell'app
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
@@ -43,3 +42,4 @@
 - [x] Aggiungere salvare in cache le info dashboard (per evitare che ogni volta che si clicchi su dashboard mostri tutto a 0 per poco)
 - [x] Aggiungere la possibilità di votare le fontanelle
 - [x] Riproporre all'utente di accettare l'accesso alla posizione se declina
+- [x] Creazione canale Telegram + riferimento nell'app
