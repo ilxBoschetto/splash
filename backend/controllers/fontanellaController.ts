@@ -5,6 +5,7 @@ import SavedFontanella from "@models/SavedFontanella";
 import User, { IUser } from "@models/User";
 import type { DecodedToken } from "@lib/auth";
 import Vote, { IVote } from "@/models/Vote";
+import { Potability } from "@/enum/potability_enum";
 
 //#region Utility
 
