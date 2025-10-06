@@ -84,6 +84,7 @@ export const handleWrongImage = async (report: IReport) => {
 };
 
 export const handleNonExistent = async (report: IReport) => {
+  // TODO: do not delete completely the fountain
   const fontanella = await Fontanella.findById(report.fontanellaId).exec();
   if (!fontanella) throw new Error("Fontanella non trovata");
 
