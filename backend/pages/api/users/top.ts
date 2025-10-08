@@ -3,6 +3,7 @@ import dbConnect from "@lib/mongodb";
 import withCors from "@lib/withCors";
 import UserController from "@/controllers/userController";
 import { TopUserDto } from "@/dtos/topUserDto";
+import withLastRequest from "@/lib/withLastRequest";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await dbConnect();
@@ -23,4 +24,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

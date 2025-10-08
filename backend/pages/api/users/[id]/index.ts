@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@lib/mongodb";
 import withCors from "@lib/withCors";
 import UserController from "@/controllers/userController";
+import withLastRequest from "@/lib/withLastRequest";
 
 //#region Handler principale per /api/fontanelle/[id]
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -39,4 +40,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 //#endregion
 
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

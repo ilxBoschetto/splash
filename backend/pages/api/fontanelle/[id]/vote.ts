@@ -8,6 +8,7 @@ import {
 } from "@controllers/fontanellaController";
 import { getUserFromRequest, verifyToken } from "@/lib/auth";
 import Vote from "@/models/Vote";
+import withLastRequest from "@/lib/withLastRequest";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await dbConnect();
@@ -75,4 +76,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: "Metodo non supportato" });
 };
 
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

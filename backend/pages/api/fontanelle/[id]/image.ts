@@ -7,6 +7,7 @@ import path from "path";
 import crypto from "crypto";
 import withCors from "@lib/withCors";
 import { verifyToken } from "@/lib/auth";
+import withLastRequest from "@/lib/withLastRequest";
 
 export const config = {
   api: {
@@ -111,4 +112,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 };
 //#endregion
 
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

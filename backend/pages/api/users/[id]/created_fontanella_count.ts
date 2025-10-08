@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import dbConnect from "@lib/mongodb";
 import Fontanella from "@models/Fontanella";
 import withCors from "@lib/withCors";
+import withLastRequest from "@/lib/withLastRequest";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -22,4 +23,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       .json({ error: "Failed to count user's created fontanelle" });
   }
 }
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

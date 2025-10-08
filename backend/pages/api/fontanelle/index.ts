@@ -6,6 +6,7 @@ import {
   saveFontanella,
 } from "@controllers/fontanellaController";
 import withCors from "@lib/withCors";
+import withLastRequest from "@/lib/withLastRequest";
 
 //#region Handler principale per /api/fontanelle
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -97,4 +98,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 //#endregion
 
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

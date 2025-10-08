@@ -1,8 +1,9 @@
 // pages/api/users/[id]/saved_fontanelle/check/[fontanellaId].ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from '@lib/mongodb';
-import SavedFontanella from '@models/SavedFontanella';
-import withCors from '@lib/withCors';
+import type { NextApiRequest, NextApiResponse } from "next";
+import dbConnect from "@lib/mongodb";
+import SavedFontanella from "@models/SavedFontanella";
+import withCors from "@lib/withCors";
+import withLastRequest from "@/lib/withLastRequest";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -13,7 +14,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } = req;
 
   switch (method) {
-    case 'GET':
+    case "GET":
       try {
         const savedEntry = await SavedFontanella.findOne({
           userId: id as string,
@@ -27,8 +28,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       break;
 
     default:
-      res.status(405).json({ success: false, error: 'Metodo non permesso' });
+      res.status(405).json({ success: false, error: "Metodo non permesso" });
       break;
   }
 }
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

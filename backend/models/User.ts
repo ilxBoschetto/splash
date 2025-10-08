@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
@@ -8,6 +8,7 @@ export interface IUser extends Document {
   isAdmin: boolean;
   confirmationCode: string;
   createdAt: Date;
+  lastRequest: Date | null;
   resetPasswordToken: string;
   resetPasswordExpires: Date;
 }
@@ -29,7 +30,7 @@ const UserSchema: Schema<IUser> = new Schema(
     },
 
     isAdmin: {
-      type: Boolean
+      type: Boolean,
     },
 
     passwordHash: {
@@ -42,23 +43,27 @@ const UserSchema: Schema<IUser> = new Schema(
       default: false,
     },
 
-    confirmationCode:{
+    confirmationCode: {
       type: String,
       required: false,
     },
-    
+
     resetPasswordToken: {
       type: String,
-      default: null
+      default: null,
     },
     resetPasswordExpires: {
       type: Date,
-      default: null
+      default: null,
     },
 
     createdAt: {
       type: Date,
       default: Date.now,
+    },
+    lastRequest: {
+      type: Date,
+      default: null,
     },
   },
   {
@@ -66,6 +71,7 @@ const UserSchema: Schema<IUser> = new Schema(
   }
 );
 
-const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+const User: Model<IUser> =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 
 export default User;

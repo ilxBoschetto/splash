@@ -4,6 +4,7 @@ import User from "@models/User";
 import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import withCors from "@lib/withCors";
+import withLastRequest from "@/lib/withLastRequest";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
@@ -26,12 +27,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(401).json({ error: "Email o password errati" });
   }
   if (!user.isConfirmed) {
-    return res
-      .status(403)
-      .json({
-        error:
-          "Account non confermato. Controlla la tua email per completare la registrazione.",
-      });
+    return res.status(403).json({
+      error:
+        "Account non confermato. Controlla la tua email per completare la registrazione.",
+    });
   }
   const passwordMatch = await bcrypt.compare(password, user.passwordHash);
   if (!passwordMatch) {
@@ -53,4 +52,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
-export default withCors(handler);
+export default withCors(withLastRequest(handler));

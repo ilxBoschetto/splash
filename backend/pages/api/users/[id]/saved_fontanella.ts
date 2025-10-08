@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@lib/mongodb';
 import SavedFontanella from '@models/SavedFontanella';
 import withCors from '@lib/withCors';
+import withLastRequest from '@/lib/withLastRequest';
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -44,4 +45,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(405).json({ error: 'Metodo non consentito' });
   }
 }
-export default withCors(handler);
+export default withCors(withLastRequest(handler));
