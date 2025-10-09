@@ -9,6 +9,7 @@
           <th>Nome</th>
           <th>Latitudine</th>
           <th>Longitudine</th>
+          <th>Creato Da</th>
         </tr>
       </thead>
       <tbody>
@@ -16,6 +17,7 @@
           <td>{{ f.name }}</td>
           <td>{{ f.lat }}</td>
           <td>{{ f.lon }}</td>
+          <td>{{ f.createdBy.name }}</td>
         </tr>
       </tbody>
     </table>
@@ -34,7 +36,6 @@ const isLoading = ref(true);
 const getFontanelle = () => {
   axios.get(`${apiBaseUrl}/fontanelle`, {})
     .then((response) => {
-      console.log(response.data)
       fontanelle.value = response.data;
     })
     .catch(error => {
