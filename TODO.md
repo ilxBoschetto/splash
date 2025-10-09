@@ -3,7 +3,6 @@
 - [ ] Aggiungere informazioni copyright openstreetmap nella sezione informazioni applicazione
 - [ ] Aggiungere modifica ed elimina per admin
 - [ ] Aggiungere modifica ed elimina per creatore della fontanella
-- [ ] Aggiungere backup in cloud o salvarli da qualche parte
 - [ ] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [ ] Aggiungere segnalazioni fontanella (con frasi già preimpostate)
 - [ ] Aggiungere log per ogni azione compiuta
@@ -13,7 +12,6 @@
 
 ## IMPROVEMENTS
 
-- [ ] Creazione canale Telegram + riferimento nell'app
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
@@ -43,3 +41,5 @@
 - [x] Aggiungere salvare in cache le info dashboard (per evitare che ogni volta che si clicchi su dashboard mostri tutto a 0 per poco)
 - [x] Aggiungere la possibilità di votare le fontanelle
 - [x] Riproporre all'utente di accettare l'accesso alla posizione se declina
+- [x] Creazione canale Telegram + riferimento nell'app
+- [x] Aggiungere backup in cloud o salvarli da qualche parte
