@@ -44,7 +44,6 @@ const menuItems = [
 
 .main-card {
     width: 100%;
-    max-width: 1200px;
     background-color: var(--surface-card);
     padding: 2rem;
     border-radius: 0.5rem;
