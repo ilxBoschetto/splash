@@ -4,7 +4,7 @@
 
     <!-- Skeleton Loading -->
     <div v-if="isLoading" class="space-y-2">
-      <Skeleton v-for="i in 5" :key="i" width="100%" height="2.5rem" />
+      <Skeleton v-for="i in 5" :key="i" width="100%" height="10rem" />
     </div>
 
     <!-- Data Table -->
