@@ -12,6 +12,7 @@
 
 ## IMPROVEMENTS
 
+- [ ] Comprare dominio + creazione qrcode che puntano a pagina che reindirizza se iphone o android
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
