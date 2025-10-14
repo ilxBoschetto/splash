@@ -185,6 +185,35 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: theme.textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    icon: Padding(
+                      padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+                      child: Image.asset('assets/images/google.png', width: 35),
+                    ),
+                    label: Text(
+                      'Accedi con Google',
+                      style: TextStyle(
+                        color: Theme.of(context).iconTheme.color,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onPressed: () async {
+                      final result = await AuthHelper.loginWithGoogle();
+                      if (result.success) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/',
+                          (_) => false,
+                        );
+                      } else {
+                        setState(() => error = result.message);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Divider(),
+                  const SizedBox(height: 16),
                   if (error != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
