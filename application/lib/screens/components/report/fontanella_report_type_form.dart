@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/potability_helper.dart';
 import 'package:application/helpers/user_session.dart';
@@ -8,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:application/enum/report_type_enum.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 
 class ReportFormBottomSheet extends StatefulWidget {
@@ -185,8 +186,6 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
 
     final url = Uri.parse('${dotenv.env['API_URL']}/reports');
 
-    String? description;
-    String? imageUrl;
     String? value;
 
     switch (selectedType!) {
@@ -195,7 +194,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         break;
 
       case ReportType.wrongImage:
-        imageUrl = _imageUrlController.text;
+        // do nothing, image will be uploaded as multipart
         break;
 
       case ReportType.wrongPotability:
@@ -207,23 +206,24 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         break;
     }
 
-    final body = {
-      "fontanellaId": widget.fontanellaId,
-      "type": selectedType!.index,
-      "value": value,
-      "imageUrl": imageUrl,
-      "description": description,
-    };
-
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Authorization': 'Bearer ${userSession.token}',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(body),
-      );
+      final request = http.MultipartRequest('POST', url);
+      request.headers['Authorization'] = 'Bearer ${userSession.token}';
+
+      request.fields['fontanellaId'] = widget.fontanellaId;
+      request.fields['type'] = selectedType!.index.toString();
+      if (value != null) request.fields['value'] = value;
+
+      // Se è un report con immagine, allega il file
+      if (selectedType == ReportType.wrongImage &&
+          _selectedImage != null &&
+          await File(_selectedImage!.path).length() > 0) {
+        request.files.add(
+          await http.MultipartFile.fromPath('image', _selectedImage!.path),
+        );
+      }
+
+      final response = await request.send();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         if (!mounted) return;
@@ -242,7 +242,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
           message: 'errors.save'.tr(),
           duration: 2500,
           position: 'bottom',
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.red,
         );
       }
     } catch (e) {
@@ -252,7 +252,7 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         message: 'errors.network_error'.tr(),
         duration: 2500,
         position: 'bottom',
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.red,
       );
     }
   }
