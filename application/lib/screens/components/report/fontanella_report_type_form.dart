@@ -1,6 +1,7 @@
 import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/potability_helper.dart';
 import 'package:application/helpers/user_session.dart';
+import 'package:application/screens/components/image_uploader.dart';
 import 'package:application/screens/components/minimal_notification.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:application/enum/report_type_enum.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 
 class ReportFormBottomSheet extends StatefulWidget {
   final String fontanellaId;
@@ -27,6 +29,8 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
   final TextEditingController _imageUrlController = TextEditingController();
   final userSession = UserSession();
   Potability potability = Potability.unknown;
+
+  XFile? _selectedImage;
 
   @override
   void dispose() {
@@ -104,17 +108,9 @@ class _ReportFormBottomSheetState extends State<ReportFormBottomSheet>
         );
 
       case ReportType.wrongImage:
-        return TextFormField(
-          controller: _imageUrlController,
-          decoration: const InputDecoration(
-            labelText: "URL nuova immagine",
-            border: OutlineInputBorder(),
-          ),
-          validator:
-              (value) =>
-                  value == null || value.isEmpty
-                      ? 'warnings.insert_image'.tr()
-                      : null,
+        return ImageUploader(
+          selectedImage: _selectedImage,
+          onImagePicked: (image) => setState(() => _selectedImage = image),
         );
 
       case ReportType.wrongPotability:
