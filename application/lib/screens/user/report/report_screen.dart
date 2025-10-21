@@ -102,7 +102,10 @@ class _ReportScreenState extends State<ReportScreen> {
       case ReportType.wrongInformation:
         return Text("Dettagli: ${report.value}");
       case ReportType.wrongImage:
-        return Image.network(report.value);
+        print(report.value);
+        return Image.network(
+          '${dotenv.env['API_URL']}/uploads/${report.value}',
+        );
       case ReportType.nonExistentFontanella:
         return const Text(
           "La fontanella segnalata non esiste.",
