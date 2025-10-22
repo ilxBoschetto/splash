@@ -1,18 +1,27 @@
-import { IUser } from "@/lib/auth";
 import mongoose from "mongoose";
+import { IUser } from "@/lib/auth";
 
 export class TopUserDto {
-  userId: string;
-  user?: IUser;
+  _id: string;
+  name: string;
+  email: string;
   count: number;
 
-  constructor(data: { userId: mongoose.Types.ObjectId | string; user?: IUser; count: number }) {
+  constructor(data: {
+    userId: mongoose.Types.ObjectId | string;
+    user?: IUser;
+    count: number;
+  }) {
     const { userId, user, count } = data;
-    this.userId = typeof userId === "string" ? userId : userId.toHexString();
-    this.user = user;
+    this._id = typeof userId === "string" ? userId : userId.toHexString();
+    this.name = user?.name ?? "-";
+    this.email = user?.email ?? "-";
     this.count = count;
   }
 }
 
-export const mapToDto = (userId: mongoose.Types.ObjectId | string, count: number, user?: IUser) =>
-  new TopUserDto({ userId, count, user });
+export const mapToDto = (
+  userId: mongoose.Types.ObjectId | string,
+  count: number,
+  user?: IUser
+): TopUserDto => new TopUserDto({ userId, count, user });
