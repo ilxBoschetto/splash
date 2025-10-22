@@ -10,6 +10,7 @@ export interface IReport extends Document {
   status: ReportStatus;
   description?: string;
   imageUrl?: string;
+  originalValue?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,7 @@ const ReportSchema: Schema<IReport> = new Schema(
     status: { type: Number, default: 0 },
     description: { type: String },
     imageUrl: { type: String },
+    originalValue: { type: mongoose.Schema.Types.Mixed, default: null },
   },
   { timestamps: true }
 );

@@ -4,6 +4,7 @@ import { IReport, Report } from "@/models/Report";
 import User, { IUser } from "@/models/User";
 import { ReportType } from "@/enum/report_type_enum";
 import { ReportStatus } from "@/enum/report_status_enum";
+import { Potability } from "@/enum/potability_enum";
 
 export const createReport = async (
   fontanellaId: IFontanella,
@@ -13,6 +14,10 @@ export const createReport = async (
   imageUrl?: string,
   description?: string
 ): Promise<void> => {
+  const fontanella = await Fontanella.findById(fontanellaId).lean();
+  if (!fontanella) {
+    throw new Error("Fontanella non trovata");
+  }
   if (!fontanellaId || !user) {
     throw new Error("Fontanella o utente non validi");
   }
@@ -28,6 +33,33 @@ export const createReport = async (
   if (value) createData.value = value;
   if (imageUrl) createData.imageUrl = imageUrl;
   if (description) createData.description = description;
+  switch (type) {
+    case ReportType.wrongInformation:
+      createData.originalValue = {
+        name: fontanella.name ?? "-",
+        latitude: fontanella.lat ?? null,
+        longitude: fontanella.lon ?? null,
+      };
+      break;
+
+    case ReportType.wrongImage:
+      createData.originalValue = fontanella.imageUrl
+        ? fontanella.imageUrl
+        : "-";
+      break;
+
+    case ReportType.wrongPotability:
+      createData.originalValue = fontanella.status ?? "-";
+      break;
+
+    case ReportType.nonExistentFontanella:
+      createData.originalValue = null;
+      break;
+
+    default:
+      createData.originalValue = null;
+      break;
+  }
   await Report.create(createData);
 };
 
