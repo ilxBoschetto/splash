@@ -129,7 +129,7 @@ export const getFontanelle = async (
       : -1;
 
   // Ordinamento di default: createdAt discendente
-  const fontanelle = await Fontanella.find()
+  const fontanelle = await Fontanella.find({ deleted: { $ne: true } })
     .sort({ createdAt: sortOrder })
     .lean();
 

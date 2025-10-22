@@ -14,6 +14,7 @@ export interface IFontanella extends Document {
   };
   status: Number;
   imageUrl?: String;
+  deleted?: Boolean;
   createdBy: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -49,6 +50,7 @@ const FontanellaSchema: Schema<IFontanella> = new Schema(
       type: Number,
       default: 2,
     },
+    deleted: { type: Boolean, default: false },
     imageUrl: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
