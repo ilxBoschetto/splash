@@ -56,6 +56,7 @@
     }
   },
   "report": {
+    "my_reports": "My Reports",
     "title": "Report Fountain",
     "select_reason": "Select the reason for reporting",
     "wrong_information": "Wrong Information",
