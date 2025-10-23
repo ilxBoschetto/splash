@@ -18,6 +18,7 @@ export class ReportDto {
   description?: string;
   createdAt: Date;
   updatedAt: Date;
+  originalValue?: any;
 
   constructor(data: {
     report: IReport;
@@ -35,6 +36,13 @@ export class ReportDto {
     this.description = report.description;
     this.createdAt = report.createdAt;
     this.updatedAt = report.updatedAt;
+    this.fontanellaId = (
+      report.fontanellaId as mongoose.Types.ObjectId
+    ).toHexString();
+    this.createdById = (
+      report.createdBy as mongoose.Types.ObjectId
+    ).toHexString();
+    this.originalValue = report.originalValue;
   }
 }
 
