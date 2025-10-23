@@ -91,9 +91,9 @@ class _ReportScreenState extends State<ReportScreen> {
       case ReportStatus.pending:
         return const Color.fromARGB(255, 52, 51, 51).withOpacity(0.25);
       case ReportStatus.rejected:
-        return const Color.fromARGB(255, 167, 107, 102).withOpacity(0.10);
+        return const Color.fromARGB(255, 167, 64, 55).withOpacity(0.10);
       case ReportStatus.accepted:
-        return const Color.fromARGB(255, 159, 199, 161).withOpacity(0.10);
+        return const Color.fromARGB(255, 67, 169, 72).withOpacity(0.10);
     }
   }
 
@@ -103,8 +103,14 @@ class _ReportScreenState extends State<ReportScreen> {
         return Text("Dettagli: ${report.value}");
       case ReportType.wrongImage:
         print(report.value);
-        return Image.network(
-          '${dotenv.env['API_URL']}/uploads/${report.value}',
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            '${dotenv.env['API_URL']}/uploads/${report.value}',
+            width: 250,
+            height: 250,
+            fit: BoxFit.cover,
+          ),
         );
       case ReportType.nonExistentFontanella:
         return const Text(
@@ -113,7 +119,7 @@ class _ReportScreenState extends State<ReportScreen> {
         );
       case ReportType.wrongPotability:
         final int potabilityIndex =
-            int.tryParse(report.value) ?? Potability.unknown.index;
+            int.tryParse(report.value.toString()) ?? Potability.unknown.index;
         final info = PotabilityHelper.getInfo(
           Potability.values[potabilityIndex],
         );
@@ -125,6 +131,29 @@ class _ReportScreenState extends State<ReportScreen> {
           ],
         );
     }
+  }
+
+  String _formatOriginalValue(Report report) {
+    final originalValue = report.originalValue;
+
+    if (report.type == ReportType.wrongInformation) {
+      if (originalValue == null) return '';
+
+      if (originalValue is Map<String, dynamic>) {
+        if (originalValue.containsKey('name')) {
+          return originalValue['name'].toString();
+        }
+        if (originalValue.containsKey('imageUrl')) {
+          return originalValue['imageUrl'].toString();
+        }
+        return originalValue.toString();
+      }
+
+      final str = originalValue.toString().trim();
+      return str.isEmpty ? '' : str;
+    }
+
+    return report.fontanella?.nome ?? '';
   }
 
   Widget _buildReportCard(Report report) {
@@ -148,7 +177,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "${"${DateFormat('dd/MM').format(report.createdAt)} - ${report.type.translationKey.tr()}"} - ${report.fountain != null ? report.fountain!.name : "Fontanella rimossa"}",
+                      "${"${DateFormat('dd/MM').format(report.createdAt)} - ${report.type.translationKey.tr()}"} - ${_formatOriginalValue(report)}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -173,8 +202,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    if (report.status == ReportStatus.pending)
-                      _buildReportDetails(report),
+                    _buildReportDetails(report),
                   ],
                 ),
               ),
