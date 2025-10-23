@@ -212,7 +212,7 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('reports.my_reports'.tr())),
+      appBar: AppBar(title: Text('report.my_reports'.tr())),
       body:
           loading
               ? const Center(child: CircularProgressIndicator())
