@@ -184,6 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'login_with_account'.tr(),
                     style: theme.textTheme.headlineSmall,
                   ),
+                  /*
                   const SizedBox(height: 16),
                   OutlinedButton.icon(
                     icon: Padding(
@@ -211,6 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                   ),
+                  */
                   const SizedBox(height: 16),
                   Divider(),
                   const SizedBox(height: 16),
