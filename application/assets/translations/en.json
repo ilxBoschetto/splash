@@ -55,6 +55,20 @@
       "are_you_sure_you_want_to_delete": "Are you sure you want to delete"
     }
   },
+  "report": {
+    "my_reports": "My Reports",
+    "title": "Report Fountain",
+    "select_reason": "Select the reason for reporting",
+    "wrong_information": "Wrong Information",
+    "wrong_image": "Wrong Image",
+    "wrong_potability": "Wrong Potability",
+    "non_existent_fontanella": "Non-Existent Fountain",
+    "correct_submit": "Report submitted successfully!",
+    "send": "Send Report",
+    "new_name": "New Name",
+    "new_potability": "New Potability",
+    "info_message": "The report will be reviewed by the administrators, it takes a few days to be processed."
+  },
   "settings": "Settings",
   "user_settings": "User Settings",
   "open_settings": "Open Settings",
@@ -114,6 +128,7 @@
   },
   "warnings": {
     "insert_name": "Enter the name",
+    "insert_image": "Enter an image",
     "fill_in_fields": "Fill in all fields",
     "accept_terms_and_privacy_policy": "Accept terms of service and privacy policy"
   }

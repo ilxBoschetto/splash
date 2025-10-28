@@ -1,6 +1,7 @@
 import 'package:application/notifiers/theme_notifier.dart';
 import 'package:application/screens/components/version_check_wrapper.dart';
 import 'package:application/screens/user/administration/administration_screen.dart';
+import 'package:application/screens/user/report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/layout/fontanelle_screen.dart';
 import 'screens/fontanelle/fontanelle_details_screen.dart';
@@ -27,5 +28,6 @@ Map<String, WidgetBuilder> appRoutes(ThemeNotifier themeNotifier) {
     '/community': (_) => const CommunityScreen(),
     '/settings': (_) => SettingsScreen(themeNotifier: themeNotifier),
     '/administration': (_) => const AdministrationScreen(),
+    '/report': (_) => const ReportScreen(),
   };
 }

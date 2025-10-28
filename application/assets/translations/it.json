@@ -55,6 +55,20 @@
       "are_you_sure_you_want_to_delete": "Sei sicuro di voler eliminare"
     }
   },
+  "report": {
+    "my_reports": "Le mie segnalazioni",
+    "title": "Segnala Fontanella",
+    "select_reason": "Seleziona il motivo della segnalazione",
+    "wrong_information": "Informazioni Errate",
+    "wrong_image": "Immagine Errata",
+    "wrong_potability": "Potabilità Errata",
+    "non_existent_fontanella": "Fontanella Non Esistente",
+    "correct_submit": "Report inviato con successo!",
+    "send": "Invia Report",
+    "new_name": "Nuovo Nome",
+    "new_potability": "Nuova Potabilità",
+    "info_message": "La segnalazione verrà esaminata dagli amministratori, ci vogliono alcuni giorni per essere elaborata."
+  },
   "settings": "Impostazioni",
   "user_settings": "Impostazioni Utente",
   "open_settings": "Apri Impostazioni",
@@ -114,6 +128,7 @@
   },
   "warnings":{
     "insert_name": "Inserisci il nome",
+    "insert_image": "Inserisci un'immagine",
     "fill_in_fields": "Compila tutti i campi",
     "accept_terms_and_privacy_policy": "Accetta termini di servizo e privacy policy"
   }

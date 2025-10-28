@@ -1,4 +1,5 @@
 import 'package:application/enum/potability_enum.dart';
+import 'package:application/helpers/potability_helper.dart';
 import 'package:application/screens/components/fontanella_form.dart';
 import 'package:application/screens/components/loaders.dart';
 import 'package:application/helpers/auth_helper.dart';
@@ -362,29 +363,14 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   Widget _buildStatusIndicator(Fontanella f) {
-    Color color;
-    IconData icon;
-
-    switch (f.potability) {
-      case Potability.potable:
-        color = Colors.lightBlue;
-        icon = Icons.invert_colors;
-        break;
-      case Potability.notPotable:
-        color = Colors.orange;
-        icon = Icons.invert_colors_off;
-        break;
-      case Potability.unknown:
-      default:
-        color = Colors.grey;
-        icon = Icons.invert_colors;
-        break;
-    }
+    final info = PotabilityHelper.getInfo(
+      f.potability ?? Potability.unknown,
+    );
 
     return CircleAvatar(
       radius: 12,
-      backgroundColor: color.withOpacity(0.2),
-      child: Icon(icon, size: 16, color: color),
+      backgroundColor: info.color.withOpacity(0.2),
+      child: Icon(info.icon, size: 16, color: info.color),
     );
   }
 

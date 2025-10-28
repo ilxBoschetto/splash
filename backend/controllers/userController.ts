@@ -89,6 +89,7 @@ class UserController {
     await dbConnect();
 
     const topUsers = await Fontanella.aggregate([
+      { $match: { deleted: { $ne: true } } },
       { $group: { _id: "$createdBy", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       {

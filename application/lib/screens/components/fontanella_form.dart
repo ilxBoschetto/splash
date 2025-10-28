@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:application/enum/potability_enum.dart';
+import 'package:application/helpers/potability_helper.dart';
+import 'package:application/screens/components/image_uploader.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -76,16 +78,6 @@ class _FountainFormState extends State<FountainForm> {
     widget.latController.removeListener(_updateMapCenterFromText);
     widget.lonController.removeListener(_updateMapCenterFromText);
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
-    if (!mounted) return;
-    if (image != null) {
-      setState(() => _selectedImage = image);
-      widget.onImagePicked?.call(image); // <-- notifica al parent
-    }
   }
 
   void _updateMapCenterFromText() {
@@ -199,37 +191,13 @@ class _FountainFormState extends State<FountainForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:
                   Potability.values.map((p) {
-                    Color color;
-                    IconData icon;
-                    String label;
-
-                    switch (p) {
-                      case Potability.potable:
-                        color = Colors.lightBlue;
-                        icon = Icons.invert_colors;
-                        label = 'drinking_fountain.potable'.tr();
-                        break;
-                      case Potability.notPotable:
-                        color = Colors.orange;
-                        icon = Icons.invert_colors_off;
-                        label = 'drinking_fountain.not_potable'.tr();
-                        break;
-                      case Potability.unknown:
-                        color = Colors.grey;
-                        icon = Icons.invert_colors;
-                        label = 'drinking_fountain.unknown'.tr();
-                        break;
-                    }
-
+                    final info = PotabilityHelper.getInfo(p);
                     final bool selected = potability == p;
 
                     return Expanded(
                       child: InkWell(
                         onTap: () {
                           setState(() => potability = p);
-                          if (widget.onPotabilityChanged != null) {
-                            widget.onPotabilityChanged!(p);
-                          }
                         },
                         borderRadius: BorderRadius.circular(8),
                         child: Container(
@@ -237,7 +205,7 @@ class _FountainFormState extends State<FountainForm> {
                           decoration: BoxDecoration(
                             color:
                                 selected
-                                    ? color.withOpacity(0.2)
+                                    ? info.color.withOpacity(0.2)
                                     : theme.inputDecorationTheme.fillColor ??
                                         Colors.white,
                             border: Border.all(
@@ -255,10 +223,10 @@ class _FountainFormState extends State<FountainForm> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(icon, color: color),
+                              Icon(info.icon, color: info.color),
                               const SizedBox(height: 4),
                               Text(
-                                label,
+                                info.label,
                                 softWrap: true,
                                 overflow: TextOverflow.visible,
                                 textAlign: TextAlign.center,
@@ -274,10 +242,12 @@ class _FountainFormState extends State<FountainForm> {
 
             const SizedBox(height: 20),
             Center(
-              child: ElevatedButton.icon(
-                onPressed: _pickImage,
-                icon: const Icon(Icons.image),
-                label: Text('drinking_fountain.upload_image'.tr()),
+              child: ImageUploader(
+                selectedImage: _selectedImage,
+                onImagePicked: (img) {
+                  setState(() => _selectedImage = img);
+                  widget.onImagePicked?.call(img);
+                },
               ),
             ),
 

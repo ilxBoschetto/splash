@@ -13,7 +13,8 @@ export function verifyToken(req: NextApiRequest): DecodedToken {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new Error("Missing or invalid token");
+    console.log("Missing or invalid Authorization header");
+    return false as any;
   }
 
   const token = authHeader.split(" ")[1];

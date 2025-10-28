@@ -12,7 +12,6 @@
 
 ## IMPROVEMENTS
 
-- [ ] Comprare dominio + creazione qrcode che puntano a pagina che reindirizza se iphone o android
 - [ ] Tasto visualizzazione password quando si scrive
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
@@ -43,4 +42,3 @@
 - [x] Aggiungere la possibilità di votare le fontanelle
 - [x] Riproporre all'utente di accettare l'accesso alla posizione se declina
 - [x] Creazione canale Telegram + riferimento nell'app
-- [x] Aggiungere backup in cloud o salvarli da qualche parte
