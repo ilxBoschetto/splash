@@ -13,7 +13,7 @@ import { Potability } from "@/enum/potability_enum";
  * Restituisce il numero totale di fontanelle nel database.
  */
 export const countFontanelle = async (): Promise<number> =>
-  Fontanella.countDocuments();
+  Fontanella.countDocuments({ deleted: { $ne: true } });
 
 /**
  * Restituisce il numero di fontanelle create da mezzanotte di oggi.
@@ -22,7 +22,10 @@ export const countFontanelleToday = async (): Promise<number> => {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 
-  return await Fontanella.countDocuments({ createdAt: { $gte: startOfToday } });
+  return await Fontanella.countDocuments({
+    createdAt: { $gte: startOfToday },
+    deleted: { $ne: true },
+  });
 };
 
 export const getFontanellaVotes = async (
