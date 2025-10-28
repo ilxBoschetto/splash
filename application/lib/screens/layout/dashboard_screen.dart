@@ -100,15 +100,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
 
       if (res5.statusCode == 200) {
-        final rawData = json.decode(res5.body) as List<dynamic>? ?? [];
+        final rawData = json.decode(res5.body) as List<dynamic>;
 
-        final List<Map<String, dynamic>> users =
+        print(rawData);
+
+        final users =
             rawData
-                .where((item) => item["user"] != null)
-                .map(
+                .map<Map<String, dynamic>>(
                   (item) => {
-                    "username": item["user"]?["name"] ?? "Sconosciuto",
-                    "score": item["count"] ?? 0,
+                    "username": (item["name"] ?? "Sconosciuto").toString(),
+                    "score": (item["count"] ?? 0).toInt(),
                   },
                 )
                 .toList();
@@ -116,7 +117,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           topUsers = users;
         });
+
         prefs.setString('topUsers', json.encode(topUsers));
+
+        print(users);
       }
     } catch (e) {
       print('Errore durante il caricamento delle statistiche: $e');
