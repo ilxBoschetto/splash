@@ -101,9 +101,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       if (res5.statusCode == 200) {
         final rawData = json.decode(res5.body) as List<dynamic>;
-
-        print(rawData);
-
         final users =
             rawData
                 .map<Map<String, dynamic>>(
@@ -119,8 +116,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         });
 
         prefs.setString('topUsers', json.encode(topUsers));
-
-        print(users);
       }
     } catch (e) {
       print('Errore durante il caricamento delle statistiche: $e');
