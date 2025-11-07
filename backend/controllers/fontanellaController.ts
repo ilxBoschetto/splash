@@ -28,6 +28,19 @@ export const countFontanelleToday = async (): Promise<number> => {
   });
 };
 
+/**
+ * Returns the number of fontanelle created by a specific user.
+ * @param userId
+ * @returns
+ */
+export const countUserCreatedFontanella = async (
+  userId: string
+): Promise<number> =>
+  Fontanella.countDocuments({
+    createdBy: userId,
+    deleted: { $ne: true },
+  });
+
 export const getFontanellaVotes = async (
   fontanellaId: string | string[]
 ): Promise<object> => {

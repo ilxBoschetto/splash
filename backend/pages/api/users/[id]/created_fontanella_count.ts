@@ -15,10 +15,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const count = await Fontanella.countDocuments(
-      { deleted: { $ne: true } },
-      { createdBy: id as string }
-    );
+    const count = await Fontanella.countDocuments({
+      createdBy: id,
+      deleted: { $ne: true },
+    });
     res.status(200).json({ count });
   } catch (err: any) {
     res
