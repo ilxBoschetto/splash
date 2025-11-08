@@ -16,6 +16,10 @@ class LoginResult {
 }
 
 class AuthHelper {
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile', 'openid'],
+    serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+  );
   static bool isUserLogged = false;
 
   static Future<void> checkLogin() async {
@@ -80,13 +84,8 @@ class AuthHelper {
   }
 
   static Future<void> logout() async {
-    final googleSignIn = GoogleSignIn(
-      scopes: ['email', 'profile', 'openid'],
-      serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
-    );
-    final isSignedIn = await googleSignIn.isSignedIn();
-    if (isSignedIn) {
-      await googleSignIn.disconnect();
+    if (await _googleSignIn.isSignedIn()) {
+      await _googleSignIn.disconnect();
     }
     UserSession().clearSession();
     final prefs = await SharedPreferences.getInstance();
@@ -96,14 +95,12 @@ class AuthHelper {
 
   static Future<LoginResult> loginWithGoogle() async {
     try {
-      final googleSignIn = GoogleSignIn(
-        scopes: ['email', 'profile', 'openid'],
-        serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
-      );
-
-      final account = await googleSignIn.signIn();
+      final account = await _googleSignIn.signIn();
       if (account == null) {
-        return LoginResult(success: false, message: 'Accesso annullato.');
+        return LoginResult(
+          success: false,
+          message: 'Login Google annullato dall\'utente.',
+        );
       }
 
       final auth = await account.authentication;
@@ -138,6 +135,9 @@ class AuthHelper {
         isUserLogged = true;
         return LoginResult(success: true);
       } else {
+        if (await _googleSignIn.isSignedIn()) {
+          await _googleSignIn.disconnect();
+        }
         debugPrint('Google login error: ${data['error']}');
         return LoginResult(
           success: false,
@@ -145,6 +145,9 @@ class AuthHelper {
         );
       }
     } catch (e) {
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.disconnect();
+      }
       debugPrint('Google login exception: $e');
       return LoginResult(
         success: false,
