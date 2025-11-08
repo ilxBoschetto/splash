@@ -57,11 +57,9 @@ export default async function handler(
       console.log(`Nuovo utente creato: ${email}`);
     }
 
-    const appToken = jwt.sign(
-      { id: user._id.toString(), email: user.email },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const appToken = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     const userDto = mapToUserDto(user._id.toString(), user);
 
