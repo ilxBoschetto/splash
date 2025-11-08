@@ -1,10 +1,11 @@
-import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'user_session.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'user_session.dart';
 
 class LoginResult {
   final bool success;
@@ -30,7 +31,7 @@ class AuthHelper {
       UserSession().saveSession(
         token: token,
         userData: user,
-        isAdmin: user['isAdmin'],
+        isAdmin: user['isAdmin'] == true,
       );
       isUserLogged = true;
     }
@@ -53,11 +54,11 @@ class AuthHelper {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('jwt_token', token);
         await prefs.setString('user_data', json.encode(user));
-        final isAdmin = (user['isAdmin'] == true);
+
         UserSession().saveSession(
           token: token,
           userData: user,
-          isAdmin: isAdmin,
+          isAdmin: user['isAdmin'] == true,
         );
 
         isUserLogged = true;
@@ -79,6 +80,14 @@ class AuthHelper {
   }
 
   static Future<void> logout() async {
+    final googleSignIn = GoogleSignIn(
+      scopes: ['email', 'profile', 'openid'],
+      serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+    );
+    final isSignedIn = await googleSignIn.isSignedIn();
+    if (isSignedIn) {
+      await googleSignIn.disconnect();
+    }
     UserSession().clearSession();
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
@@ -86,15 +95,12 @@ class AuthHelper {
   }
 
   static Future<LoginResult> loginWithGoogle() async {
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId:
-          kIsWeb
-              ? dotenv.env['GOOGLE_WEB_CLIENT_ID'] // usato da Edge/Chrome
-              : dotenv.env['GOOGLE_ANDROID_CLIENT_ID'],
-      scopes: ['email', 'profile'],
-    );
-
     try {
+      final googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile', 'openid'],
+        serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+      );
+
       final account = await googleSignIn.signIn();
       if (account == null) {
         return LoginResult(success: false, message: 'Accesso annullato.');
@@ -102,6 +108,10 @@ class AuthHelper {
 
       final auth = await account.authentication;
       final idToken = auth.idToken;
+
+      if (idToken == null) {
+        return LoginResult(success: false, message: 'Token Google non valido.');
+      }
 
       final res = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/auth/google'),
@@ -128,14 +138,14 @@ class AuthHelper {
         isUserLogged = true;
         return LoginResult(success: true);
       } else {
-        print('Google login error: ${data['error']}');
+        debugPrint('Google login error: ${data['error']}');
         return LoginResult(
           success: false,
           message: data['error'] ?? 'Errore durante il login Google.',
         );
       }
     } catch (e) {
-      print('Google login exception: $e');
+      debugPrint('Google login exception: $e');
       return LoginResult(
         success: false,
         message: 'Errore di rete o autenticazione: $e',
