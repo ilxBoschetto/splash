@@ -5,6 +5,7 @@ import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import withCors from "@lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
+import { mapToUserDto } from "@/dtos/UserLoginDto";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
@@ -41,14 +42,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     expiresIn: "7d",
   });
 
+  const userDto = mapToUserDto(user._id.toString(), user);
+
   return res.status(200).json({
     token,
-    user: {
-      id: user._id,
-      email: user.email,
-      name: user.name,
-      isAdmin: user.isAdmin,
-    },
+    user: userDto,
   });
 }
 

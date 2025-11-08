@@ -3,6 +3,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
 import dbConnect from "@/lib/mongodb";
+import { mapToUserDto } from "@/dtos/UserLoginDto";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_WEB_CLIENT_ID!;
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -62,14 +63,11 @@ export default async function handler(
       { expiresIn: "7d" }
     );
 
+    const userDto = mapToUserDto(user._id.toString(), user);
+
     return res.status(200).json({
       token: appToken,
-      user: {
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        isAdmin: user.isAdmin,
-      },
+      user: userDto,
     });
   } catch (err) {
     console.error("Errore login Google:", err);
