@@ -3,14 +3,15 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IUser extends Document {
   name: string;
   email: string;
-  passwordHash: string;
+  passwordHash?: string;
+  googleId?: string;
   isConfirmed: boolean;
   isAdmin: boolean;
-  confirmationCode: string;
+  confirmationCode?: string;
   createdAt: Date;
   lastRequest: Date | null;
-  resetPasswordToken: string;
-  resetPasswordExpires: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date | null;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
@@ -29,13 +30,21 @@ const UserSchema: Schema<IUser> = new Schema(
       trim: true,
     },
 
+    googleId: {
+      type: String,
+      required: false,
+      unique: true,
+    },
+
     isAdmin: {
       type: Boolean,
+      default: false,
     },
 
     passwordHash: {
       type: String,
-      required: true,
+      required: false,
+      default: null,
     },
 
     isConfirmed: {

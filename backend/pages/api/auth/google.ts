@@ -1,10 +1,9 @@
-// /pages/api/auth/google.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
+import User from "@/models/User";
+import dbConnect from "@/lib/mongodb";
 
-// --- Config ---
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_WEB_CLIENT_ID!;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -25,7 +24,8 @@ export default async function handler(
       return res.status(400).json({ error: "Token mancante" });
     }
 
-    // Verifica token Google
+    await dbConnect();
+
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: GOOGLE_CLIENT_ID,
@@ -36,27 +36,42 @@ export default async function handler(
       return res.status(401).json({ error: "Token Google non valido" });
     }
 
-    const { sub: googleId, email, name, picture } = payload;
+    const { sub: googleId, email, name } = payload;
 
-    // Qui puoi cercare o creare l'utente nel tuo DB
-    const user = {
-      id: googleId,
-      email,
-      name,
-      picture,
-      isAdmin: false, // oppure in base al DB
-    };
+    if (!email) {
+      return res.status(400).json({ error: "Email non fornita da Google" });
+    }
 
-    // Crea un token JWT interno della tua app
-    const appToken = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        googleId,
+        email,
+        name,
+        isAdmin: false,
+        isConfirmed: true,
+        passwordHash: null,
+      });
+      console.log(`Nuovo utente creato: ${email}`);
+    }
+
+    const appToken = jwt.sign(
+      { id: user._id.toString(), email: user.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     return res.status(200).json({
       token: appToken,
-      user,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        isAdmin: user.isAdmin,
+      },
     });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Errore login Google:", err);
     return res.status(500).json({ error: "Errore interno durante il login" });
   }
