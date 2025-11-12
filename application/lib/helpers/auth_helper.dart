@@ -18,7 +18,7 @@ class LoginResult {
 class AuthHelper {
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile', 'openid'],
-    serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID_DEBUG']!,
+    serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID']!,
   );
   static bool isUserLogged = false;
 
