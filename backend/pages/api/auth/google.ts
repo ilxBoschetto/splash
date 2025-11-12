@@ -5,10 +5,10 @@ import User from "@/models/User";
 import dbConnect from "@/lib/mongodb";
 import { mapToUserDto } from "@/dtos/userLoginDto";
 
-const GOOGLE_CLIENT_IDS = process.env.GOOGLE_WEB_CLIENT_IDS!.split(",");
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_WEB_CLIENT_ID;
 const JWT_SECRET = process.env.JWT_SECRET!;
 
-const client = new OAuth2Client();
+const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,7 +29,7 @@ export default async function handler(
 
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: GOOGLE_CLIENT_IDS,
+      audience: GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
