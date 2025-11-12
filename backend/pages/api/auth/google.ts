@@ -3,7 +3,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import User from "@/models/User";
 import dbConnect from "@/lib/mongodb";
-import { mapToUserDto } from "@/dtos/UserLoginDto";
+import { mapToUserDto } from "@/dtos/userLoginDto";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_WEB_CLIENT_ID!;
 const JWT_SECRET = process.env.JWT_SECRET!;
