@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'user_session.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
 
 class LoginResult {
   final bool success;
@@ -19,9 +18,7 @@ class LoginResult {
 class AuthHelper {
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile', 'openid'],
-    serverClientId: kReleaseMode
-      ? dotenv.env['GOOGLE_WEB_CLIENT_ID_RELEASE']
-      : dotenv.env['GOOGLE_WEB_CLIENT_ID_DEBUG'],
+    serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID_RELEASE']!,
   );
   static bool isUserLogged = false;
 
