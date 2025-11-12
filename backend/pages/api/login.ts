@@ -5,7 +5,7 @@ import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import withCors from "@lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
-import { mapToUserDto } from "@/dtos/UserLoginDto";
+import { mapToUserDto } from "@/dtos/userLoginDto";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
