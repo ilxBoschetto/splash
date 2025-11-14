@@ -4,6 +4,7 @@ import dbConnect from "@lib/mongodb";
 import Fontanella from "@models/Fontanella";
 import withCors from "@lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
+import { countUserCreatedFontanella } from "@/controllers/fontanellaController";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect();
@@ -15,10 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const count = await Fontanella.countDocuments({
-      createdBy: id,
-      deleted: { $ne: true },
-    });
+    const count = await countUserCreatedFontanella(id as string);
     res.status(200).json({ count });
   } catch (err: any) {
     res
