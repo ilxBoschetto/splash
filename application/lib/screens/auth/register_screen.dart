@@ -1,3 +1,4 @@
+import 'package:application/screens/components/password_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -138,13 +139,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TextField(
-                    style: TextStyle(color: Colors.white),
+                  PasswordField(
                     controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: '${'general.password'.tr()} (*)',
-                    ),
+                    placeholder: 'general.password'.tr(),
                   ),
                   const SizedBox(height: 20),
                   const SizedBox(height: 20),

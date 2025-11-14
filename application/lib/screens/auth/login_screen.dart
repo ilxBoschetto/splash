@@ -233,7 +233,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  PasswordField(controller: passwordController),
+                  PasswordField(
+                    controller: passwordController,
+                    placeholder: 'general.password'.tr(),
+                  ),
                   const SizedBox(height: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,

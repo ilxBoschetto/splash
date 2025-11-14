@@ -1,10 +1,13 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
-
-  const PasswordField({super.key, required this.controller});
+  final String? placeholder;
+  const PasswordField({
+    super.key,
+    required this.controller,
+    required this.placeholder,
+  });
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -20,7 +23,7 @@ class _PasswordFieldState extends State<PasswordField> {
       obscureText: _obscure,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
-        labelText: 'general.password'.tr(),
+        labelText: widget.placeholder,
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
