@@ -44,3 +44,4 @@
 #vs code
 .vscode
 /backend/public/uploads/
+/logs
