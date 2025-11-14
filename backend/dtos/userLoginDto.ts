@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { IUser } from "@/lib/auth";
 
 export class UserLoginDto {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   isAdmin?: boolean;
@@ -14,7 +14,7 @@ export class UserLoginDto {
     user?: IUser;
   }) {
     const { userId, user } = data;
-    this._id = typeof userId === "string" ? userId : userId.toHexString();
+    this.id = typeof userId === "string" ? userId : userId.toHexString();
     this.name = user?.name ?? "-";
     this.email = user?.email ?? "-";
     this.googleId = user?.googleId;

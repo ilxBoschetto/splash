@@ -36,12 +36,10 @@ export const countFontanelleToday = async (): Promise<number> => {
 export const countUserCreatedFontanella = async (
   userId: string
 ): Promise<number> => {
-  console.log("Counting fontanelle for user:", userId);
   const count = await Fontanella.countDocuments({
     createdBy: userId,
     deleted: { $ne: true },
   });
-  console.log("Count result:", count);
   return count;
 };
 
