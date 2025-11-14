@@ -3,7 +3,6 @@
 - [ ] Aggiungere informazioni copyright openstreetmap nella sezione informazioni applicazione
 - [ ] Aggiungere modifica ed elimina per admin
 - [ ] Aggiungere modifica ed elimina per creatore della fontanella
-- [ ] Aggiungere log per ogni azione compiuta
 - [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
 
@@ -44,3 +43,4 @@
 - [x] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [x] Aggiungere login con Google
 - [x] Tasto visualizzazione password quando si scrive
+- [x] Aggiungere log per ogni azione compiuta
