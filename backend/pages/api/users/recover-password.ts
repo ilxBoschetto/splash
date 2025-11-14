@@ -26,14 +26,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(404).json({ message: "Utente non trovato" });
   }
 
-  const token = crypto.randomBytes(32).toString("hex");
-  const expires = new Date(Date.now() + 1000 * 60 * 60);
+  let token = crypto.randomBytes(32).toString("hex");
+  let expires = new Date(Date.now() + 1000 * 60 * 60);
+
+  // if token is already present reuse it
+  if (
+    user.resetPasswordToken &&
+    user.resetPasswordExpires &&
+    user.resetPasswordExpires > new Date()
+  ) {
+    token = user.resetPasswordToken;
+    expires = user.resetPasswordExpires;
+  }
 
   user.resetPasswordToken = token;
   user.resetPasswordExpires = expires;
   await user.save();
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
   const resetLink = `${baseUrl}/reset-password?token=${token}`;
 
   const emailContent = forgotPasswordTemplate({
