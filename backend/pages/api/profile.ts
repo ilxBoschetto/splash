@@ -4,6 +4,7 @@ import User from "@models/User";
 import jwt from "jsonwebtoken";
 import withCors from "@lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
+import { log } from "@/helpers/logger";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "GET") {
@@ -31,6 +32,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (!user) {
       return res.status(404).json({ message: "Utente non trovato" });
     }
+
+    log.info(`Recupero profilo utente ${user._id} riuscito`);
 
     return res.status(200).json({
       name: user.name,

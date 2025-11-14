@@ -5,6 +5,7 @@ import User, { IUser } from "@/models/User";
 import { ReportType } from "@/enum/report_type_enum";
 import { ReportStatus } from "@/enum/report_status_enum";
 import { Potability } from "@/enum/potability_enum";
+import { log } from "@/helpers/logger";
 
 export const createReport = async (
   fontanellaId: IFontanella,
@@ -14,6 +15,9 @@ export const createReport = async (
   imageUrl?: string,
   description?: string
 ): Promise<void> => {
+  log.info(
+    `Creazione report di tipo ${type} per fontanella ${fontanellaId} da utente ${user.id}`
+  );
   const fontanella = await Fontanella.findById(fontanellaId).lean();
   if (!fontanella) {
     throw new Error("Fontanella non trovata");

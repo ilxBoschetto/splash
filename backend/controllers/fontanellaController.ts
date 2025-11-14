@@ -6,6 +6,7 @@ import User, { IUser } from "@models/User";
 import type { DecodedToken } from "@lib/auth";
 import Vote, { IVote } from "@/models/Vote";
 import { Potability } from "@/enum/potability_enum";
+import { log } from "@/helpers/logger";
 
 //#region Utility
 
@@ -74,6 +75,8 @@ export const voteFontanella = async (
     throw new Error("Tipo di voto non valido");
   }
 
+  log.info(`Utente ${user.id} vota fontanella ${fontanella.id} con ${vote}`);
+
   const fontanellaId = fontanella.id;
   const userId = user.id;
 
@@ -141,6 +144,7 @@ export const getFontanelle = async (
   req: NextApiRequest,
   user: DecodedToken | null
 ) => {
+  log.info(`Recupero fontanelle per utente ${user?.userId ?? "anonimo"}`);
   const sortOrder =
     typeof req.query.sort === "string" && req.query.sort.toLowerCase() === "asc"
       ? 1
@@ -220,6 +224,9 @@ export const saveFontanella = async (
   },
   user: DecodedToken
 ) => {
+  log.info(
+    `${id ? "Aggiornamento" : "Creazione"} fontanella da utente ${user.userId}`
+  );
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
 
   if (!id) {
@@ -317,6 +324,8 @@ export const updateFontanella = async (
  */
 export const deleteFontanella = async (
   id: string
-): Promise<IFontanella | null> => Fontanella.findByIdAndDelete(id);
-
+): Promise<IFontanella | null> => {
+  log.info(`Eliminazione fontanella ${id} richiesta da utente amministratore`);
+  return Fontanella.findByIdAndDelete(id);
+};
 //#endregion

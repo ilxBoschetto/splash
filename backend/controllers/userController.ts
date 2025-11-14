@@ -6,6 +6,7 @@ import { mapToDto, TopUserDto } from "@/dtos/topUserDto";
 import dbConnect from "@/lib/mongodb";
 import mongoose from "mongoose";
 import Fontanella from "@/models/Fontanella";
+import { log } from "@/helpers/logger";
 
 class UserController {
   /**
@@ -42,6 +43,7 @@ class UserController {
    */
   static async deleteUser(req: NextApiRequest, res: NextApiResponse) {
     try {
+      log.info(`Richiesta eliminazione utente ${req.query.id} da parte di amministratore`);
       const admin = await getUserFromRequest(req);
 
       if (!admin || !admin.isAdmin) {

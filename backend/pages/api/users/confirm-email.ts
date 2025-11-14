@@ -3,6 +3,7 @@ import dbConnect from "@lib/mongodb";
 import User from "@models/User";
 import withCors from "@/lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
+import { log } from "@/helpers/logger";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -28,6 +29,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   user.isConfirmed = true;
   user.confirmationCode = null;
   await user.save();
+
+  log.info(`Email utente ${user._id} confermata con successo`);
 
   return res.status(200).json({ message: "Email confermata con successo" });
 };

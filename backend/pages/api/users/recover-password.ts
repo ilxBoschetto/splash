@@ -6,6 +6,7 @@ import withCors from "@/lib/withCors";
 import nodemailer from "nodemailer";
 import { forgotPasswordTemplate } from "@lib/emailTemplates";
 import withLastRequest from "@/lib/withLastRequest";
+import { log } from "@/helpers/logger";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -70,6 +71,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       html: emailContent.html,
       text: emailContent.text,
     });
+
+    log.info(`Email di recupero password inviata a ${email}`);
 
     return res.status(200).json({ message: "Email inviata", info });
   } catch (error) {

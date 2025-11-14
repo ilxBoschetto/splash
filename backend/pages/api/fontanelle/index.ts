@@ -7,6 +7,7 @@ import {
 } from "@controllers/fontanellaController";
 import withCors from "@lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
+import { log } from "@/helpers/logger";
 
 //#region Handler principale per /api/fontanelle
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -39,6 +40,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             .status(401)
             .json({ error: "Unauthorized: Invalid or missing token" });
         }
+
+        log.info(
+          `Creazione nuova fontanella richiesta da utente ${user.userId}`
+        );
 
         const userEntity = await getUserFromRequest(req);
 

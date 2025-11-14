@@ -1,9 +1,9 @@
 import nodemailer from 'nodemailer';
 import { sendRegistrationEmail } from '@lib/emailTemplates';
 import jwt from 'jsonwebtoken';
+import { log } from '@/helpers/logger';
 
 export default async function handler(req, res) {
-  // TODO: make this work
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -42,6 +42,8 @@ export default async function handler(req, res) {
       html: emailContent.html,
       text: emailContent.text,
     });
+
+    log.info(`Email di conferma registrazione inviata a ${to}`);
 
     return res.status(200).json({ message: 'Email inviata', info });
   } catch (error) {

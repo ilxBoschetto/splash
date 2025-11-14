@@ -8,6 +8,7 @@ import crypto from "crypto";
 import withCors from "@lib/withCors";
 import { verifyToken } from "@/lib/auth";
 import withLastRequest from "@/lib/withLastRequest";
+import { log } from "@/helpers/logger";
 
 export const config = {
   api: {
@@ -39,6 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       //#region PUT /api/fontanelle/[id]/image
       case "POST": {
+        log.info(`Upload immagine per fontanella ${id} richiesta`);
         const user = verifyToken(req);
         if (!user || !user.userId) {
           return res
