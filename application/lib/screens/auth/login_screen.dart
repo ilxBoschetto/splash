@@ -1,3 +1,4 @@
+import 'package:application/screens/components/password_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -232,14 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  TextField(
-                    style: TextStyle(color: Colors.white),
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      labelText: 'general.password'.tr(),
-                    ),
-                  ),
+                  PasswordField(controller: passwordController),
                   const SizedBox(height: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
