@@ -10,7 +10,6 @@
 ## IMPROVEMENTS
 
 - [ ] Aggiungere massimo di fontanelle create al giorno per evitare spam
-- [ ] Tasto visualizzazione password quando si scrive
 - [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere l'edit delle fontanelle se utente Admin
@@ -44,3 +43,4 @@
 - [x] Aggiungere segnalazioni fontanella (con frasi già preimpostate)
 - [x] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
 - [x] Aggiungere login con Google
+- [x] Tasto visualizzazione password quando si scrive
