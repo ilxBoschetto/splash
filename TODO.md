@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Aggiungere login con Google
 - [ ] Aggiungere informazioni copyright openstreetmap nella sezione informazioni applicazione
 - [ ] Aggiungere modifica ed elimina per admin
 - [ ] Aggiungere modifica ed elimina per creatore della fontanella
@@ -44,3 +43,4 @@
 - [x] Creare una classifica utenti (numero fontanelle create/votate/certificate)
 - [x] Aggiungere segnalazioni fontanella (con frasi già preimpostate)
 - [x] Aggiungere informazioni fontanella (account creatore, quando è stata creata, periodi attiva/disattiva)
+- [x] Aggiungere login con Google
