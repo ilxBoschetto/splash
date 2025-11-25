@@ -18,7 +18,8 @@
     "delete_confirm_msg": "Sei sicuro di voler eliminare {item}?",
     "confirm_delete": "Conferma cancellazione",
     "drinking_fountains": "Fontanelle",
-    "users": "Utenti"
+    "users": "Utenti",
+    "search": "Cerca"
   },
   "menu": {
     "dashboard": "Dashboard",

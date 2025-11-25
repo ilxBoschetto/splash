@@ -18,7 +18,8 @@
     "delete_confirm_msg": "Are you sure you want to delete {item}?",
     "confirm_delete": "Confirm delete",
     "drinking_fountains": "Drinking Fountains",
-    "users": "Users"
+    "users": "Users",
+    "search": "Search"
   },
   "menu": {
     "dashboard": "Dashboard",
