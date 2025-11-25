@@ -33,7 +33,9 @@ class LocationHelper {
     final hasPermission = await checkAndRequestPermission();
     if (!hasPermission) return null;
 
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 
   // Open device settings
