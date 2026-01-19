@@ -39,7 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "10y",
   });
 
   const userDto = mapToUserDto(user._id.toString(), user);
