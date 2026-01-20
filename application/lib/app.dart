@@ -1,17 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:application/notifiers/theme_notifier.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'routes.dart';
+import 'package:application/helpers/notification_helper.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final ThemeNotifier themeNotifier;
 
-  MyApp({super.key, required this.themeNotifier});
+  const MyApp({super.key, required this.themeNotifier});
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    _requestNotificationPermission();
+    _sendToken();
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      sendTokenToBackend(newToken);
+    });
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+  }
+
+  Future<void> _sendToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken();
+    print('Firebase Messaging Token: $token');
+    sendTokenToBackend(token);
+  }
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
+      valueListenable: widget.themeNotifier,
       builder: (context, currentThemeMode, _) {
         return MaterialApp(
           title: 'Splash',
@@ -23,7 +59,7 @@ class MyApp extends StatelessWidget {
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
           initialRoute: '/',
-          routes: appRoutes(themeNotifier),
+          routes: appRoutes(widget.themeNotifier),
         );
       },
     );
