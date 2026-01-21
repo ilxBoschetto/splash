@@ -1,0 +1,16 @@
+name: Scheduled Notifications
+
+on:
+  schedule:
+    - cron: "0 9 */14 * *"   # ogni 14 giorni alle 09:00 UTC
+  workflow_dispatch:        # ti permette di lanciarlo a mano (fondamentale)
+
+jobs:
+  send_notifications:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call backend cron endpoint
+        run: |
+          curl -X POST https://splash.dedyn.io/api/cron/send-notifications \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
