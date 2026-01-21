@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:application/notifiers/theme_notifier.dart';
 import 'package:application/helpers/auth_helper.dart';
@@ -29,6 +31,9 @@ class _BootstrapAppState extends State<BootstrapApp> {
         const Duration(seconds: 8),
         onTimeout: () => null,
       );
+      if (!kIsWeb) {
+        await Firebase.initializeApp();
+      }
     } catch (e, s) {
       debugPrint('Bootstrap error: $e\n$s');
       _error = true;
@@ -42,15 +47,17 @@ class _BootstrapAppState extends State<BootstrapApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: _ready
-          ? MyApp(themeNotifier: _themeNotifier)
-          : Scaffold(
-              body: Center(
-                child: _error
-                    ? const Text('Errore durante il caricamento')
-                    : const CircularProgressIndicator(),
+      home:
+          _ready
+              ? MyApp(themeNotifier: _themeNotifier)
+              : Scaffold(
+                body: Center(
+                  child:
+                      _error
+                          ? const Text('Errore durante il caricamento')
+                          : const CircularProgressIndicator(),
+                ),
               ),
-            ),
     );
   }
 }
