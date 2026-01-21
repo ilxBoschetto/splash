@@ -7,6 +7,7 @@ import {
   NotificationType,
 } from "@/enum/notifications.catalog";
 import { log } from "@/helpers/logger";
+import dbConnect from "@/lib/mongodb";
 import withCors from "@/lib/withCors";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -18,6 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   log.info("Cron authorized");
   try {
+    dbConnect();
     const notification =
       NOTIFICATIONS_CATALOG[NotificationType.HYDRATION_NUDGE];
 
