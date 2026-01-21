@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   log.info("Cron authorized");
   try {
     const notification =
-      NOTIFICATIONS_CATALOG[NotificationType.HOT_DAY_REMINDER];
+      NOTIFICATIONS_CATALOG[NotificationType.HYDRATION_NUDGE];
 
     const deviceTokens = await getDeviceNotifications();
     await sendNotificationsToDeviceTokens(

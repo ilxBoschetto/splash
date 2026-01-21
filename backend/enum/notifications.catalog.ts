@@ -30,14 +30,14 @@ export const NOTIFICATIONS_CATALOG: Record<NotificationType, AppNotification> = 
 
   [NotificationType.HYDRATION_NUDGE]: {
     type: NotificationType.HYDRATION_NUDGE,
-    title: "Hai bevuto oggi?",
-    body: "Un piccolo promemoria per prenderti cura di te 💧",
+    title: "Hai bevuto oggi?💧",
+    body: "Un piccolo promemoria per prenderti cura di te",
     minDaysBetweenSends: 14,
   },
 
   [NotificationType.WEEKEND_OUTDOOR]: {
     type: NotificationType.WEEKEND_OUTDOOR,
-    title: "Weekend all'aperto?",
+    title: "Weekend all'aperto🏖️?",
     body: "Se esci oggi, ricordati che puoi trovare acqua gratuita vicino a te.",
     minDaysBetweenSends: 21,
   },
