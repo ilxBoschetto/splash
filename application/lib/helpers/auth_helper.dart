@@ -16,11 +16,25 @@ class LoginResult {
 }
 
 class AuthHelper {
-  static final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile', 'openid'],
-    serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID']!,
-  );
   static bool isUserLogged = false;
+  static GoogleSignIn? _initGoogleSignInSafe() {
+  try {
+    if (kIsWeb) {
+      return GoogleSignIn(
+        scopes: ['email', 'profile', 'openid'],
+        clientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'], // null ok in sviluppo
+      );
+    } else {
+      return GoogleSignIn(
+        scopes: ['email', 'profile', 'openid'],
+        serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'], // null ok in sviluppo
+      );
+    }
+  } catch (e, s) {
+    debugPrint('GoogleSignIn init failed: $e\n$s');
+    return null;
+  }
+}
 
   static Future<void> checkLogin() async {
     final prefs = await SharedPreferences.getInstance();
@@ -84,8 +98,9 @@ class AuthHelper {
   }
 
   static Future<void> logout() async {
-    if (await _googleSignIn.isSignedIn()) {
-      await _googleSignIn.disconnect();
+    final googleSignIn = _initGoogleSignInSafe();
+    if (await googleSignIn?.isSignedIn() == true) {
+      await googleSignIn?.disconnect();
     }
     UserSession().clearSession();
     final prefs = await SharedPreferences.getInstance();
@@ -94,8 +109,9 @@ class AuthHelper {
   }
 
   static Future<LoginResult> loginWithGoogle() async {
+    final googleSignIn = _initGoogleSignInSafe();
     try {
-      final account = await _googleSignIn.signIn();
+      final account = await _initGoogleSignInSafe()?.signIn();
       if (account == null) {
         return LoginResult(
           success: false,
@@ -135,8 +151,8 @@ class AuthHelper {
         isUserLogged = true;
         return LoginResult(success: true);
       } else {
-        if (await _googleSignIn.isSignedIn()) {
-          await _googleSignIn.disconnect();
+        if (await googleSignIn?.isSignedIn() == true) {
+          await googleSignIn?.disconnect();
         }
         debugPrint('Google login error: ${data['error']}');
         return LoginResult(
@@ -145,8 +161,8 @@ class AuthHelper {
         );
       }
     } catch (e) {
-      if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.disconnect();
+      if (await googleSignIn?.isSignedIn() == true) {
+        await googleSignIn?.disconnect();
       }
       debugPrint('Google login exception: $e');
       return LoginResult(
