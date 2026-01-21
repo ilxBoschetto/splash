@@ -3,7 +3,6 @@
 - [ ] Aggiungere informazioni copyright openstreetmap nella sezione informazioni applicazione
 - [ ] Aggiungere modifica ed elimina per admin
 - [ ] Aggiungere modifica ed elimina per creatore della fontanella
-- [ ] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
 
 ## IMPROVEMENTS
@@ -17,6 +16,7 @@
 
 ## DONE
 
+- [x] Aggiungere notifiche push "Oggi è una giornata molto calda, se esci ricordati di rimanere idratato controllando che vicino ci siano delle fontanelle"
 - [x] Implementare multilingua
 - [x] Visualizzazione fontanelle + filtro
 - [x] Visualizzazione mappa con fontanelle
