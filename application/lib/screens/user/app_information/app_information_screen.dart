@@ -13,7 +13,6 @@ class AppInformationScreen extends StatefulWidget {
 }
 
 class _AppInformationScreenState extends State<AppInformationScreen> {
-  bool isUserLogged = false;
   bool loading = true;
   String? currentVersion;
 
@@ -29,6 +28,22 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
       currentVersion = packageInfo.version;
       loading = false;
     });
+  }
+
+  Future<void> _openLink(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      showMinimalNotification(
+        context,
+        message: 'errors.unable_to_open_link'.tr(),
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
   }
 
   @override
@@ -52,6 +67,7 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          /// APP INFO
           Container(
             margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
@@ -71,6 +87,8 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 12),
+
+                  /// DEVELOPER
                   Row(
                     children: [
                       const Icon(Icons.person_outline, size: 18),
@@ -83,7 +101,10 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 6),
+
+                  /// CONTACT
                   Row(
                     children: [
                       const Icon(Icons.mail, size: 18),
@@ -96,20 +117,10 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      const Icon(Icons.map, size: 18),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '${'maps_powered_by'.tr()}: Carto',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
+
+                  /// VERSION
                   Row(
                     children: [
                       const Icon(Icons.verified_outlined, size: 18),
@@ -124,6 +135,8 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
               ),
             ),
           ),
+
+          /// DATA & MAP ATTRIBUTION (IMPORTANT PART)
           Container(
             margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
             decoration: BoxDecoration(
@@ -143,44 +156,94 @@ class _AppInformationScreenState extends State<AppInformationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 12),
+
+                  /// OSM ATTRIBUTION
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.privacy_tip_outlined, size: 18),
+                      const Icon(Icons.public, size: 18),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () async {
-                            final uri = Uri.parse(
-                              '${dotenv.env['API_URI']}/privacy-policy',
-                            );
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(
-                                uri,
-                                mode: LaunchMode.externalApplication,
-                              );
-                            } else {
-                              showMinimalNotification(
-                                context,
-                                message: 'errors.unable_to_open_link'.tr(),
-                                duration: 2500,
-                                position: 'bottom',
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                              );
-                            }
-                          },
-                          child: Text(
-                            'read_privacy_policy'.tr(),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              decoration: TextDecoration.underline,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () => _openLink(
+                                'https://www.openstreetmap.org/copyright',
+                              ),
+                              child: Text(
+                                '© OpenStreetMap contributors',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      decoration: TextDecoration.underline,
+                                    ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 4),
+                            GestureDetector(
+                              onTap: () =>
+                                  _openLink('https://carto.com/'),
+                              child: Text(
+                                'Map tiles by CARTO',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      decoration: TextDecoration.underline,
+                                    ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          /// PRIVACY POLICY
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const Icon(Icons.privacy_tip_outlined, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        _openLink(
+                          '${dotenv.env['API_URI']}/privacy-policy',
+                        );
+                      },
+                      child: Text(
+                        'read_privacy_policy'.tr(),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                              color:
+                                  Theme.of(context).colorScheme.primary,
+                              decoration: TextDecoration.underline,
+                            ),
+                      ),
+                    ),
                   ),
                 ],
               ),
