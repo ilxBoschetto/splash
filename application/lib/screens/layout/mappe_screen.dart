@@ -6,6 +6,7 @@ import 'package:application/models/fontanella.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -24,6 +25,7 @@ class _MappeScreenState extends State<MappeScreen> {
   List<Fontanella> fontanelle = [];
   Timer? _debounce;
   List<Fontanella> allFontanelle = [];
+  List<Marker> _allMarkers = [];
   LatLng? userPosition;
   final Distance distance = const Distance();
 
@@ -45,10 +47,31 @@ class _MappeScreenState extends State<MappeScreen> {
     }
   }
 
+  Future<void> fetchMarkers() async{
+    _allMarkers =
+    // use fontanelle to create filtered markers
+      fontanelle.map((f) {
+        return Marker(
+          width: 40,
+          height: 40,
+          point: LatLng(f.lat, f.lon),
+          child: GestureDetector(
+            onTap: () => goToDetail(f),
+            child: const Icon(
+              Icons.location_on,
+              color: Colors.lightBlue,
+              size: 30,
+            ),
+          ),
+        );
+      }).toList();
+  }
+
   Future<void> fetchData() async {
     setState(() => isLoading = true);
     await fetchUserPosition();
     await fetchFontanelle();
+    await fetchMarkers();
     setState(() => isLoading = false);
   }
 
@@ -121,6 +144,8 @@ class _MappeScreenState extends State<MappeScreen> {
           }).toList();
 
       setState(() => fontanelle = results);
+      fetchFontanelle();
+      fetchMarkers();
     });
   }
 
@@ -224,48 +249,31 @@ class _MappeScreenState extends State<MappeScreen> {
                         subdomains: ['a', 'b', 'c'],
                         userAgentPackageName: 'com.boschetti.splash',
                       ),
-                      MarkerLayer(
-                        markers: [
-                          if (userPosition != null)
-                            Marker(
-                              point: userPosition!,
-                              width: 40,
-                              height: 40,
-                              child: Transform.translate(
-                                offset: const Offset(
-                                  0,
-                                  -15,
-                                ), // move the icon so the bottom is aligned
-                                child: const Icon(
-                                  Icons.person_pin_circle,
-                                  color: Colors.red,
-                                  size: 30,
+                      MarkerClusterLayerWidget(
+                      options: MarkerClusterLayerOptions(
+                        markers: _allMarkers,
+                        maxClusterRadius: 60,
+                        size: const Size(30, 30),
+                        builder: (context, markers) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                markers.length.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                          ...fontanelle.map(
-                            (f) => Marker(
-                              point: LatLng(f.lat, f.lon),
-                              width: 40,
-                              height: 40,
-                              child: GestureDetector(
-                                onTap: () => goToDetail(f),
-                                child: Transform.translate(
-                                  offset: const Offset(
-                                    0,
-                                    -15,
-                                  ), // move the icon so the bottom is aligned
-                                  child: const Icon(
-                                    Icons.location_on,
-                                    color: Colors.lightBlue,
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
+                    )
+
                     ],
                   ),
                   Positioned(
