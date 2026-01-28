@@ -195,7 +195,12 @@ export const getFontanelle = async (
       : { id: "-", name: "-", email: "-" };
 
     return {
-      ...f,
+      _id: f._id,
+      name: f.name,
+      lat: f.lat,
+      lon: f.lon,
+      potability: f.status,
+      createdAt: f.createdAt,
       imageUrl: f.imageUrl ?? "",
       isSaved: savedFontanellaIds.has(f._id.toString()),
       createdBy: createdByUser,
