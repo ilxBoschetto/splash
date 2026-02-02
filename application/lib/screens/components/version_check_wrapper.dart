@@ -37,7 +37,10 @@ class _VersionCheckWrapperState extends State<VersionCheckWrapper> {
       final packageInfo = await PackageInfo.fromPlatform();
       final String currentVersion = packageInfo.version;
       print('Current version: $currentVersion');
-      final response = await http.get(Uri.parse(apiUrl));
+      final response = await http.get(Uri.parse(apiUrl)).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => http.Response('{"error": "timeout"}', 408),
+      );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         String latestVersion = data['latestVersion'];

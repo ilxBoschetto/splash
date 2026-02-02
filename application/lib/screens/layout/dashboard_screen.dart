@@ -36,7 +36,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _checkUserStatus() async {
-    await AuthHelper.checkLogin();
+    try {
+      await AuthHelper.checkLogin().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => null,
+      );
+    } catch (e) {
+      print('Errore durante il controllo dello stato di login: $e');
+    }
     setState(() {
       isUserLogged = AuthHelper.isUserLogged;
       loading = false;
