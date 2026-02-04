@@ -372,51 +372,62 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
-        itemBuilder: (_) => [
-          PopupMenuItem<int>(
-            value: 0,
-            child: Row(
-              children: [
-                Icon(Icons.outlined_flag, size: 20),
-                SizedBox(width: 12),
-                Text(tr('general.report')),
-              ],
-            ),
-          ),
-          const PopupMenuDivider(height: 8),
-          PopupMenuItem<int>(
-            value: 1,
-            child: Row(
-              children: [
-                Icon(
-                  isSaved ? Icons.bookmark : Icons.bookmark_border,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Text(isSaved ? tr('general.unsave') : tr('general.save')),
-              ],
-            ),
-          ),
-          const PopupMenuDivider(height: 8),
-          if (canUserDelete)
+        itemBuilder: (_) {
+          final items = <PopupMenuEntry<int>>[];
+
+          // Mostra Report + Save/Unsave
+          items.add(
             PopupMenuItem<int>(
-              value: 2,
+              value: 0,
               child: Row(
                 children: [
-                  Icon(
-                    Icons.delete_outline,
-                    size: 20,
-                    color: Colors.red,
-                  ),
+                  Icon(Icons.outlined_flag, size: 20),
                   const SizedBox(width: 12),
-                  Text(
-                    tr('general.delete'),
-                    style: TextStyle(color: Colors.red),
-                    ),
+                  Text(tr('general.report')),
                 ],
               ),
             ),
-        ],
+          );
+
+          items.add(const PopupMenuDivider(height: 8));
+
+          items.add(
+            PopupMenuItem<int>(
+              value: 1,
+              child: Row(
+                children: [
+                  Icon(isSaved ? Icons.bookmark : Icons.bookmark_border, size: 20),
+                  const SizedBox(width: 12),
+                  Text(isSaved ? tr('general.unsave') : tr('general.save')),
+                ],
+              ),
+            ),
+          );
+
+          // Delete sempre opzionale
+          if (canUserDelete) {
+            items.add(const PopupMenuDivider(height: 8));
+
+            items.add(
+              PopupMenuItem<int>(
+                value: 2,
+                child: Row(
+                  children: [
+                    Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                    const SizedBox(width: 12),
+                    Text(
+                      tr('general.delete'),
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return items;
+        },
+
         onSelected: (value) {
           switch (value) {
             case 0:
