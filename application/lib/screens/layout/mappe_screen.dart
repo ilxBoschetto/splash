@@ -42,7 +42,7 @@ class _MappeScreenState extends State<MappeScreen> {
     );
 
     if (needRefresh == true) {
-      fetchFontanelle();
+      fetchData();
     }
   }
 
