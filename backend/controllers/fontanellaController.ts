@@ -199,7 +199,8 @@ export const getFontanelle = async (
       name: f.name,
       lat: f.lat,
       lon: f.lon,
-      potability: f.status,
+      // app reads status as potability
+      status: f.status,
       createdAt: f.createdAt,
       imageUrl: f.imageUrl ?? "",
       isSaved: savedFontanellaIds.has(f._id.toString()),
