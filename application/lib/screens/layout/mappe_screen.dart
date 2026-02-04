@@ -250,8 +250,8 @@ class _MappeScreenState extends State<MappeScreen> {
                       MarkerClusterLayerWidget(
                       options: MarkerClusterLayerOptions(
                         markers: _allMarkers,
-                        maxClusterRadius: 60,
-                        size: const Size(30, 30),
+                        maxClusterRadius: 80,
+                        size: const Size(40, 40),
                         builder: (context, markers) {
                           return Container(
                             decoration: BoxDecoration(
