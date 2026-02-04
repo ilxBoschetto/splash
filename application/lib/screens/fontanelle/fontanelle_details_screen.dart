@@ -1,5 +1,6 @@
 import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/auth_helper.dart';
+import 'package:application/helpers/fontanella_helper.dart';
 import 'package:application/helpers/potability_helper.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:application/screens/components/report/fontanella_report_type_form.dart';
@@ -61,6 +62,59 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
       setState(() {
         userPosition = LatLng(lat, lon);
       });
+    }
+  }
+
+  void _confirmDeleteFountain(Fontanella fontanella) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('general.confirm_delete'.tr()),
+            content: Text(
+              'general.delete_confirm_msg'.tr(
+                namedArgs: {'item': fontanella.nome},
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text('general.cancel'.tr()),
+                onPressed: () => Navigator.pop(context),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                child: Text('general.delete'.tr()),
+                onPressed: () {
+                  Navigator.pop(context);
+                  deleteFountain(fontanella.id);
+                },
+              ),
+            ],
+          ),
+    );
+  }
+
+    Future<void> deleteFountain(String id) async {
+    final http.Response response = await FontanellaHelper().deleteFountain(id);
+    if (response.statusCode == 200) {
+      Navigator.pop(context, true);
+      showMinimalNotification(
+        context,
+        message: 'drinking_fountain.deleted_action'.tr(),
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    } else {
+      showMinimalNotification(
+        context,
+        message: 'errors.general_error'.tr(),
+        duration: 2500,
+        position: 'bottom',
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
     }
   }
 
@@ -294,11 +348,107 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
     }
   }
 
+  List<Widget> buildFontanellaMenu({
+    required BuildContext context,
+    required bool isUserLogged,
+    required bool isSaved,
+    required String fontanellaId,
+    required VoidCallback onAddToSaved,
+    required VoidCallback onRemoveFromSaved,
+    required bool canUserDelete,
+  }) {
+    if (!isUserLogged) return [];
+
+    final theme = Theme.of(context);
+
+    return [
+      PopupMenuButton<int>(
+        icon: Icon(
+          Icons.more_vert,
+          color: theme.iconTheme.color,
+        ),
+        color: theme.cardColor,
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        itemBuilder: (_) => [
+          PopupMenuItem<int>(
+            value: 0,
+            child: Row(
+              children: [
+                Icon(Icons.outlined_flag, size: 20),
+                SizedBox(width: 12),
+                Text(tr('general.report')),
+              ],
+            ),
+          ),
+          const PopupMenuDivider(height: 8),
+          PopupMenuItem<int>(
+            value: 1,
+            child: Row(
+              children: [
+                Icon(
+                  isSaved ? Icons.bookmark : Icons.bookmark_border,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(isSaved ? tr('general.unsave') : tr('general.save')),
+              ],
+            ),
+          ),
+          const PopupMenuDivider(height: 8),
+          if (canUserDelete)
+            PopupMenuItem<int>(
+              value: 2,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    tr('general.delete'),
+                    style: TextStyle(color: Colors.red),
+                    ),
+                ],
+              ),
+            ),
+        ],
+        onSelected: (value) {
+          switch (value) {
+            case 0:
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (_) => ReportFormBottomSheet(
+                  fontanellaId: fontanellaId,
+                ),
+              );
+              break;
+
+            case 1:
+              isSaved ? onRemoveFromSaved() : onAddToSaved();
+              break;
+            case 2:
+              _confirmDeleteFountain(fontanella);
+              break;
+          }
+        },
+      ),
+    ];
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final info = PotabilityHelper.getInfo(
       fontanella.potability ?? Potability.unknown,
     );
+    bool canUserDelete = userSession.userId == fontanella.createdBy?.id || userSession.isAdmin == true;
     return PopScope(
       canPop: false,
       onPopInvoked: (didPop) async {
@@ -321,37 +471,15 @@ class _FontanellaDetailScreenState extends State<FontanellaDetailScreen> {
             ),
           ),
           iconTheme: IconThemeData(color: Theme.of(context).iconTheme.color),
-          actions:
-              isUserLogged
-                  ? [
-                    IconButton(
-                      icon: Icon(
-                        Icons.outlined_flag,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder:
-                              (_) => ReportFormBottomSheet(
-                                fontanellaId: fontanella.id,
-                              ),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        isSaved ? Icons.bookmark : Icons.bookmark_border,
-                        color: Theme.of(context).iconTheme.color,
-                      ),
-                      onPressed: () {
-                        isSaved ? _removeFromSaved() : _addToSaved();
-                      },
-                    ),
-                  ]
-                  : null,
+          actions: buildFontanellaMenu(
+            context: context,
+            isUserLogged: isUserLogged,
+            isSaved: isSaved,
+            fontanellaId: fontanella.id,
+            onAddToSaved: _addToSaved,
+            onRemoveFromSaved: _removeFromSaved,
+            canUserDelete: canUserDelete,
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16),

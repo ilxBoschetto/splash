@@ -19,7 +19,10 @@
     "confirm_delete": "Conferma cancellazione",
     "drinking_fountains": "Fontanelle",
     "users": "Utenti",
-    "search": "Cerca"
+    "search": "Cerca",
+    "save": "Salva",
+    "unsave": "Rimuovi dai preferiti",
+    "report": "Segnala"
   },
   "menu": {
     "dashboard": "Dashboard",
