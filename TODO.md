@@ -1,7 +1,7 @@
 ## TODO
 
-- [ ] Aggiungere modifica ed elimina per admin
-- [ ] Aggiungere modifica ed elimina per creatore della fontanella
+- [ ] Aggiungere modifica admin
+- [ ] Aggiungere modifica per creatore della fontanella
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"
 
 ## IMPROVEMENTS
