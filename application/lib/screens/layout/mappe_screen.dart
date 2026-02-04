@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:application/helpers/fontanella_helper.dart';
 import 'package:application/screens/components/loaders.dart';
 import 'package:application/helpers/location_helper.dart';
 import 'package:application/models/fontanella.dart';
@@ -8,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 class MappeScreen extends StatefulWidget {
@@ -95,8 +94,7 @@ class _MappeScreenState extends State<MappeScreen> {
   }
 
   Future<void> fetchFontanelle() async {
-    final url = '${dotenv.env['API_URL']}/fontanelle';
-    final response = await http.get(Uri.parse(url));
+    final response = await FontanellaHelper().fetchFountains();
 
     if (response.statusCode == 200 && userPosition != null) {
       final List<dynamic> data = json.decode(response.body);

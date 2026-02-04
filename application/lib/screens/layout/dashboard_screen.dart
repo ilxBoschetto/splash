@@ -1,10 +1,9 @@
 import 'package:application/helpers/auth_helper.dart';
+import 'package:application/helpers/fontanella_helper.dart';
 import 'package:application/screens/components/dashboard/top_users_card.dart';
 import 'package:application/screens/components/login_card.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import '../../helpers/user_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,27 +63,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 .map((e) => e as Map<String, dynamic>)
                 .toList();
       });
-      final userSession = UserSession();
-      final res1 = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'),
-      );
-      final res2 = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/fontanelle/today'),
-      );
-      final res5 = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/users/top'),
-      );
+      final res1 = await FontanellaHelper().fetchFontanelleCount();
+      final res2 = await FontanellaHelper().getFontanelleToday();
+      final res5 = await FontanellaHelper().getTopUsers();
       if (isUserLogged) {
-        final res3 = await http.get(
-          Uri.parse(
-            '${dotenv.env['API_URL']}/users/${userSession.userId}/saved_fontanella_count',
-          ),
-        );
-        final res4 = await http.get(
-          Uri.parse(
-            '${dotenv.env['API_URL']}/users/${userSession.userId}/created_fontanella_count',
-          ),
-        );
+        final res3 = await FontanellaHelper().getUserSavedFontanellaCount();
+        final res4 = await FontanellaHelper().getUserCreatedFontanellaCount();
 
         if (res3.statusCode == 200) {
           fontanelleUser = json.decode(res3.body)['count'];

@@ -1,4 +1,5 @@
 import 'package:application/enum/potability_enum.dart';
+import 'package:application/helpers/fontanella_helper.dart';
 import 'package:application/helpers/potability_helper.dart';
 import 'package:application/screens/components/fontanella_form.dart';
 import 'package:application/screens/components/loaders.dart';
@@ -7,12 +8,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -145,13 +143,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       final userLon = position.longitude;
       final distance = Distance();
 
-      final response = await http.get(
-        Uri.parse('${dotenv.env['API_URL']}/fontanelle'),
-        headers: {
-          'Authorization': 'Bearer ${userSession.token}',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await FontanellaHelper().fetchFountains();
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         final List<Fontanella> loaded =
@@ -292,22 +284,13 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     XFile? image,
     required Potability potability,
   }) async {
-    final uri = Uri.parse('${dotenv.env['API_URL']}/fontanelle');
-
-    final response = await http.post(
-      uri,
-      headers: {
-        'Authorization': 'Bearer ${userSession.token}',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
+    Map<String, dynamic> body = {
         'name': nome,
         'lat': lat,
         'lon': lon,
-        'potability': _potability.value,
-      }),
-    );
-
+        'potability': potability.value,
+      };
+    final response = await FontanellaHelper().createFountain(body);
     if (response.statusCode != 200) {
       String message;
       try {
@@ -341,25 +324,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   }
 
   Future<void> inviaFontanellaImage(String fontanellaId, XFile? image) async {
-    final uri = Uri.parse(
-      '${dotenv.env['API_URL']}/fontanelle/$fontanellaId/image',
-    );
-    final request = http.MultipartRequest('POST', uri)
-      ..headers['Authorization'] = 'Bearer ${userSession.token}';
-    if (image != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          image.path,
-          contentType: MediaType('image', 'jpeg'),
-        ),
-      );
-    }
-
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-
-    print(jsonDecode(response.body));
+    await FontanellaHelper().uploadFountainImage(fontanellaId, image);
   }
 
   Widget _buildStatusIndicator(Fontanella f) {

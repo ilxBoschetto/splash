@@ -1,3 +1,4 @@
+import 'package:application/helpers/fontanella_helper.dart';
 import 'package:application/helpers/user_session.dart';
 import 'package:application/models/fontanella.dart';
 import 'package:application/models/user.dart';
@@ -70,13 +71,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   }
 
   void fetchFontanelleCount() async {
-    final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/fontanelle/count'),
-      headers: {
-        'Authorization': 'Bearer ${userSession.token}',
-        'Content-Type': 'application/json',
-      },
-    );
+    final response = await FontanellaHelper().fetchFontanelleCount();
     if (response.statusCode == 200) {
       setState(() {
         _fontanelleCount = jsonDecode(response.body)['count'] as int;
@@ -120,13 +115,7 @@ class _AdministrationScreenState extends State<AdministrationScreen> {
   }
 
   Future<void> deleteFountain(String id) async {
-    final response = await http.delete(
-      Uri.parse('${dotenv.env['API_URL']}/fontanelle/$id'),
-      headers: {
-        'Authorization': 'Bearer ${userSession.token}',
-        'Content-Type': 'application/json',
-      },
-    );
+    final http.Response response = await FontanellaHelper().deleteFountain(id);
     if (response.statusCode == 200) {
       setState(() {
         _fountainsFuture = fetchFountains();
