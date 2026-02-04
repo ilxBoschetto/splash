@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:application/enum/potability_enum.dart';
 import 'package:application/helpers/potability_helper.dart';
 import 'package:application/screens/components/image_uploader.dart';
@@ -250,18 +249,6 @@ class _FountainFormState extends State<FountainForm> {
                 },
               ),
             ),
-
-            if (_selectedImage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Center(
-                  child: Image.file(
-                    File(_selectedImage!.path),
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
 
             const SizedBox(height: 20),
             SizedBox(
