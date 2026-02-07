@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import withCors from "@lib/withCors";
 import withLastRequest from "@/lib/withLastRequest";
 import { mapToUserDto } from "@/dtos/userLoginDto";
+import { generateJwtToken } from "@/lib/auth";
 
 const JWT_SECRET = process.env.JWT_SECRET || "super-secret-key";
 
@@ -38,9 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(401).json({ error: "Email o password errati" });
   }
 
-  const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
-    expiresIn: "10y",
-  });
+  const token = generateJwtToken(user._id.toString(), email);
 
   const userDto = mapToUserDto(user._id.toString(), user);
 

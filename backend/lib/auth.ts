@@ -32,4 +32,13 @@ export async function getUserFromRequest(
 
   return userModel;
 }
+
+export async function generateJwtToken(userId: string, email?: string): Promise<string> {
+  const payload = {
+    userId,
+    email,
+  };
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "10y" });
+}
+
 export type { IUser };

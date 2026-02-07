@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import User from "@/models/User";
 import dbConnect from "@/lib/mongodb";
 import { mapToUserDto } from "@/dtos/userLoginDto";
+import { generateJwtToken } from "@/lib/auth";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_WEB_CLIENT_ID;
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -12,7 +13,7 @@ const client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Metodo non consentito" });
@@ -57,9 +58,7 @@ export default async function handler(
       console.log(`Nuovo utente creato: ${email}`);
     }
 
-    const appToken = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const appToken = generateJwtToken(user._id.toString(), email);
 
     const userDto = mapToUserDto(user._id.toString(), user);
 

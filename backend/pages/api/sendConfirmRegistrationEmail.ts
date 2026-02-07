@@ -2,6 +2,8 @@ import nodemailer from 'nodemailer';
 import { sendRegistrationEmail } from '@lib/emailTemplates';
 import jwt from 'jsonwebtoken';
 import { log } from '@/helpers/logger';
+import { generateJwtToken } from '@/lib/auth';
+import User from '@/models/User';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -14,11 +16,12 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: 'Missing email' });
   }
 
-  const confirmationCode = jwt.sign(
-    { email: to },
-    process.env.JWT_SECRET,
-    { expiresIn: '1d' }
-  );
+  const userModel = await User.findOne({ email: to });
+  if (!userModel) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  const confirmationCode = generateJwtToken(userModel._id.toString(), to);
 
   const confirmationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/confirm?code=${confirmationCode}`;
 
