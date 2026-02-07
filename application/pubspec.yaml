@@ -75,7 +75,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - .env
+    - .env.development
+    - .env.production
     - assets/images/placeholder.png
     - assets/icons/logo.png
     - assets/icons/favicon.png
