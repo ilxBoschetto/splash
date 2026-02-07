@@ -6,7 +6,12 @@ import 'package:easy_localization/easy_localization.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: ".env");
+  const env = String.fromEnvironment(
+    'ENV',
+    defaultValue: 'development',
+  );
+
+  await dotenv.load(fileName: '.env.$env');
   await EasyLocalization.ensureInitialized();
 
   runApp(

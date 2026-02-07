@@ -34,6 +34,8 @@
 /backend/.env.local
 /backend/.env.production
 /application/.env
+/application/.env.development
+/application/.env.production
 
 # vercel
 /backend/.vercel
