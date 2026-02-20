@@ -17,7 +17,10 @@ export const createDeviceTokenNotification = async (
     deviceToken: deviceToken,
   });
   if (existingNotification) {
-    throw new Error("Notifica già esistente per questo device token");
+    log.info(`Notifica già esistente per device token ${deviceToken}`);
+    existingNotification.userId = userId;
+    await existingNotification.save();
+    return existingNotification;
   }
   const notification = new DeviceNotification({
     userId: userId,
