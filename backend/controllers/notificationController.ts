@@ -1,44 +1,56 @@
-import { DeviceNotification, IDeviceNotification } from "@/models/DeviceNotification";
+import {
+  DeviceNotification,
+  IDeviceNotification,
+} from "@/models/DeviceNotification";
 import { log } from "@/helpers/logger";
 import { firebaseAdmin } from "@/lib/firebaseAdmin";
 
 export const createDeviceTokenNotification = async (
   userId: string | null | undefined,
-  deviceToken: string
+  deviceToken: string,
 ): Promise<IDeviceNotification> => {
-    log.info(`Creazione notifica per device token di utente ${userId}`);
-    const notification = new DeviceNotification({
-      userId: userId,
-      deviceToken: deviceToken
-    });
-    return await notification.save();
-  };
+  log.info(`Creazione notifica per device token di utente ${userId}`);
+  if (!userId || !deviceToken) {
+    throw new Error("userId o deviceToken mancanti");
+  }
+  const existingNotification = await DeviceNotification.findOne({
+    deviceToken: deviceToken,
+  });
+  if (existingNotification) {
+    throw new Error("Notifica già esistente per questo device token");
+  }
+  const notification = new DeviceNotification({
+    userId: userId,
+    deviceToken: deviceToken,
+  });
+  return await notification.save();
+};
 
 export const deleteDeviceTokenNotification = async (
-  deviceToken: string
+  deviceToken: string,
 ): Promise<void> => {
-    log.info(`Eliminazione notifica per device token ${deviceToken}`);
-    await DeviceNotification.deleteOne({
-      deviceToken: deviceToken
-    });
-  };
+  log.info(`Eliminazione notifica per device token ${deviceToken}`);
+  await DeviceNotification.deleteOne({
+    deviceToken: deviceToken,
+  });
+};
 
 export const sendNotificationsToDeviceTokens = async (
-    deviceTokens: string[],
-    title: string,
-    body: string,
-    ): Promise<void> => {
-    deviceTokens.forEach(deviceToken => {
-        sendNotificationsToDeviceToken(deviceToken, title, body);
-    });
+  deviceTokens: string[],
+  title: string,
+  body: string,
+): Promise<void> => {
+  deviceTokens.forEach((deviceToken) => {
+    sendNotificationsToDeviceToken(deviceToken, title, body);
+  });
 };
 
 export const sendNotificationsToDeviceToken = async (
-    deviceToken: string,
-    title: string,
-    body: string,
+  deviceToken: string,
+  title: string,
+  body: string,
 ): Promise<void> => {
-log.info(`Invio notifica a device token ${deviceToken}`);
+  log.info(`Invio notifica a device token ${deviceToken}`);
   await firebaseAdmin.messaging().send({
     token: deviceToken,
     notification: {
@@ -48,7 +60,8 @@ log.info(`Invio notifica a device token ${deviceToken}`);
   });
 };
 
-export const getDeviceNotifications = async (
-): Promise<IDeviceNotification[]> => {
-    return (await DeviceNotification.find({}));
+export const getDeviceNotifications = async (): Promise<
+  IDeviceNotification[]
+> => {
+  return await DeviceNotification.find({});
 };
