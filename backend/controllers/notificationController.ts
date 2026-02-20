@@ -54,13 +54,18 @@ export const sendNotificationsToDeviceToken = async (
   body: string,
 ): Promise<void> => {
   log.info(`Invio notifica a device token ${deviceToken}`);
-  await firebaseAdmin.messaging().send({
-    token: deviceToken,
-    notification: {
-      title: title,
-      body: body,
-    },
-  });
+  try {
+    await firebaseAdmin.messaging().send({
+      token: deviceToken,
+      notification: {
+        title: title,
+        body: body,
+      },
+    });
+  } catch (error) {
+    log.error(`Errore invio notifica a device token ${deviceToken}, with error: ${error}`);
+  }
+
 };
 
 export const getDeviceNotifications = async (): Promise<
