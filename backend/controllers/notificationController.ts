@@ -10,8 +10,8 @@ export const createDeviceTokenNotification = async (
   deviceToken: string,
 ): Promise<IDeviceNotification> => {
   log.info(`Creazione notifica per device token di utente ${userId}`);
-  if (!userId || !deviceToken) {
-    throw new Error("userId o deviceToken mancanti");
+  if (!deviceToken) {
+    throw new Error("deviceToken mancante");
   }
   const existingNotification = await DeviceNotification.findOne({
     deviceToken: deviceToken,
