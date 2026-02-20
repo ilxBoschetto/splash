@@ -33,7 +33,7 @@ export async function getUserFromRequest(
   return userModel;
 }
 
-export async function generateJwtToken(userId: string, email?: string): Promise<string> {
+export function generateJwtToken(userId: string, email?: string): string {
   const payload = {
     userId,
     email,
