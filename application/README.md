@@ -1,4 +1,4 @@
-# Flutter Frontend - Splash Project
+﻿# Flutter Frontend - Splash Project
 
 Questo progetto rappresenta la parte **frontend** sviluppata in **Flutter**, connessa a un backend Next.js + MongoDB.
 
@@ -28,3 +28,15 @@ flutter pub get
 ```bash
 flutter run
 ```
+## Configurazione ambiente
+
+Questo progetto usa due file distinti:
+- application/.env.development
+- application/.env.production
+
+Sviluppo locale (default):
+- Esegui `flutter run` senza parametri. Il codice usa ENV=development come default.
+
+Produzione:
+- Usa `flutter run --dart-define=ENV=production` oppure `flutter build <target> --dart-define=ENV=production`.
+
