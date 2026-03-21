@@ -68,8 +68,29 @@ export const sendNotificationsToDeviceToken = async (
 
 };
 
-export const getDeviceNotifications = async (): Promise<
-  IDeviceNotification[]
-> => {
+export const updateLastNotificationSentAt = async (
+  deviceTokens: string[],
+): Promise<void> => {
+  log.info(`Aggiornamento lastNotificationSentAt per ${deviceTokens.length} device tokens`);
+  await DeviceNotification.updateMany(
+    { deviceToken: { $in: deviceTokens } },
+    { $set: { lastNotificationSentAt: new Date() } },
+  );
+};
+
+export const getDeviceNotifications = async (
+  minDaysThreshold?: number,
+): Promise<IDeviceNotification[]> => {
+  if (minDaysThreshold !== undefined) {
+    const thresholdDate = new Date();
+    thresholdDate.setDate(thresholdDate.getDate() - minDaysThreshold);
+    return await DeviceNotification.find({
+      $or: [
+        { lastNotificationSentAt: { $lte: thresholdDate } },
+        { lastNotificationSentAt: { $exists: false } },
+        { lastNotificationSentAt: null },
+      ],
+    });
+  }
   return await DeviceNotification.find({});
 };

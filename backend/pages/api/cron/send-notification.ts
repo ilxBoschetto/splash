@@ -1,6 +1,7 @@
 import {
   getDeviceNotifications,
   sendNotificationsToDeviceTokens,
+  updateLastNotificationSentAt,
 } from "@/controllers/notificationController";
 import {
   NOTIFICATIONS_CATALOG,
@@ -20,17 +21,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   log.info("Cron authorized");
   try {
     dbConnect();
-    const notification =
-      NOTIFICATIONS_CATALOG[NotificationType.HYDRATION_NUDGE];
+    const notificationTypes = Object.values(NotificationType);
+    const randomType =
+      notificationTypes[Math.floor(Math.random() * notificationTypes.length)];
+    const notification = NOTIFICATIONS_CATALOG[randomType];
 
-    const deviceTokens = await getDeviceNotifications();
-    await sendNotificationsToDeviceTokens(
-      deviceTokens.map((dt) => dt.deviceToken),
-      notification.title,
-      notification.body,
+    log.info(`Sending random notification: ${notification.type}`);
+
+    const deviceNotifications = await getDeviceNotifications(
+      notification.minDaysBetweenSends,
     );
+    const deviceTokens = deviceNotifications.map((dt) => dt.deviceToken);
 
-    return res.status(200).json({ success: true });
+    if (deviceTokens.length > 0) {
+      await sendNotificationsToDeviceTokens(
+        deviceTokens,
+        notification.title,
+        notification.body,
+      );
+      await updateLastNotificationSentAt(deviceTokens);
+      log.info(`Sent notification to ${deviceTokens.length} devices`);
+    } else {
+      log.info("No devices eligible for notification today");
+    }
+
+    return res.status(200).json({ success: true, sentTo: deviceTokens.length });
   } catch (error) {
     console.error("Cron error", error);
     return res.status(500).json({ error: "Internal error" });
