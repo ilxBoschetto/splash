@@ -7,7 +7,6 @@
 ## IMPROVEMENTS
 
 - [ ] Aggiungere massimo di fontanelle create al giorno per evitare spam
-- [ ] (?) Aggiungere scroll infinito per le fontanelle
 - [ ] Salvare la theme in sessione utente
 - [ ] Aggiungere l'edit delle fontanelle se utente Admin
 - [ ] Aggiungere refresh token
@@ -44,3 +43,4 @@
 - [x] Aggiungere login con Google
 - [x] Tasto visualizzazione password quando si scrive
 - [x] Aggiungere log per ogni azione compiuta
+- [x] Aggiungere scroll infinito per le fontanelle
