@@ -13,7 +13,7 @@ void main() async {
 
   // Try loading .env.local first, fallback to .env.$env
   try {
-    await dotenv.load(fileName: '.env.local');
+    await dotenv.load(fileName: '.env.development');
   } catch (e) {
     await dotenv.load(fileName: '.env.$env');
   }
