@@ -166,46 +166,56 @@ export const getFontanelle = async (
       ? 1
       : -1;
 
+  // Parametri di paginazione
+  const page = req.query.page ? parseInt(req.query.page as string, 10) : null;
+  const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : null;
+
   let fontanelle: any[];
-  const cachedList = await redis.get(CACHE_KEY_LIST);
 
-  if (cachedList) {
-    fontanelle = JSON.parse(cachedList);
-    // Apply sort if it's different from cached (assuming default is -1)
-    if (sortOrder === 1) {
-      fontanelle.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    } else {
-      fontanelle.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
-  } else {
-    // Ordinamento di default: createdAt discendente
+  if (page !== null && limit !== null) {
+    const skip = (page - 1) * limit;
     fontanelle = await Fontanella.find({ deleted: { $ne: true } })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: sortOrder })
+      .skip(skip)
+      .limit(limit)
       .lean();
-    
-    await redis.set(CACHE_KEY_LIST, JSON.stringify(fontanelle), "EX", 3600);
-
-    // If requested order was asc, sort it now
-    if (sortOrder === 1) {
-      fontanelle.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  } else {
+    const cachedList = await redis.get(CACHE_KEY_LIST);
+    if (cachedList) {
+      fontanelle = JSON.parse(cachedList);
+      if (sortOrder === 1) {
+        fontanelle.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      } else {
+        fontanelle.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      }
+    } else {
+      fontanelle = await Fontanella.find({ deleted: { $ne: true } })
+        .sort({ createdAt: -1 })
+        .lean();
+      await redis.set(CACHE_KEY_LIST, JSON.stringify(fontanelle), "EX", 3600);
+      if (sortOrder === 1) {
+        fontanelle.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      }
     }
   }
 
-  // Salvataggi dell’utente (se autenticato)
+  // Salvataggi dell’utente (solo per gli ID presenti nella risposta corrente per efficienza)
   let savedFontanellaIds = new Set<string>();
-  if (user?.userId) {
-    const saved = await SavedFontanella.find({ userId: user.userId })
+  if (user?.userId && fontanelle.length > 0) {
+    const currentIds = fontanelle.map(f => f._id);
+    const saved = await SavedFontanella.find({ 
+        userId: user.userId,
+        fontanellaId: { $in: currentIds } 
+      })
       .select("fontanellaId")
       .lean();
     savedFontanellaIds = new Set(saved.map((e) => e.fontanellaId.toString()));
   }
 
-  // Recupera gli ID dei creatori
+  // Get creators
   const createdByIds = fontanelle.map((f) => f.createdBy!).filter(Boolean);
-
-  // Mappa utenti (per assegnare nome e id)
-  let usersMap: Record<string, { id: string; name: string; email: string }> =
-    {};
+  let usersMap: Record<string, { id: string; name: string; email: string }> = {};
+  
   if (createdByIds.length > 0) {
     const users = await User.find({ _id: { $in: createdByIds } })
       .select("_id name email")
