@@ -10,6 +10,7 @@ services:
       - .env.local
     depends_on:
       - mongodb
+      - redis
     restart: unless-stopped
 
   mongodb:
@@ -19,6 +20,13 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
     restart: unless-stopped
 
 volumes:

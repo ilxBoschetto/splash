@@ -7,14 +7,30 @@ import type { DecodedToken } from "@lib/auth";
 import Vote, { IVote } from "@/models/Vote";
 import { Potability } from "@/enum/potability_enum";
 import { log } from "@/helpers/logger";
+import redis from "@lib/redis";
+
+const CACHE_KEY_COUNT = "fontanelle:count";
+const CACHE_KEY_LIST = "fontanelle:all";
+
+async function invalidateFontanelleCache() {
+  await redis.del(CACHE_KEY_COUNT, CACHE_KEY_LIST);
+}
 
 //#region Utility
 
 /**
  * Restituisce il numero totale di fontanelle nel database.
  */
-export const countFontanelle = async (): Promise<number> =>
-  Fontanella.countDocuments({ deleted: { $ne: true } });
+export const countFontanelle = async (): Promise<number> => {
+  const cachedCount = await redis.get(CACHE_KEY_COUNT);
+  if (cachedCount) {
+    return parseInt(cachedCount, 10);
+  }
+
+  const count = await Fontanella.countDocuments({ deleted: { $ne: true } });
+  await redis.set(CACHE_KEY_COUNT, count.toString(), "EX", 3600); // Cache for 1 hour
+  return count;
+};
 
 /**
  * Restituisce il numero di fontanelle create da mezzanotte di oggi.
@@ -150,10 +166,30 @@ export const getFontanelle = async (
       ? 1
       : -1;
 
-  // Ordinamento di default: createdAt discendente
-  const fontanelle = await Fontanella.find({ deleted: { $ne: true } })
-    .sort({ createdAt: sortOrder })
-    .lean();
+  let fontanelle: any[];
+  const cachedList = await redis.get(CACHE_KEY_LIST);
+
+  if (cachedList) {
+    fontanelle = JSON.parse(cachedList);
+    // Apply sort if it's different from cached (assuming default is -1)
+    if (sortOrder === 1) {
+      fontanelle.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    } else {
+      fontanelle.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+  } else {
+    // Ordinamento di default: createdAt discendente
+    fontanelle = await Fontanella.find({ deleted: { $ne: true } })
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    await redis.set(CACHE_KEY_LIST, JSON.stringify(fontanelle), "EX", 3600);
+
+    // If requested order was asc, sort it now
+    if (sortOrder === 1) {
+      fontanelle.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    }
+  }
 
   // Salvataggi dell’utente (se autenticato)
   let savedFontanellaIds = new Set<string>();
@@ -165,7 +201,7 @@ export const getFontanelle = async (
   }
 
   // Recupera gli ID dei creatori
-  const createdByIds = fontanelle.map((f) => f.createdBy!).map((id) => id);
+  const createdByIds = fontanelle.map((f) => f.createdBy!).filter(Boolean);
 
   // Mappa utenti (per assegnare nome e id)
   let usersMap: Record<string, { id: string; name: string; email: string }> =
@@ -235,6 +271,7 @@ export const saveFontanella = async (
   );
   const userObjectId = new mongoose.Types.ObjectId(user.userId);
 
+  let result;
   if (!id) {
     // Creazione
     const createData: any = { createdBy: userObjectId };
@@ -278,8 +315,7 @@ export const saveFontanella = async (
 
     if (imageUrl !== undefined) createData.imageUrl = imageUrl;
 
-    const newFontanella = await Fontanella.create(createData);
-    return newFontanella;
+    result = await Fontanella.create(createData);
   } else {
     // Aggiornamento
     const doc = await Fontanella.findById(id);
@@ -296,9 +332,11 @@ export const saveFontanella = async (
     }
     if (imageUrl !== undefined) doc.imageUrl = imageUrl;
 
-    const updated = await doc.save();
-    return updated;
+    result = await doc.save();
   }
+
+  await invalidateFontanelleCache();
+  return result;
 };
 
 //#endregion
@@ -319,11 +357,16 @@ export const getFontanellaById = async (
 export const updateFontanella = async (
   id: string,
   data: Partial<Pick<IFontanella, "name" | "lat" | "lon">>
-): Promise<IFontanella | null> =>
-  Fontanella.findByIdAndUpdate(id, data, {
+): Promise<IFontanella | null> => {
+  const updated = await Fontanella.findByIdAndUpdate(id, data, {
     new: true,
     runValidators: true,
   }).lean();
+  if (updated) {
+    await invalidateFontanelleCache();
+  }
+  return updated;
+};
 
 /**
  * Elimina una fontanella dal database.
@@ -332,6 +375,10 @@ export const deleteFontanella = async (
   id: string
 ): Promise<IFontanella | null> => {
   log.info(`Eliminazione fontanella ${id} richiesta da utente amministratore`);
-  return Fontanella.findByIdAndDelete(id);
+  const deleted = await Fontanella.findByIdAndDelete(id);
+  if (deleted) {
+    await invalidateFontanelleCache();
+  }
+  return deleted;
 };
 //#endregion
