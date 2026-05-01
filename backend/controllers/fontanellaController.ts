@@ -166,13 +166,32 @@ export const getFontanelle = async (
       ? 1
       : -1;
 
-  // Parametri di paginazione
+  // Parametri di paginazione e posizione
   const page = req.query.page ? parseInt(req.query.page as string, 10) : null;
   const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : null;
+  const userLat = req.query.lat ? parseFloat(req.query.lat as string) : null;
+  const userLon = req.query.lon ? parseFloat(req.query.lon as string) : null;
 
   let fontanelle: any[];
 
-  if (page !== null && limit !== null) {
+  // Case 1: sort by proximity (requires lat/lon)
+  if (userLat !== null && userLon !== null) {
+    let dbQuery = Fontanella.find({ deleted: { $ne: true } }).where("location").near({
+      center: {
+        type: "Point",
+        coordinates: [userLon, userLat],
+      },
+    });
+
+    if (page !== null && limit !== null) {
+      const skip = (page - 1) * limit;
+      dbQuery = dbQuery.skip(skip).limit(limit);
+    }
+
+    fontanelle = await dbQuery.lean();
+  } 
+  // Case 2: Temporal Sorting with Pagination (Direct Query)
+  else if (page !== null && limit !== null) {
     const skip = (page - 1) * limit;
     fontanelle = await Fontanella.find({ deleted: { $ne: true } })
       .sort({ createdAt: sortOrder })
@@ -180,6 +199,7 @@ export const getFontanelle = async (
       .limit(limit)
       .lean();
   } else {
+    // Case 3: COMPLETE LIST (Redis Cache)
     const cachedList = await redis.get(CACHE_KEY_LIST);
     if (cachedList) {
       fontanelle = JSON.parse(cachedList);
