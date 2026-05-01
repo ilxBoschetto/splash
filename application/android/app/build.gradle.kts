@@ -21,8 +21,6 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
-    flavorDimensions += "env"
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -38,21 +36,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-
-        missingDimensionStrategy("env", "development")
-    }
-
-    productFlavors {
-        create("development") {
-            dimension = "env"
-            applicationIdSuffix = ".dev"
-            versionNameSuffix = "-dev"
-        }
-
-        create("production") {
-            dimension = "env"
-            // niente suffix: questa è quella che va sullo store
-        }
+        // Default suffix for local development
+        versionNameSuffix = "-dev"
     }
 
     signingConfigs {
@@ -65,7 +50,12 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            // Debug specific config if needed
+        }
         getByName("release") {
+            // Remove dev suffix for release builds
+            versionNameSuffix = ""
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             isShrinkResources = false
