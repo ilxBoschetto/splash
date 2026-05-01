@@ -24,6 +24,7 @@ async function invalidateFontanelleCache() {
 export const countFontanelle = async (): Promise<number> => {
   const cachedCount = await redis.get(CACHE_KEY_COUNT);
   if (cachedCount) {
+    log.info("Uso cache Redis per il conteggio fontanelle");
     return parseInt(cachedCount, 10);
   }
 
@@ -202,6 +203,7 @@ export const getFontanelle = async (
     // Case 3: COMPLETE LIST (Redis Cache)
     const cachedList = await redis.get(CACHE_KEY_LIST);
     if (cachedList) {
+      log.info("Uso cache Redis per la lista completa delle fontanelle");
       fontanelle = JSON.parse(cachedList);
       if (sortOrder === 1) {
         fontanelle.sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
