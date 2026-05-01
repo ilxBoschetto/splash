@@ -427,7 +427,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
       ),
       body:
           isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? const FountainListSkeleton(itemCount: 15)
               : !isLocationEnabled
               ? Center(
                 child: Column(
@@ -470,10 +470,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 itemCount: filteredFontanelle.length + (_isFetchingMore ? 1 : 0),
                 itemBuilder: (context, index) {
                   if (index == filteredFontanelle.length) {
-                    return const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
+                    return const FountainSkeleton();
                   }
 
                   final f = filteredFontanelle[index];

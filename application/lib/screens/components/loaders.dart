@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BouncingDotsLoader extends StatefulWidget {
   final double dotSize;
@@ -81,6 +82,58 @@ class Dot extends StatelessWidget {
         color: color,
         shape: BoxShape.circle,
       ),
+    );
+  }
+}
+
+class FountainSkeleton extends StatelessWidget {
+  const FountainSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[800]!,
+      highlightColor: Colors.grey[700]!,
+      child: ListTile(
+        leading: const CircleAvatar(
+          radius: 12,
+          backgroundColor: Colors.white,
+        ),
+        title: Container(
+          width: double.infinity,
+          height: 16.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Container(
+            width: 100,
+            height: 12.0,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FountainListSkeleton extends StatelessWidget {
+  final int itemCount;
+  const FountainListSkeleton({super.key, this.itemCount = 10});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: itemCount,
+      itemBuilder: (context, index) => const FountainSkeleton(),
     );
   }
 }
