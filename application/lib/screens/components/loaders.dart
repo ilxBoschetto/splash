@@ -108,10 +108,10 @@ class FountainSkeleton extends StatelessWidget {
           ),
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+          padding: const EdgeInsets.only(top: 8.0, right: 250.0),
           child: Container(
-            width: 100,
-            height: 12.0,
+            width: 1,
+            height: 10.0,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(4),
