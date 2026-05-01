@@ -11,10 +11,27 @@ class FontanellaHelper
 {
   final baseUrl = dotenv.env['API_URL'];
 
-  Future<http.Response> fetchFountains() async {
+  Future<http.Response> fetchFountains({
+    double? lat,
+    double? lon,
+    int? page,
+    int? limit,
+  }) async {
     final userSession = UserSession();
+    
+    final queryParams = <String, String>{};
+    if (page != null) queryParams['page'] = page.toString();
+    if (limit != null) queryParams['limit'] = limit.toString();
+    
+    if (lat != null && lon != null) {
+      queryParams['lat'] = lat.toString();
+      queryParams['lon'] = lon.toString();
+    }
+
+    final uri = Uri.parse('$baseUrl/fontanelle').replace(queryParameters: queryParams);
+
     final response = await http.get(
-      Uri.parse('$baseUrl/fontanelle'),
+      uri,
       headers: {
         'Authorization': 'Bearer ${userSession.token}',
         'Content-Type': 'application/json',

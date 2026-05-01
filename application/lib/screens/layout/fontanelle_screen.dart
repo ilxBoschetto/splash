@@ -27,11 +27,18 @@ class FontanelleListScreen extends StatefulWidget {
 }
 
 class _FontanelleListScreenState extends State<FontanelleListScreen> {
-  // data
+  // Data
   List<Fontanella> fontanelle = [];
   List<Fontanella> filteredFontanelle = [];
 
-  // page controllers
+  // Pagination
+  int _currentPage = 1;
+  final int _limit = 100;
+  bool _isFetchingMore = false;
+  bool _hasMore = true;
+  late ScrollController _scrollController;
+
+  // Page controllers
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cittaController = TextEditingController();
@@ -40,10 +47,10 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   final modalMapController = MapController();
   Potability _potability = Potability.unknown;
 
-  // arguments
+  // Arguments
   String? activeFilter;
 
-  // user session
+  // User session
   bool isUserLogged = false;
   final ValueNotifier<bool> _isSubmitting = ValueNotifier(false);
   final userSession = UserSession();
@@ -57,6 +64,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController()..addListener(_onScroll);
     _initPermissions();
     _checkLocationAndLoad();
     _checkUserStatus();
@@ -65,6 +73,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _searchController.dispose();
     _nomeController.dispose();
     _cittaController.dispose();
@@ -73,18 +82,29 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     super.dispose();
   }
 
+  // Scroll listener for infinite scroll
+  void _onScroll() {
+    if (_isFetchingMore || !_hasMore) return;
+
+    // If 25 items from the bottom (approx 1500px)
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 1500) {
+      fetchFontanelle(isLoadMore: true);
+    }
+  }
+
+  // Search filter logic
   void filterFontanelle() {
-    _searchController.text = _searchController.text.toString();
     final query = _searchController.text.toLowerCase();
 
     List<Fontanella> tempList = fontanelle;
 
-    // Applica filtro 'saved_fontanelle' se attivo
+    // Apply 'saved_fontanelle' filter if active
     if (activeFilter == 'saved_fontanelle') {
       tempList = tempList.where((f) => f.isSaved).toList();
     }
 
-    // Applica ricerca testuale
+    // Apply text search
     if (query.isNotEmpty) {
       tempList =
           tempList.where((f) => f.nome.toLowerCase().contains(query)).toList();
@@ -93,6 +113,84 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     setState(() {
       filteredFontanelle = tempList;
     });
+  }
+
+  // Main data fetching method
+  Future<void> fetchFontanelle({bool isLoadMore = false}) async {
+    if (isLoadMore) {
+      if (_isFetchingMore || !_hasMore) return;
+      setState(() => _isFetchingMore = true);
+    } else {
+      setState(() {
+        isLoading = true;
+        _currentPage = 1;
+        _hasMore = true;
+        fontanelle = [];
+      });
+    }
+
+    try {
+      final position = await LocationHelper.getCurrentPosition();
+      final userLat = position?.latitude;
+      final userLon = position?.longitude;
+      final distance = Distance();
+
+      final response = await FontanellaHelper().fetchFountains(
+        lat: userLat,
+        lon: userLon,
+        page: _currentPage,
+        limit: _limit,
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        final List<Fontanella> loaded = data.map((jsonItem) {
+          final lat = jsonItem['lat'].toDouble();
+          final lon = jsonItem['lon'].toDouble();
+          double dist = 0;
+          if (userLat != null && userLon != null) {
+            dist = distance.as(
+              LengthUnit.Meter,
+              LatLng(userLat, userLon),
+              LatLng(lat, lon),
+            );
+          }
+          return Fontanella.fromJson(jsonItem, dist);
+        }).toList();
+
+        setState(() {
+          if (isLoadMore) {
+            fontanelle.addAll(loaded);
+            _isFetchingMore = false;
+          } else {
+            fontanelle = loaded;
+            isLoading = false;
+          }
+          
+          if (loaded.length < _limit) {
+            _hasMore = false;
+          } else {
+            _currentPage++;
+          }
+          
+          filterFontanelle();
+        });
+      } else {
+        throw Exception('Error ${response.statusCode}');
+      }
+    } on TimeoutException {
+      setState(() {
+        isLoading = false;
+        _isFetchingMore = false;
+      });
+      print('errors.server_timeout'.tr());
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        _isFetchingMore = false;
+      });
+      print('Error loading fountains: $e');
+    }
   }
 
   Future<void> _initPermissions() async {
@@ -131,49 +229,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
     }
 
     await fetchFontanelle();
-  }
-
-  Future<void> fetchFontanelle() async {
-    try {
-      final position = await LocationHelper.getCurrentPosition();
-      if (position == null) {
-        return;
-      }
-      final userLat = position.latitude;
-      final userLon = position.longitude;
-      final distance = Distance();
-
-      final response = await FontanellaHelper().fetchFountains();
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        final List<Fontanella> loaded =
-            data.map((jsonItem) {
-              final lat = jsonItem['lat'].toDouble();
-              final lon = jsonItem['lon'].toDouble();
-              double dist = distance.as(
-                LengthUnit.Meter,
-                LatLng(userLat, userLon),
-                LatLng(lat, lon),
-              );
-              return Fontanella.fromJson(jsonItem, dist);
-            }).toList();
-
-        loaded.sort((a, b) => a.distanza.compareTo(b.distanza));
-
-        setState(() {
-          fontanelle = loaded;
-          filterFontanelle();
-          isLoading = false;
-        });
-      } else {
-        throw Exception('Errore ${response.statusCode}');
-      }
-    } on TimeoutException {
-      setState(() => isLoading = false);
-      print('errors.server_timeout'.tr());
-    } catch (e) {
-      print('Errore nel caricamento: $e');
-    }
   }
 
   void _checkUserStatus() async {
@@ -297,7 +352,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
         final Map<String, dynamic> bodyJson = jsonDecode(response.body);
         message = bodyJson['error']?.toString() ?? 'errors.general_error'.tr();
       } catch (e) {
-        message = 'Errore: ${response.body}';
+        message = 'Error: ${response.body}';
       }
       showMinimalNotification(
         context,
@@ -356,7 +411,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     hintStyle: TextStyle(color: Theme.of(context).hintColor),
                     border: InputBorder.none,
                   ),
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                 )
                 : Text(
                   activeFilter == 'saved_fontanelle'
@@ -369,23 +424,6 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     color: Theme.of(context).iconTheme.color,
                   ),
                 ),
-        /*
-        actions: [
-          IconButton(
-            color: Theme.of(context).iconTheme.color,
-            icon: Icon(_isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  _searchController.clear();
-                  filterFontanelle();
-                }
-              });
-            },
-          ),
-        ],
-        */
       ),
       body:
           isLoading
@@ -395,7 +433,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.location_off, size: 64, color: Colors.grey),
+                    const Icon(Icons.location_off, size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
                     Text(
                       'position_disabled'.tr(),
@@ -405,8 +443,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     Text(
                       hasLocationPermission
                           ? 'position_disabled_message'.tr()
-                          : 'position_permission_required'
-                              .tr(), // nuovo messaggio
+                          : 'position_permission_required'.tr(),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
@@ -415,7 +452,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                       label: Text(
                         hasLocationPermission
                             ? 'open_settings'.tr()
-                            : 'grant_permissions'.tr(), // testo bottone diverso
+                            : 'grant_permissions'.tr(),
                       ),
                       onPressed: () {
                         if (hasLocationPermission) {
@@ -429,8 +466,16 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                 ),
               )
               : ListView.builder(
-                itemCount: filteredFontanelle.length,
+                controller: _scrollController,
+                itemCount: filteredFontanelle.length + (_isFetchingMore ? 1 : 0),
                 itemBuilder: (context, index) {
+                  if (index == filteredFontanelle.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
                   final f = filteredFontanelle[index];
 
                   return Material(
@@ -438,7 +483,7 @@ class _FontanelleListScreenState extends State<FontanelleListScreen> {
                     child: GestureDetector(
                       onTap: () => goToDetail(f),
                       child: InkWell(
-                        onTap: () => goToDetail(f), // per il ripple
+                        onTap: () => goToDetail(f),
                         child: ListTile(
                           leading: _buildStatusIndicator(f),
                           title: Text(f.nome),
