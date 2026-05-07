@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] Aggiungere google sign in con apple
 - [ ] Aggiungere modifica admin
 - [ ] Aggiungere modifica per creatore della fontanella
 - [ ] Aggiungere "achivements" per gli utenti, tipo dopo aver creato / recensito X fontanelle nel profilo appare una "medaglia"

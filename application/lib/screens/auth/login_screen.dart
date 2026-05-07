@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:application/screens/components/password_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -186,35 +187,37 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: theme.textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    icon: Padding(
-                      padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
-                      child: Image.asset('assets/images/google.png', width: 35),
-                    ),
-                    label: Text(
-                      'Accedi con Google',
-                      style: TextStyle(
-                        color: Theme.of(context).iconTheme.color,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                  if (!Platform.isIOS) ...[
+                    OutlinedButton.icon(
+                      icon: Padding(
+                        padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+                        child: Image.asset('assets/images/google.png', width: 35),
                       ),
+                      label: Text(
+                        'Accedi con Google',
+                        style: TextStyle(
+                          color: Theme.of(context).iconTheme.color,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () async {
+                        final result = await AuthHelper.loginWithGoogle();
+                        if (result.success) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/',
+                            (_) => false,
+                          );
+                        } else {
+                          setState(() => error = result.message);
+                        }
+                      },
                     ),
-                    onPressed: () async {
-                      final result = await AuthHelper.loginWithGoogle();
-                      if (result.success) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/',
-                          (_) => false,
-                        );
-                      } else {
-                        setState(() => error = result.message);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  Divider(),
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                    Divider(),
+                    const SizedBox(height: 16),
+                  ],
                   if (error != null)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12),
