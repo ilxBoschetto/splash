@@ -49,3 +49,4 @@
 /backend/public/uploads/
 /logs
 /backend/splash-firebase.json
+.claude/

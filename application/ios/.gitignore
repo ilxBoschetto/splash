@@ -24,8 +24,29 @@ Flutter/app.flx
 Flutter/app.zip
 Flutter/flutter_assets/
 Flutter/flutter_export_environment.sh
+Flutter/.last_build_id
 ServiceDefinitions.json
 Runner/GeneratedPluginRegistrant.*
+
+# Build / archive / distribution artifacts
+build/
+*.ipa
+*.xcarchive
+*.xcarchive/
+*.dSYM
+*.dSYM.zip
+*.xcuserstate
+
+# Code signing assets (NEVER commit)
+*.mobileprovision
+*.cer
+*.certSigningRequest
+*.p8
+*.p12
+*.pem
+
+# Firebase config (treat like google-services.json on Android)
+Runner/GoogleService-Info.plist
 
 # Exceptions to above rules.
 !default.mode1v3
