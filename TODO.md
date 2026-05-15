@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] Aggiungere elimina account nell'app
 - [ ] Aggiungere google sign in con apple
 - [ ] Aggiungere modifica admin
 - [ ] Aggiungere modifica per creatore della fontanella
