@@ -108,6 +108,29 @@ class AuthHelper {
     isUserLogged = false;
   }
 
+  static Future<bool> deleteAccount() async {
+    try {
+      final token = UserSession().token;
+      final res = await http.delete(
+        Uri.parse('${dotenv.env['API_URL']}/users/delete-account'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (res.statusCode == 200 || res.statusCode == 204) {
+        await logout();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Delete account error: $e');
+      return false;
+    }
+  }
+
   static Future<LoginResult> loginWithGoogle() async {
     final googleSignIn = _initGoogleSignInSafe();
     try {

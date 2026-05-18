@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:application/helpers/auth_helper.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,6 +46,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } else {
       throw Exception('Errore durante il recupero dei dati profilo');
     }
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('delete_account'.tr()),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('delete_account_confirm'.tr()),
+              const SizedBox(height: 16),
+              Text(
+                'delete_account_warning'.tr(),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text('general.cancel'.tr()),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final success = await AuthHelper.deleteAccount();
+                if (success) {
+                  if (context.mounted) {
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/login', (route) => false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('delete_account_success'.tr())),
+                    );
+                  }
+                } else {
+                  if (context.mounted) {
+                    Navigator.of(dialogContext).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('errors.something_went_wrong'.tr()),
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: Text(
+                'general.delete'.tr(),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -160,6 +217,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  color: Theme.of(context).colorScheme.surface,
+                  elevation: 4,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading:
+                            const Icon(Icons.delete_forever, color: Colors.red),
+                        title: Text(
+                          'delete_account'.tr(),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onTap: () => _showDeleteConfirmation(context),
+                      ),
                     ],
                   ),
                 ),

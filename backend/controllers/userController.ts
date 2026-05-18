@@ -43,17 +43,19 @@ class UserController {
    */
   static async deleteUser(req: NextApiRequest, res: NextApiResponse) {
     try {
-      log.info(`Richiesta eliminazione utente ${req.query.id} da parte di amministratore`);
+      const { id } = req.query;
+
+      if (!id || typeof id !== "string" || !mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ error: "Invalid user id" });
+      }
+
+      log.info(
+        `Richiesta eliminazione utente ${id} da parte di amministratore`
+      );
       const admin = await getUserFromRequest(req);
 
       if (!admin || !admin.isAdmin) {
         return res.status(401).json({ error: "Unauthorized: access denied" });
-      }
-
-      const { id } = req.query;
-
-      if (!id || typeof id !== "string") {
-        return res.status(400).json({ error: "Invalid user id" });
       }
 
       const user = await User.findById(id);
@@ -62,7 +64,7 @@ class UserController {
         return res.status(404).json({ error: "User not found" });
       }
 
-      if (user._id == admin._id) {
+      if (user._id.toString() === admin._id.toString()) {
         return res
           .status(409)
           .json({ error: "Conflict: Cannot delete yourself" });
@@ -88,8 +90,6 @@ class UserController {
   }
 
   static async getTopUsers(): Promise<TopUserDto[]> {
-    await dbConnect();
-
     const topUsers = await Fontanella.aggregate([
       { $match: { deleted: { $ne: true } } },
       { $group: { _id: "$createdBy", count: { $sum: 1 } } },
@@ -110,6 +110,27 @@ class UserController {
     return topUsers.map((row: any) =>
       mapToDto(row._id, row.count, row.userInfo as IUser)
     );
+  }
+
+  /**
+   * DELETE /api/users/delete-account
+   * Elimina l'account dell'utente loggato
+   */
+  static async deleteMyAccount(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      const user = await getUserFromRequest(req);
+
+      if (!user) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      await User.findByIdAndDelete(user._id);
+
+      return res.status(200).json({ message: "Account deleted successfully" });
+    } catch (error) {
+      console.error("Errore deleteMyAccount:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
   }
 }
 

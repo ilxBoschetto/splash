@@ -9,25 +9,31 @@ export interface DecodedToken {
   email?: string;
 }
 
-export function verifyToken(req: NextApiRequest): DecodedToken {
+export function verifyToken(req: NextApiRequest): DecodedToken | null {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     console.log("Missing or invalid Authorization header");
-    return false as any;
+    return null;
   }
 
   const token = authHeader.split(" ")[1];
-  const decoded = jwt.verify(token, JWT_SECRET);
-
-  return decoded as DecodedToken;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    return decoded as DecodedToken;
+  } catch (err) {
+    console.error("Token verification failed:", err);
+    return null;
+  }
 }
 
 export async function getUserFromRequest(
-  req: NextApiRequest
+  req: NextApiRequest,
 ): Promise<IUser | null> {
-  let user = verifyToken(req);
-  const userModel = await User.findById(user.userId).select("-password");
+  const decoded = verifyToken(req);
+  if (!decoded || !decoded.userId) return null;
+
+  const userModel = await User.findById(decoded.userId).select("-password");
   if (!userModel) return null;
 
   return userModel;
