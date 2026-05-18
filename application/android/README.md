@@ -37,10 +37,7 @@ storeFile=release-keystore.jks
 - Lancia questo comando
 
 ```bash
-flutter build appbundle \
-  --flavor production \
-  --release \
-  --dart-define=ENV=production
+flutter build appbundle --flavor production --release --dart-define=ENV=production
 ```
 
 ## Notes
