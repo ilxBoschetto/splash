@@ -11,12 +11,8 @@ void main() async {
     defaultValue: 'development',
   );
 
-  // Try loading .env.local first, fallback to .env.$env
-  try {
-    await dotenv.load(fileName: '.env.development');
-  } catch (e) {
-    await dotenv.load(fileName: '.env.$env');
-  }
+  // Load the environment file based on the ENV define
+  await dotenv.load(fileName: '.env.$env');
   await EasyLocalization.ensureInitialized();
 
   runApp(
